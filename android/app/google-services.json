@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1009445090491",
+    "project_id": "hcareapp-ee339",
+    "storage_bucket": "hcareapp-ee339.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1009445090491:android:25a7a1a8a24caba9df659e",
+        "android_client_info": {
+          "package_name": "com.example.hcareapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAL35_HXgE8ZaJA4cWsqnLRhc2Pt7a96tg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

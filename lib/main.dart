@@ -1,10 +1,8 @@
 import 'package:hcareapp/pages/auth/ana_sayfa.dart';
-import 'package:hcareapp/pages/auth/ana_sayfa.dart';
 import 'package:hcareapp/pages/auth/yoneticiPage.dart';
 import 'package:hcareapp/pages/auth/kayitOlPage.dart';
 import 'package:hcareapp/pages/auth//nursePage.dart';
 import 'package:hcareapp/pages/auth/sickPage.dart';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart'; // forgot password ve kullanııc tipleri ayarlanacak

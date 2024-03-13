@@ -71,9 +71,15 @@ class _yoneticiPageState extends State<yoneticiPage> {
                         const SizedBox(
                           height: 50,
                         ),
-                        emailTextField(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          child: emailTextField(),
+                        ),
                         customSizedBox(),
-                        passwdTxtField(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          child: passwdTxtField(),
+                        ),
                         customSizedBox(),
                         customSizedBox(),
                         CustomButton(
@@ -114,6 +120,7 @@ class _yoneticiPageState extends State<yoneticiPage> {
 
   TextFormField emailTextField() {
     return TextFormField(
+      decoration: textfielddec('E-Mail '),
       controller: forgotPasswdController,
       validator: (value) {
         if (value!.isEmpty) {
@@ -128,6 +135,8 @@ class _yoneticiPageState extends State<yoneticiPage> {
 
   TextFormField passwdTxtField() {
     return TextFormField(
+      decoration: textfielddec('Şifre '),
+
       validator: (value){
         if(value!.isEmpty)
         {
@@ -142,23 +151,23 @@ class _yoneticiPageState extends State<yoneticiPage> {
   }
 
   void forgotPasswd() async {
-      try {
-        await firebaseAuth.sendPasswordResetEmail(email: forgotPasswdController.text.trim());
-        showDialog(context: context, builder: (context) {
-          return AlertDialog(
-            content: Text('Şifre Yenileme linki gönderildi. Lütfen Email Gelen Kutunuzu Kontrol Ediniz'),
-          );
-        }
-        );
-      } on FirebaseAuthException catch (e) {
-        showDialog(context: context, builder: (context) {
-          return AlertDialog(
-            content: Text('Lütfen email kısmını bos bırakmayınız'),
-          );
-        }
+    try {
+      await firebaseAuth.sendPasswordResetEmail(email: forgotPasswdController.text.trim());
+      showDialog(context: context, builder: (context) {
+        return const AlertDialog(
+          content: Text('Şifre Yenileme linki gönderildi. Lütfen Email Gelen Kutunuzu Kontrol Ediniz'),
         );
       }
-}
+      );
+    } on FirebaseAuthException catch (e) {
+      showDialog(context: context, builder: (context) {
+        return const AlertDialog(
+          content: Text('Lütfen email kısmını bos bırakmayınız'),
+        );
+      }
+      );
+    }
+  }
 
   void signIn() async{
     if(formKey.currentState!.validate()) {
@@ -166,7 +175,7 @@ class _yoneticiPageState extends State<yoneticiPage> {
       try {
         var userResult = await firebaseAuth.signInWithEmailAndPassword(
             email: email, password: passwd);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AnaSayfa()));      }
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const AnaSayfa()));      }
       catch(e) {
         print(e.toString());
         // buraya hata yakalama gelecek , scaffold messenger ile
@@ -207,7 +216,7 @@ InputDecoration textfielddec(String hintText) {
 }
 
 Widget customSizedBox() => const SizedBox(
-  height: 20,
+  height: 16,
 );
 
 class CustomButton extends StatelessWidget {
@@ -225,8 +234,8 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 228,
-      height: 55,
+      width: 227,
+      height: 50,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,

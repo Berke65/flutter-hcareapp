@@ -21,6 +21,8 @@ class _yoneticiPageState extends State<yoneticiPage> {
   final formKey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
 
+  TextEditingController forgotPasswdController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -83,8 +85,7 @@ class _yoneticiPageState extends State<yoneticiPage> {
                         CustomButton(
                           icon: Icons.lock_outlined,
                           text: 'Şifremi Unuttum',
-                          onPressed: () {
-                          },
+                          onPressed: forgotPasswd,
                         ),
                         customSizedBox(),
                         CustomButton(
@@ -113,6 +114,7 @@ class _yoneticiPageState extends State<yoneticiPage> {
 
   TextFormField emailTextField() {
     return TextFormField(
+      controller: forgotPasswdController,
       validator: (value) {
         if (value!.isEmpty) {
           return "Bilgileri Eksiksiz Doldurunuz";
@@ -138,6 +140,25 @@ class _yoneticiPageState extends State<yoneticiPage> {
       obscureText: true,
     );
   }
+
+  void forgotPasswd() async {
+      try {
+        await firebaseAuth.sendPasswordResetEmail(email: forgotPasswdController.text.trim());
+        showDialog(context: context, builder: (context) {
+          return AlertDialog(
+            content: Text('Şifre Yenileme linki gönderildi. Lütfen Email Gelen Kutunuzu Kontrol Ediniz'),
+          );
+        }
+        );
+      } on FirebaseAuthException catch (e) {
+        showDialog(context: context, builder: (context) {
+          return AlertDialog(
+            content: Text('Lütfen email kısmını bos bırakmayınız'),
+          );
+        }
+        );
+      }
+}
 
   void signIn() async{
     if(formKey.currentState!.validate()) {

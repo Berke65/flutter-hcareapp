@@ -21,6 +21,8 @@ class _nursePageState extends State<nursePage> {
   final formKey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
 
+  TextEditingController forgotPasswdController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -37,64 +39,65 @@ class _nursePageState extends State<nursePage> {
             child: Column(
               children: [
                 Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 200,
-                        height: 200,
-                        child: Image.asset('images/gero1.jpg'), // Logo resmi
-                      ),
-                      const Row(
-                        children: [
-                          SizedBox(width: 100,),
-                          Icon(Icons.local_hospital_rounded),
-                          SizedBox(width: 5),
-                          Text(
-                            'Hemşire Girişi',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 28,
-                              fontFamily: 'Roboto',
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 200,
+                          height: 200,
+                          child: Image.asset('images/gero1.jpg'), // Logo resmi
+                        ),
+                        const Row(
+                          children: [
+                            SizedBox(width: 100,),
+                            Icon(Icons.local_hospital_rounded),
+                            SizedBox(width: 5),
+                            Text(
+                              'Hemşire Girişi',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 28,
+                                fontFamily: 'Roboto',
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      emailTextField(),
-                      customSizedBox(),
-                      passwdTxtField(),
-                      customSizedBox(),
-                      customSizedBox(),
-                      CustomButton(
-                          icon: Icons.local_hospital_outlined,
-                          text: 'Giriş Yap',
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 50,
+                        ),
+                        emailTextField(),
+                        customSizedBox(),
+                        passwdTxtField(),
+                        customSizedBox(),
+                        customSizedBox(),
+                        CustomButton(
+                            icon: Icons.local_hospital_outlined,
+                            text: 'Giriş Yap',
+                            onPressed: signIn
+                        ),
+                        customSizedBox(),
+                        CustomButton(
+                          icon: Icons.lock_outline,
+                          text: 'Şifremi Unuttum',
+                          onPressed: forgotPasswd,
+                        ),
+                        customSizedBox(),
+                        CustomButton(
+                          icon: Icons.home_outlined,
+                          text: 'Ana Ekrana Dön',
                           onPressed: () {
-                            Navigator.pushReplacementNamed(context, '/anaSayfa');
-
-                          }),
-                      customSizedBox(),
-                      CustomButton(
-                        icon: Icons.lock_outline,
-                        text: 'Şifremi Unuttum',
-                        onPressed: () {},
-                      ),
-                      customSizedBox(),
-                      CustomButton(
-                        icon: Icons.home_outlined,
-                        text: 'Ana Ekrana Dön',
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => GirisYap(),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => GirisYap(),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -107,6 +110,7 @@ class _nursePageState extends State<nursePage> {
 
   TextFormField emailTextField() {
     return TextFormField(
+      controller: forgotPasswdController,
       validator: (value) {
         if (value!.isEmpty) {
           return "Bilgileri Eksiksiz Doldurunuz";
@@ -131,6 +135,25 @@ class _nursePageState extends State<nursePage> {
       },
       obscureText: true,
     );
+  }
+
+  void forgotPasswd() async {
+    try {
+      await firebaseAuth.sendPasswordResetEmail(email: forgotPasswdController.text.trim());
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(
+          content: Text('Şifre Yenileme linki gönderildi. Lütfen Email Gelen Kutunuzu Kontrol Ediniz'),
+        );
+      }
+      );
+    } on FirebaseAuthException catch (e) {
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(
+          content: Text('Lütfen email kısmını bos bırakmayınız'),
+        );
+      }
+      );
+    }
   }
 
   void signIn() async{

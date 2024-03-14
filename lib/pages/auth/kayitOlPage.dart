@@ -189,13 +189,16 @@ class _kayitOlPageState extends State<kayitOlPage> {
     );
   }
 }
-
+// Widget customSizedBox() => const SizedBox(
+//   height: 18,
+// );
 class CustomButton extends StatelessWidget {
   final IconData icon;
   final String text;
   final VoidCallback onPressed;
 
   const CustomButton({
+    super.key,
     required this.icon,
     required this.text,
     required this.onPressed,
@@ -204,8 +207,8 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 228,
-      height: 55,
+      width: 227,
+      height: 45,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,

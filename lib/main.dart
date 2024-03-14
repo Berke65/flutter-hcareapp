@@ -4,6 +4,7 @@ import 'package:hcareapp/pages/auth/yoneticiPage.dart';
 import 'package:hcareapp/pages/auth/kayitOlPage.dart';
 import 'package:hcareapp/pages/auth//nursePage.dart';
 import 'package:hcareapp/pages/auth/sickPage.dart';
+import 'package:hcareapp/pages/auth/passwd.dart';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -23,6 +24,7 @@ class GirisYap extends StatelessWidget {
     return MaterialApp(
       title: 'Geropital',
       routes: {
+        "/passwd":(context) => passwd(),
         "/girisYap": (context) => GirisYap(),
         "/kayitOl": (context) => kayitOlPage(),
         "/anaSayfa": (context) => AnaSayfa(),

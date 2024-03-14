@@ -71,9 +71,15 @@ class _yoneticiPageState extends State<yoneticiPage> {
                         const SizedBox(
                           height: 50,
                         ),
-                        emailTextField(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 22.0),
+                          child: emailTextField(),
+                        ),
                         customSizedBox(),
-                        passwdTxtField(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 22.0),
+                          child: passwdTxtField(),
+                        ),
                         customSizedBox(),
                         customSizedBox(),
                         CustomButton(
@@ -114,6 +120,7 @@ class _yoneticiPageState extends State<yoneticiPage> {
 
   TextFormField emailTextField() {
     return TextFormField(
+      decoration: textfielddec('E Mail'),
       controller: forgotPasswdController,
       validator: (value) {
         if (value!.isEmpty) {
@@ -127,7 +134,22 @@ class _yoneticiPageState extends State<yoneticiPage> {
   }
 
   TextFormField passwdTxtField() {
+    bool obscureText = true; // Başlangıçta şifre gizlenmiş olarak başlatılır
     return TextFormField(
+      decoration: InputDecoration(
+        labelText: 'Şifre',
+        suffixIcon: IconButton(
+          icon: Icon(
+            obscureText ? Icons.visibility : Icons.visibility_off,
+            color: Colors.grey, // Görme butonunun rengi
+          ),
+          onPressed: () {
+            setState(() {
+              obscureText = !obscureText; // Şifre gizleme durumu tersine çevrilir
+            });
+          },
+        ),
+      ),
       validator: (value){
         if(value!.isEmpty)
         {
@@ -137,7 +159,7 @@ class _yoneticiPageState extends State<yoneticiPage> {
       onSaved: (value){
         passwd = value!;
       },
-      obscureText: true,
+      obscureText: !obscureText, // Şifre gizleme durumuna tersini veriyoruz, çünkü butona basıldığında değişmiş olacak
     );
   }
 
@@ -145,14 +167,14 @@ class _yoneticiPageState extends State<yoneticiPage> {
       try {
         await firebaseAuth.sendPasswordResetEmail(email: forgotPasswdController.text.trim());
         showDialog(context: context, builder: (context) {
-          return AlertDialog(
+          return const AlertDialog(
             content: Text('Şifre Yenileme linki gönderildi. Lütfen Email Gelen Kutunuzu Kontrol Ediniz'),
           );
         }
         );
       } on FirebaseAuthException catch (e) {
         showDialog(context: context, builder: (context) {
-          return AlertDialog(
+          return const AlertDialog(
             content: Text('Lütfen email kısmını bos bırakmayınız'),
           );
         }
@@ -195,17 +217,17 @@ class _yoneticiPageState extends State<yoneticiPage> {
       final result = await signInHataYakalama(email, passwd);
       if(result == 'success')
       {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AnaSayfa()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const AnaSayfa()));
       }
       else {
         showDialog(context: context,
             builder: (context) {
               return AlertDialog(
-                title: Text('Hata'),
+                title: const Text('Hata'),
                 content: Text(result!),
                 actions: [
                   TextButton(onPressed: () => Navigator.pop(context),
-                      child: Text('Geri dön'))
+                      child: const Text('Geri dön'))
                 ],
               );
             }
@@ -218,13 +240,10 @@ class _yoneticiPageState extends State<yoneticiPage> {
   TextFormField txtfield(String hinttext, bool obsocureText) {
     return TextFormField(
       decoration: textfielddec(hinttext),
-      obscureText: obsocureText,
+    //  obscureText: obsocureText,
     );
   }
 }
-
-
-
 //textfieldların decoration;
 InputDecoration textfielddec(String hintText) {
   return InputDecoration(
@@ -247,7 +266,7 @@ InputDecoration textfielddec(String hintText) {
 }
 
 Widget customSizedBox() => const SizedBox(
-  height: 20,
+  height: 17,
 );
 
 class CustomButton extends StatelessWidget {
@@ -265,8 +284,8 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 228,
-      height: 55,
+      width: 227,
+      height: 45,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,

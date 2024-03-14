@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hcareapp/main.dart';
+import 'package:hcareapp/pages/auth/ana_sayfa.dart';
 
 void main() {
   runApp(const kayitOlPage());
@@ -89,7 +90,7 @@ class _kayitOlPageState extends State<kayitOlPage> {
                                 icon: Icons.person_add_alt,
                                 text: 'Kayıt Ol',
                                 onPressed: () {
-                                  _submitForm();
+                                  signUp();
                                 },
                               ),
                               const SizedBox(height: 20),
@@ -120,27 +121,48 @@ class _kayitOlPageState extends State<kayitOlPage> {
     );
   }
 
-  void _submitForm() async {
-    if (formKey.currentState!.validate()) {
+  Future<String?> signupHataYakalama(String email, String password) async {
+    String? res;
+    try {
+      final result = await firebaseAuth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      res = "success";
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case "invalid-email":
+          res = "Lütfen dogru email biciminde girin";
+          break;
+        case "email-already-in-use":
+          res = "Bu Email Zaten Kullanımda";
+          break;
+        default:
+          res ='Failed with error code: ${e.code}';
+          break;
+      }
+    }
+    return res;
+  }
+
+  void signUp() async{
+    if(formKey.currentState!.validate()) {
       formKey.currentState!.save();
-      try {
-        await firebaseAuth.createUserWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-        // Kayıt başarılı olduğunda bir sonraki sayfaya yönlendirme yapılabilir.
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Kayıt başarılı , Giriş Sayfasına Yönlendiriliyorsunuz'),
-          ),
-        );
-        Navigator.pushReplacementNamed(context, '/girisYap');
-      } catch (e) {
-        print('Kayıt olma hatası: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Kayıt olma hatası: $e'),
-          ),
+      final result = await signupHataYakalama(email, password);
+      if(result == 'success')
+      {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AnaSayfa()));
+      }
+      else {
+        showDialog(context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('Hata'),
+                content: Text(result!),
+                actions: [
+                  TextButton(onPressed: () => Navigator.pop(context),
+                      child: Text('Geri dön'))
+                ],
+              );
+            }
         );
       }
     }

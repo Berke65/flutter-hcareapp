@@ -19,6 +19,7 @@ class GirisYap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Geropital',
       routes: {
         "/girisYap": (context) => GirisYap(),
@@ -30,7 +31,6 @@ class GirisYap extends StatelessWidget {
           return MaterialPageRoute(
             builder: (context) => SafeArea(
               child: Scaffold(
-
                 resizeToAvoidBottomInset: false,
                 body: Container(
                   decoration: const BoxDecoration(

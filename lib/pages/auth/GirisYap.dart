@@ -70,10 +70,7 @@ class _GirisYapState extends State<GirisYap> {
                       const SizedBox(
                         height: 50,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 22.0),
-                        child: emailTextField(),
-                      ),
+                      buildEmail(),
                       customSizedBox(),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 22.0),
@@ -114,6 +111,13 @@ class _GirisYapState extends State<GirisYap> {
         ),
       ),
     );
+  }
+
+  Padding buildEmail() {
+    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 22.0),
+                      child: emailTextField(),
+                    );
   }
 
   TextFormField emailTextField() {

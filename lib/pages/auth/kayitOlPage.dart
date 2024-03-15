@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/rendering.dart';
 import 'package:hcareapp/main.dart';
 import 'package:hcareapp/pages/auth/ana_sayfa.dart';
-
-void main() {
-  runApp(const kayitOlPage());
-}
 
 class kayitOlPage extends StatefulWidget {
   const kayitOlPage({Key? key}) : super(key: key);
@@ -16,108 +11,107 @@ class kayitOlPage extends StatefulWidget {
 }
 
 class _kayitOlPageState extends State<kayitOlPage> {
-  late String email, password;
+  late String ad, soyad, telNo, email, password;
   final formKey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
-  String? selectedOption; // Eklenen yeni combobox değeri
+  String? selectedOption;
+  String? adHataMesaji;
+  String? soyadHataMesaji;
+  String? telNoHataMesaji;
+  String? emailHataMesaji;
+  String? sifreHataMesaji;
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: SafeArea(
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('images/bakalım1.png'), // Arka plan deseni
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: Column(
-              children: [
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 200,
-                        height: 80,
-                        child: Image.asset('images/gero1.jpg'), // Logo resmi
-                      ),
-                      const Text(
-                        'Kayıt Ol',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24,
-                          fontFamily: 'Roboto',
-                        ),
-                      ),
-                      customSizedBox(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 32),
-                        child: Form(
-                          key: formKey,
-                          child: Column(
-                            children: [
-                              adTxtField(),
-                              customSizedBox(),
-                              soyadTxtField(),
-                              customSizedBox(),
-                              telNoTxtField(),
-                              customSizedBox(),
-                              emailTxtField(),
-                              customSizedBox(),
-                              passwdTxtField(),
-                              customSizedBox(),
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
-                              // Yeni combobox
-                              DropdownButtonFormField<String>(
-                                value: selectedOption,
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedOption = value;
-                                  });
-                                },
-                                items: <String>[
-                                  'Yönetim',
-                                  'Hemşire',
-                                  'Hasta',
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                                decoration:
-                                    textfielddec('Kullanıcı Tipi Seçiniz.'),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              CustomButton(
-                                icon: Icons.person_add_alt,
-                                text: 'Kayıt Ol',
-                                onPressed: () {
-                                  signUp();
-                                },
-                              ),
-                              const SizedBox(height: 20),
-                              CustomButton(
-                                icon: Icons.home_outlined,
-                                text: 'Ana Ekrana Dön',
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Main(),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('images/bakalım1.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: screenWidth * 0.5,
+                  height: screenHeight * 0.15,
+                  child: Image.asset('images/gero1.jpg'),
+                ),
+                const Text(
+                  'Kayıt Ol',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                    fontFamily: 'Roboto',
+                  ),
+                ),
+                customSizedBox(),
+                Form(
+                  key: formKey,
+                  child: Column(
+                    children: [
+                      adTxtField(),
+                      adHataMesaji != null ? Text(adHataMesaji!, style: TextStyle(color: Colors.red)) : Container(),
+                      customSizedBox(),
+                      soyadTxtField(),
+                      soyadHataMesaji != null ? Text(soyadHataMesaji!, style: TextStyle(color: Colors.red)) : Container(),
+                      customSizedBox(),
+                      telNoTxtField(),
+                      telNoHataMesaji != null ? Text(telNoHataMesaji!, style: TextStyle(color: Colors.red)) : Container(),
+                      customSizedBox(),
+                      emailTxtField(),
+                      emailHataMesaji != null ? Text(emailHataMesaji!, style: TextStyle(color: Colors.red)) : Container(),
+                      customSizedBox(),
+                      passwdTxtField(),
+                      sifreHataMesaji != null ? Text(sifreHataMesaji!, style: TextStyle(color: Colors.red)) : Container(),
+                      customSizedBox(),
+
+                      DropdownButtonFormField<String>(
+                        value: selectedOption,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedOption = value;
+                          });
+                        },
+                        items: <String>[
+                          'Yönetim',
+                          'Hemşire',
+                          'Hasta',
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        decoration: textfielddec('Kullanıcı Tipi Seçiniz.'),
+                      ),
+                      const SizedBox(height: 20),
+                      CustomButton(
+                        icon: Icons.person_add_alt,
+                        text: 'Kayıt Ol',
+                        onPressed: signUp,
+                      ),
+                      const SizedBox(height: 20),
+                      CustomButton(
+                        icon: Icons.home_outlined,
+                        text: 'Ana Ekrana Dön',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Main(),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -133,18 +127,45 @@ class _kayitOlPageState extends State<kayitOlPage> {
   TextFormField adTxtField() {
     return TextFormField(
       decoration: textfielddec('Ad'),
+      validator: (value) {
+        if (value!.isEmpty) {
+          return 'Lütfen adınızı girin';
+        }
+        return null;
+      },
+      onSaved: (value) {
+        ad = value!;
+      },
     );
   }
 
   TextFormField soyadTxtField() {
     return TextFormField(
       decoration: textfielddec('Soyad'),
+      validator: (value) {
+        if (value!.isEmpty) {
+          return 'Lütfen soyadınızı girin';
+        }
+        return null;
+      },
+      onSaved: (value) {
+        soyad = value!;
+      },
     );
   }
 
   TextFormField telNoTxtField() {
     return TextFormField(
       decoration: textfielddec('Telefon No'),
+      validator: (value) {
+        if (value!.isEmpty) {
+          return 'Lütfen telefon numaranızı girin';
+        }
+        return null;
+      },
+      onSaved: (value) {
+        telNo = value!;
+      },
     );
   }
 
@@ -174,7 +195,7 @@ class _kayitOlPageState extends State<kayitOlPage> {
         suffixIcon: IconButton(
           icon: Icon(
             _obscureText ? Icons.visibility_off : Icons.visibility,
-            color: Colors.grey, // Görme butonunun rengi
+            color: Colors.grey,
           ),
           onPressed: () {
             setState(() {
@@ -200,7 +221,9 @@ class _kayitOlPageState extends State<kayitOlPage> {
     String? res;
     try {
       final result = await firebaseAuth.createUserWithEmailAndPassword(
-          email: email, password: password);
+        email: email,
+        password: password,
+      );
       res = "success";
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
@@ -224,38 +247,37 @@ class _kayitOlPageState extends State<kayitOlPage> {
       final result = await signupHataYakalama(email, password);
       if (result == 'success') {
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const AnaSayfa()));
+          context,
+          MaterialPageRoute(builder: (context) => const AnaSayfa()),
+        );
       } else {
         showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: const Text('Hata'),
-                content: Text(result!),
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Geri dön'))
-                ],
-              );
-            });
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Hata'),
+              content: Text(result!),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Geri dön'),
+                )
+              ],
+            );
+          },
+        );
       }
     }
   }
 
   Widget customSizedBox() => const SizedBox(
-        height: 8,
-      );
+    height: 8,
+  );
 
-  //textfieldların decoration
   InputDecoration textfielddec(String hintText) {
     return InputDecoration(
-      // constraints: BoxConstraints(
-      //   maxHeight: ,
-      // ),
       hintText: hintText,
       labelText: hintText,
-      // Label text'i burada ayarlayın
       hintStyle: const TextStyle(
         color: Colors.black45,
         fontSize: 18,
@@ -330,3 +352,4 @@ class CustomButton extends StatelessWidget {
     );
   }
 }
+

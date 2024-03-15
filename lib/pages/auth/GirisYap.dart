@@ -1,21 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hcareapp/main.dart';
 import 'package:flutter/material.dart';
-import 'package:hcareapp/main.dart';
 import 'package:hcareapp/pages/auth/ana_sayfa.dart';
+import 'package:hcareapp/services/auth_services.dart';
 
 void main() {
-  runApp(const nursePage());
+  runApp(const SignIn());
 }
 
-class nursePage extends StatefulWidget {
-  const nursePage({super.key});
+class SignIn extends StatefulWidget {
+  const SignIn({super.key});
 
   @override
-  State<nursePage> createState() => _nursePageState();
+  State<SignIn> createState() => _SignInState();
 }
 
-class _nursePageState extends State<nursePage> {
+class _SignInState extends State<SignIn> {
 
   late String email , passwd;
   final formKey = GlobalKey<FormState>();
@@ -26,84 +26,86 @@ class _nursePageState extends State<nursePage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SafeArea(
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('images/bakalım1.png'), // Arka plan deseni
-                fit: BoxFit.cover,
-              ),
+      home: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('images/bakalım1.png'), // Arka plan deseni
+              fit: BoxFit.cover,
             ),
+          ),
+          child: Form(
+            key: formKey,
             child: Column(
               children: [
                 Center(
-                  child: Form(
-                    key: formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 200,
-                          height: 200,
-                          child: Image.asset('images/gero1.jpg'), // Logo resmi
-                        ),
-                        const Row(
-                          children: [
-                            SizedBox(width: 100,),
-                            Icon(Icons.local_hospital_rounded),
-                            SizedBox(width: 5),
-                            Text(
-                              'Hemşire Girişi',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 28,
-                                fontFamily: 'Roboto',
-                              ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 200,
+                        height: 200,
+                        child: Image.asset('images/gero1.jpg'), // Logo resmi
+                      ),
+                      const Row(
+                        children: [
+                          SizedBox(
+                            width: 100,
+                          ),
+                          Icon(Icons.business_center),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            'Yönetici Girişi',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 28,
+                              fontFamily: 'Roboto',
                             ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 50,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 22.0),
-                          child: emailTextField(),
-                        ),
-                        customSizedBox(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 22.0),
-                          child: passwdTxtField(),
-                        ),
-                        customSizedBox(),
-                        customSizedBox(),
-                        CustomButton(
-                            icon: Icons.local_hospital_outlined,
-                            text: 'Giriş Yap',
-                            onPressed: signIn
-                        ),
-                        customSizedBox(),
-                        CustomButton(
-                          icon: Icons.lock_outline,
-                          text: 'Şifremi Unuttum',
-                          onPressed: forgotPasswd,
-                        ),
-                        customSizedBox(),
-                        CustomButton(
-                          icon: Icons.home_outlined,
-                          text: 'Ana Ekrana Dön',
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => GirisYap(),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 50,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 22.0),
+                        child: emailTextField(),
+                      ),
+                      customSizedBox(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 22.0),
+                        child: passwdTxtField(),
+                      ),
+                      customSizedBox(),
+                      customSizedBox(),
+                      CustomButton(
+                        icon: Icons.admin_panel_settings_outlined,
+                        text: 'Giriş Yap',
+                        onPressed: signIn,
+                      ),
+                      customSizedBox(),
+                      CustomButton(
+                        icon: Icons.lock_outlined,
+                        text: 'Şifremi Unuttum',
+                        onPressed: forgotPasswd,
+                      ),
+                      customSizedBox(),
+                      CustomButton(
+                        icon: Icons.home_outlined,
+                        text: 'Ana Ekrana Dön',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => GirisYap(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -130,8 +132,22 @@ class _nursePageState extends State<nursePage> {
   }
 
   TextFormField passwdTxtField() {
+    bool obscureText = true; // Başlangıçta şifre gizlenmiş olarak başlatılır
     return TextFormField(
-      decoration: textfielddec('Şifre'),
+      decoration: InputDecoration(
+        labelText: 'Şifre',
+        suffixIcon: IconButton(
+          icon: Icon(
+            obscureText ? Icons.visibility : Icons.visibility_off,
+            color: Colors.grey, // Görme butonunun rengi
+          ),
+          onPressed: () {
+            setState(() {
+              obscureText = !obscureText; // Şifre gizleme durumu tersine çevrilir
+            });
+          },
+        ),
+      ),
       validator: (value){
         if(value!.isEmpty)
         {
@@ -141,28 +157,28 @@ class _nursePageState extends State<nursePage> {
       onSaved: (value){
         passwd = value!;
       },
-      obscureText: true,
+      obscureText: !obscureText, // Şifre gizleme durumuna tersini veriyoruz, çünkü butona basıldığında değişmiş olacak
     );
   }
 
   void forgotPasswd() async {
-    try {
-      await firebaseAuth.sendPasswordResetEmail(email: forgotPasswdController.text.trim());
-      showDialog(context: context, builder: (context) {
-        return const AlertDialog(
-          content: Text('Şifre Yenileme linki gönderildi. Lütfen Email Gelen Kutunuzu Kontrol Ediniz'),
+      try {
+        await firebaseAuth.sendPasswordResetEmail(email: forgotPasswdController.text.trim());
+        showDialog(context: context, builder: (context) {
+          return const AlertDialog(
+            content: Text('Şifre Yenileme linki gönderildi. Lütfen Email Gelen Kutunuzu Kontrol Ediniz'),
+          );
+        }
+        );
+      } on FirebaseAuthException catch (e) {
+        showDialog(context: context, builder: (context) {
+          return const AlertDialog(
+            content: Text('Lütfen email kısmını bos bırakmayınız'),
+          );
+        }
         );
       }
-      );
-    } on FirebaseAuthException catch (e) {
-      showDialog(context: context, builder: (context) {
-        return const AlertDialog(
-          content: Text('Lütfen email kısmını bos bırakmayınız'),
-        );
-      }
-      );
-    }
-  }
+}
 
   Future<String?> signInHataYakalama(String email, String password) async {
     String? res;
@@ -222,11 +238,10 @@ class _nursePageState extends State<nursePage> {
   TextFormField txtfield(String hinttext, bool obsocureText) {
     return TextFormField(
       decoration: textfielddec(hinttext),
-      obscureText: obsocureText,
+    //  obscureText: obsocureText,
     );
   }
 }
-
 //textfieldların decoration;
 InputDecoration textfielddec(String hintText) {
   return InputDecoration(
@@ -249,7 +264,7 @@ InputDecoration textfielddec(String hintText) {
 }
 
 Widget customSizedBox() => const SizedBox(
-  height: 18,
+  height: 17,
 );
 
 class CustomButton extends StatelessWidget {

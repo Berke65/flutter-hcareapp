@@ -1,9 +1,5 @@
-import 'package:hcareapp/pages/auth/ana_sayfa.dart';
-import 'package:hcareapp/pages/auth/ana_sayfa.dart';
-import 'package:hcareapp/pages/auth/yoneticiPage.dart';
+import 'package:hcareapp/pages/auth/GirisYap.dart';
 import 'package:hcareapp/pages/auth/kayitOlPage.dart';
-import 'package:hcareapp/pages/auth//nursePage.dart';
-import 'package:hcareapp/pages/auth/sickPage.dart';
 import 'package:hcareapp/pages/auth/passwd.dart';
 
 import 'package:flutter/material.dart';
@@ -15,98 +11,69 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(GirisYap());
+  runApp(Main());
 }
 
-class GirisYap extends StatelessWidget {
+class Main extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Geropital',
       routes: {
         "/passwd":(context) => passwd(),
-        "/girisYap": (context) => GirisYap(),
-        "/kayitOl": (context) => kayitOlPage(),
-        "/anaSayfa": (context) => AnaSayfa(),
+        "/girisYap": (context) => Main(),
       },
       home: Navigator(
         onGenerateRoute: (settings) {
           return MaterialPageRoute(
-            builder: (context) => SafeArea(
-              child: Scaffold(
+            builder: (context) => Scaffold(
 
-                resizeToAvoidBottomInset: false,
-                body: Container(
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('images/bakalım1.png'),
-                      // Arka plan deseni
-                      fit: BoxFit.cover,
-                    ),
+              resizeToAvoidBottomInset: false,
+              body: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('images/bakalım1.png'),
+                    // Arka plan deseni
+                    fit: BoxFit.cover,
                   ),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 200,
-                          height: 200,
-                          child: Image.asset('images/gero1.jpg'), // Logo resmi
-                        ),
-                        customSizedBox(),
-                        buildGirisKutusu(
-                          icon: Icons.admin_panel_settings_outlined,
-                          text: 'Yönetici Girişi',
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const yoneticiPage(),
-                              ),
-                            );
-                          },
-                        ),
-                        customSizedBox(),
-                        buildGirisKutusu(
-                          icon: Icons.local_hospital_outlined,
-                          text: 'Hemşire Girişi',
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const nursePage(),
-                              ),
-                            );
-                          },
-                        ),
-                        customSizedBox(),
-                        buildGirisKutusu(
-                          icon: Icons.person_outline,
-                          text: 'Hasta Girişi',
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const sickPage(),
-                              ),
-                            );
-                          },
-                        ),
-                        customSizedBox(),
-                        buildGirisKutusu(
-                          icon: Icons.person_add_alt,
-                          text: 'Kayıt Ol',
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const kayitOlPage(),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 200,
+                        height: 200,
+                        child: Image.asset('images/gero1.jpg'), // Logo resmi
+                      ),
+                      customSizedBox(),
+                      buildGirisKutusu(
+                        icon: Icons.admin_panel_settings_outlined,
+                        text: 'Giriş Yap',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const GirisYap(),
+                            ),
+                          );
+                        },
+                      ),
+                      customSizedBox(),
+                      buildGirisKutusu(
+                        icon: Icons.person_add_alt,
+                        text: 'Kayıt Ol',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const kayitOlPage(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ),

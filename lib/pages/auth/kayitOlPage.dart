@@ -1,5 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/rendering.dart';
 import 'package:hcareapp/main.dart';
 import 'package:hcareapp/pages/auth/ana_sayfa.dart';
 
@@ -18,6 +19,7 @@ class _kayitOlPageState extends State<kayitOlPage> {
   late String email, password;
   final formKey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
+  String? selectedOption; // Eklenen yeni combobox değeri
 
   @override
   Widget build(BuildContext context) {
@@ -40,52 +42,59 @@ class _kayitOlPageState extends State<kayitOlPage> {
                     children: [
                       SizedBox(
                         width: 200,
-                        height: 200,
+                        height: 80,
                         child: Image.asset('images/gero1.jpg'), // Logo resmi
                       ),
-                      const SizedBox(height: 20),
                       const Text(
                         'Kayıt Ol',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 28,
+                          fontSize: 24,
                           fontFamily: 'Roboto',
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      customSizedBox(),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.symmetric(horizontal: 32),
                         child: Form(
                           key: formKey,
                           child: Column(
                             children: [
-                              TextFormField(
-                                decoration: textfielddec('E-Posta'),
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'Lütfen e-posta adresinizi girin';
-                                  }
-                                  return null;
+                              adTxtField(),
+                              customSizedBox(),
+                              soyadTxtField(),
+                              customSizedBox(),
+                              telNoTxtField(),
+                              customSizedBox(),
+                              emailTxtField(),
+                              customSizedBox(),
+                              passwdTxtField(),
+                              customSizedBox(),
+
+                              // Yeni combobox
+                              DropdownButtonFormField<String>(
+                                value: selectedOption,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedOption = value;
+                                  });
                                 },
-                                onSaved: (value) {
-                                  email = value!;
-                                },
+                                items: <String>[
+                                  'Yönetim',
+                                  'Hemşire',
+                                  'Hasta',
+                                ].map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                decoration:
+                                    textfielddec('Kullanıcı Tipi Seçiniz.'),
                               ),
-                              const SizedBox(height: 20),
-                              TextFormField(
-                                decoration: textfielddec('Şifre'),
-                                obscureText: true,
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'Lütfen şifrenizi girin';
-                                  }
-                                  return null;
-                                },
-                                onSaved: (value) {
-                                  password = value!;
-                                },
+                              const SizedBox(
+                                height: 20,
                               ),
-                              const SizedBox(height: 20),
                               CustomButton(
                                 icon: Icons.person_add_alt,
                                 text: 'Kayıt Ol',
@@ -101,7 +110,7 @@ class _kayitOlPageState extends State<kayitOlPage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => GirisYap(),
+                                      builder: (context) => Main(),
                                     ),
                                   );
                                 },
@@ -121,6 +130,72 @@ class _kayitOlPageState extends State<kayitOlPage> {
     );
   }
 
+  TextFormField adTxtField() {
+    return TextFormField(
+      decoration: textfielddec('Ad'),
+    );
+  }
+
+  TextFormField soyadTxtField() {
+    return TextFormField(
+      decoration: textfielddec('Soyad'),
+    );
+  }
+
+  TextFormField telNoTxtField() {
+    return TextFormField(
+      decoration: textfielddec('Telefon No'),
+    );
+  }
+
+  TextFormField emailTxtField() {
+    return TextFormField(
+      decoration: textfielddec('E-Posta'),
+      validator: (value) {
+        if (value!.isEmpty) {
+          return 'Lütfen e-posta adresinizi girin';
+        }
+        return null;
+      },
+      onSaved: (value) {
+        email = value!;
+      },
+    );
+  }
+
+  TextEditingController _passwordController = TextEditingController();
+  bool _obscureText = true;
+
+  TextFormField passwdTxtField() {
+    return TextFormField(
+      controller: _passwordController,
+      decoration: InputDecoration(
+        labelText: 'Şifre',
+        suffixIcon: IconButton(
+          icon: Icon(
+            _obscureText ? Icons.visibility_off : Icons.visibility,
+            color: Colors.grey, // Görme butonunun rengi
+          ),
+          onPressed: () {
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },
+        ),
+      ),
+      obscureText: _obscureText,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return 'Lütfen şifrenizi girin';
+        }
+        return null;
+      },
+      onSaved: (value) {
+        password = value!;
+      },
+    );
+  }
+
   Future<String?> signupHataYakalama(String email, String password) async {
     String? res;
     try {
@@ -136,42 +211,51 @@ class _kayitOlPageState extends State<kayitOlPage> {
           res = "Bu Email Zaten Kullanımda";
           break;
         default:
-          res ='Failed with error code: ${e.code}';
+          res = 'Failed with error code: ${e.code}';
           break;
       }
     }
     return res;
   }
 
-  void signUp() async{
-    if(formKey.currentState!.validate()) {
+  void signUp() async {
+    if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
       final result = await signupHataYakalama(email, password);
-      if(result == 'success')
-      {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AnaSayfa()));
-      }
-      else {
-        showDialog(context: context,
+      if (result == 'success') {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => const AnaSayfa()));
+      } else {
+        showDialog(
+            context: context,
             builder: (context) {
               return AlertDialog(
-                title: Text('Hata'),
+                title: const Text('Hata'),
                 content: Text(result!),
                 actions: [
-                  TextButton(onPressed: () => Navigator.pop(context),
-                      child: Text('Geri dön'))
+                  TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Geri dön'))
                 ],
               );
-            }
-        );
+            });
       }
     }
   }
 
+  Widget customSizedBox() => const SizedBox(
+        height: 8,
+      );
+
   //textfieldların decoration
   InputDecoration textfielddec(String hintText) {
     return InputDecoration(
+      // constraints: BoxConstraints(
+      //   maxHeight: ,
+      // ),
       hintText: hintText,
+      labelText: hintText,
+      // Label text'i burada ayarlayın
       hintStyle: const TextStyle(
         color: Colors.black45,
         fontSize: 18,
@@ -189,9 +273,7 @@ class _kayitOlPageState extends State<kayitOlPage> {
     );
   }
 }
-// Widget customSizedBox() => const SizedBox(
-//   height: 18,
-// );
+
 class CustomButton extends StatelessWidget {
   final IconData icon;
   final String text;

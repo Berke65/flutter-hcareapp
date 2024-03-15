@@ -5,17 +5,17 @@ import 'package:hcareapp/pages/auth/ana_sayfa.dart';
 import 'package:hcareapp/services/auth_services.dart';
 
 void main() {
-  runApp(const SignIn());
+  runApp(const GirisYap());
 }
 
-class SignIn extends StatefulWidget {
-  const SignIn({super.key});
+class GirisYap extends StatefulWidget {
+  const GirisYap({super.key});
 
   @override
-  State<SignIn> createState() => _SignInState();
+  State<GirisYap> createState() => _GirisYapState();
 }
 
-class _SignInState extends State<SignIn> {
+class _GirisYapState extends State<GirisYap> {
 
   late String email , passwd;
   final formKey = GlobalKey<FormState>();
@@ -53,12 +53,12 @@ class _SignInState extends State<SignIn> {
                           SizedBox(
                             width: 100,
                           ),
-                          Icon(Icons.business_center),
+                          Icon(Icons.lock_person),
                           SizedBox(
                             width: 5,
                           ),
                           Text(
-                            'Yönetici Girişi',
+                            'Giriş Ekranı',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 28,
@@ -100,7 +100,7 @@ class _SignInState extends State<SignIn> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => GirisYap(),
+                              builder: (context) => Main(),
                             ),
                           );
                         },
@@ -118,7 +118,7 @@ class _SignInState extends State<SignIn> {
 
   TextFormField emailTextField() {
     return TextFormField(
-      decoration: textfielddec('E Mail'),
+      decoration: textfielddec('E Mail','E-Mail'),
       controller: forgotPasswdController,
       validator: (value) {
         if (value!.isEmpty) {
@@ -131,35 +131,38 @@ class _SignInState extends State<SignIn> {
     );
   }
 
+  TextEditingController _passwordController = TextEditingController();
+  bool _obscureText = true;
+
   TextFormField passwdTxtField() {
-    bool obscureText = true; // Başlangıçta şifre gizlenmiş olarak başlatılır
     return TextFormField(
+      controller: _passwordController,
       decoration: InputDecoration(
         labelText: 'Şifre',
         suffixIcon: IconButton(
           icon: Icon(
-            obscureText ? Icons.visibility : Icons.visibility_off,
+            _obscureText ? Icons.visibility : Icons.visibility_off,
             color: Colors.grey, // Görme butonunun rengi
           ),
           onPressed: () {
             setState(() {
-              obscureText = !obscureText; // Şifre gizleme durumu tersine çevrilir
+              _obscureText = !_obscureText;
             });
           },
         ),
       ),
-      validator: (value){
-        if(value!.isEmpty)
-        {
+      obscureText: _obscureText,
+      validator: (value) {
+        if (value!.isEmpty) {
           return 'Bilgileri Eksiksiz Doldurunuz';
         }
       },
-      onSaved: (value){
+      onSaved: (value) {
         passwd = value!;
       },
-      obscureText: !obscureText, // Şifre gizleme durumuna tersini veriyoruz, çünkü butona basıldığında değişmiş olacak
     );
   }
+
 
   void forgotPasswd() async {
       try {
@@ -235,27 +238,29 @@ class _SignInState extends State<SignIn> {
   }
 
   //textfield'lar
-  TextFormField txtfield(String hinttext, bool obsocureText) {
-    return TextFormField(
-      decoration: textfielddec(hinttext),
-    //  obscureText: obsocureText,
-    );
-  }
+  // TextFormField txtfield(String hinttext, bool obsocureText) {
+  //   return TextFormField(
+  //     decoration: textfielddec(hinttext,),
+  //   //  obscureText: obsocureText,
+  //   );
+  // }
 }
 //textfieldların decoration;
-InputDecoration textfielddec(String hintText) {
+InputDecoration textfielddec(String hintText, String labelText) {
   return InputDecoration(
     hintText: hintText,
+    labelText: labelText,
+    // Label text'i burada ayarlayın
     hintStyle: const TextStyle(
       color: Colors.black45,
-      fontSize:18,
+      fontSize: 18,
     ),
     enabledBorder: const UnderlineInputBorder(
       borderSide: BorderSide(
         color: Colors.grey,
       ),
     ),
-    focusedBorder:const UnderlineInputBorder(
+    focusedBorder: const UnderlineInputBorder(
       borderSide: BorderSide(
         color: Colors.black,
       ),

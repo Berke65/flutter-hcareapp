@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hcareapp/main.dart';
 import 'package:hcareapp/pages/auth/ana_sayfa.dart';
+import 'package:hcareapp/services/auth_services.dart';
 
 class kayitOlPage extends StatefulWidget {
   const kayitOlPage({Key? key}) : super(key: key);
@@ -14,6 +15,9 @@ class _kayitOlPageState extends State<kayitOlPage> {
   late String ad, soyad, telNo, email, password;
   final formKey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
+
+
+
   String? selectedOption;
   String? adHataMesaji;
   String? soyadHataMesaji;
@@ -217,58 +221,36 @@ class _kayitOlPageState extends State<kayitOlPage> {
     );
   }
 
-  Future<String?> signupHataYakalama(String email, String password) async {
-    String? res;
-    try {
-      final result = await firebaseAuth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      res = "success";
-    } on FirebaseAuthException catch (e) {
-      switch (e.code) {
-        case "invalid-email":
-          res = "Lütfen dogru email biciminde girin";
-          break;
-        case "email-already-in-use":
-          res = "Bu Email Zaten Kullanımda";
-          break;
-        default:
-          res = 'Failed with error code: ${e.code}';
-          break;
-      }
-    }
-    return res;
-  }
-
   void signUp() async {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
-      final result = await signupHataYakalama(email, password);
-      if (result == 'success') {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const AnaSayfa()),
-        );
-      } else {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Hata'),
-              content: Text(result!),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Geri dön'),
-                )
-              ],
-            );
-          },
-        );
+        final result = await authService().signupHataYakalama(email, password, ad, soyad);
+        if (result == 'success') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const AnaSayfa()),
+          );
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text('Hata'),
+                content: Text(result!),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Geri dön'),
+                  )
+                ],
+              );
+            },
+          );
+        }
       }
     }
   }
+
 
   Widget customSizedBox() => const SizedBox(
     height: 8,
@@ -294,7 +276,7 @@ class _kayitOlPageState extends State<kayitOlPage> {
       ),
     );
   }
-}
+
 
 class CustomButton extends StatelessWidget {
   final IconData icon;

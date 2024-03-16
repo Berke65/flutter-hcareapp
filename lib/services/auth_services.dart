@@ -1,49 +1,49 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hcareapp/pages/auth/kayitOlPage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class AuthService { // bütün giris islemleri burada yapılacak , kayıt ol  , giris yap , misafir girisi vb.
-  final firebaseAuth = FirebaseAuth.instance;
+final firebaseAuth = FirebaseAuth.instance;
+final firebaseFireStoreDataUTypes = FirebaseFirestore.instance.collection('roles');
 
-  Future signInAnonymous() async { // uzun süreli bir islem olacaksa giris islemleri gibi async yani asenkron kullanılır
-    try {
-      final result = await firebaseAuth.signInAnonymously(); // await ve async ye tam olarak bakılacak
-      print(result.user!.uid);
-      return result.user;
-    } catch(e) {
-      print('Anonymous error .$e');
-      return null;
-    }
-  }
+  class authService {
 
-  Future ForgotPasswd(String email) async {
-    try {
-      final result = firebaseAuth.sendPasswordResetEmail(email: email);
-    } catch(e) {}
-  }
-
-  Future<String?> signIn(String email, String passwd) async {
-    String? res;
-    try {
-      final result = await firebaseAuth.signInWithEmailAndPassword(
-          email: email, password: passwd);
-      res = "success";
-    } on FirebaseAuthException catch (e) {
-      switch (e.code) {
-        case "user-not-found":
-          res = "Kullanici Bulunamadi";
-          break;
-        case "wrong-password":
-          res = "Hatali Sifre";
-          break;
-        case "user-disabled":
-          res = "Kullanici Pasif";
-          break;
-        default:
-          res = "error: $e";
-          break;
+    Future<String?> signupHataYakalama(String email, String password, String ad,
+        String soyad) async {
+      String? res;
+      try {
+        final result = await firebaseAuth.createUserWithEmailAndPassword(
+          email: email,
+          password: password,);
+        try {
+          final resultData = await FirebaseFirestore.instance.collection('users').add({
+            'email' : email,
+            'name' : ad,
+            'surname' : soyad
+          });
+         // final resultDataUTypes = await firebaseFireStoreDataUTypes.add({
+           // 'roleCode' : roleCode,
+          //  'roleName' : roleName
+         // });
+        }
+        catch (e) {
+          print('$e');
+        }
+        res = "success";
+      } on FirebaseAuthException catch (e) {
+        switch (e.code) {
+          case "invalid-email":
+            res = "Lütfen dogru email biciminde girin";
+            break;
+          case "email-already-in-use":
+            res = "Bu Email Zaten Kullanımda";
+            break;
+          case "weak-password":
+            res = "Lütfen 8 karakter üstünde bi parola giriniz";
+            break;
+          default:
+            res = 'Failed with error code: ${e.code}';
+            break;
+        }
       }
+      return res;
     }
-    return res;
   }
-
-}

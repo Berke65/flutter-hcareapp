@@ -7,7 +7,7 @@ final firebaseFireStoreDataUTypes = FirebaseFirestore.instance.collection('roles
   class authService {
 
     Future<String?> signupHataYakalama(String email, String password, String ad,
-        String soyad) async {
+        String soyad,String telNo,String roleName) async {
       String? res;
       try {
         final result = await firebaseAuth.createUserWithEmailAndPassword(
@@ -17,12 +17,12 @@ final firebaseFireStoreDataUTypes = FirebaseFirestore.instance.collection('roles
           final resultData = await FirebaseFirestore.instance.collection('users').add({
             'email' : email,
             'name' : ad,
-            'surname' : soyad
+            'surname' : soyad,
+            'telNo' : telNo
           });
-         // final resultDataUTypes = await firebaseFireStoreDataUTypes.add({
-           // 'roleCode' : roleCode,
-          //  'roleName' : roleName
-         // });
+          final resultDataUTypes = await firebaseFireStoreDataUTypes.add({
+            'roleName' : roleName
+          });
         }
         catch (e) {
           print('$e');

@@ -18,7 +18,7 @@ class _kayitOlPageState extends State<kayitOlPage> {
 
 
 
-  String? selectedOption;
+  String? rolName;
   String? adHataMesaji;
   String? soyadHataMesaji;
   String? telNoHataMesaji;
@@ -80,10 +80,10 @@ class _kayitOlPageState extends State<kayitOlPage> {
                       customSizedBox(),
 
                       DropdownButtonFormField<String>(
-                        value: selectedOption,
+                        value: rolName,
                         onChanged: (value) {
                           setState(() {
-                            selectedOption = value;
+                            rolName = value;
                           });
                         },
                         items: <String>[
@@ -224,7 +224,7 @@ class _kayitOlPageState extends State<kayitOlPage> {
   void signUp() async {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
-        final result = await authService().signupHataYakalama(email, password, ad, soyad);
+        final result = await authService().signupHataYakalama(email, password, ad, soyad,telNo,rolName!);
         if (result == 'success') {
           Navigator.pushReplacement(
             context,

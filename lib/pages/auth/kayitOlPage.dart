@@ -16,14 +16,13 @@ class _kayitOlPageState extends State<kayitOlPage> {
   final formKey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
 
-
-
   String? rolName;
   String? adHataMesaji;
   String? soyadHataMesaji;
   String? telNoHataMesaji;
   String? emailHataMesaji;
   String? sifreHataMesaji;
+  String? kodHataMesaji;
 
   @override
   Widget build(BuildContext context) {
@@ -64,40 +63,40 @@ class _kayitOlPageState extends State<kayitOlPage> {
                   child: Column(
                     children: [
                       adTxtField(),
-                      adHataMesaji != null ? Text(adHataMesaji!, style: TextStyle(color: Colors.red)) : Container(),
+                      adHataMesaji != null
+                          ? Text(adHataMesaji!,
+                              style: TextStyle(color: Colors.red))
+                          : Container(),
                       customSizedBox(),
                       soyadTxtField(),
-                      soyadHataMesaji != null ? Text(soyadHataMesaji!, style: TextStyle(color: Colors.red)) : Container(),
+                      soyadHataMesaji != null
+                          ? Text(soyadHataMesaji!,
+                              style: TextStyle(color: Colors.red))
+                          : Container(),
                       customSizedBox(),
                       telNoTxtField(),
-                      telNoHataMesaji != null ? Text(telNoHataMesaji!, style: TextStyle(color: Colors.red)) : Container(),
+                      telNoHataMesaji != null
+                          ? Text(telNoHataMesaji!,
+                              style: TextStyle(color: Colors.red))
+                          : Container(),
                       customSizedBox(),
                       emailTxtField(),
-                      emailHataMesaji != null ? Text(emailHataMesaji!, style: TextStyle(color: Colors.red)) : Container(),
+                      emailHataMesaji != null
+                          ? Text(emailHataMesaji!,
+                              style: TextStyle(color: Colors.red))
+                          : Container(),
                       customSizedBox(),
                       passwdTxtField(),
-                      sifreHataMesaji != null ? Text(sifreHataMesaji!, style: TextStyle(color: Colors.red)) : Container(),
+                      sifreHataMesaji != null
+                          ? Text(sifreHataMesaji!,
+                              style: TextStyle(color: Colors.red))
+                          : Container(),
                       customSizedBox(),
-
-                      DropdownButtonFormField<String>(
-                        value: rolName,
-                        onChanged: (value) {
-                          setState(() {
-                            rolName = value;
-                          });
-                        },
-                        items: <String>[
-                          'Yönetim',
-                          'Hemşire',
-                          'Hasta',
-                        ].map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        decoration: textfielddec('Kullanıcı Tipi Seçiniz.'),
-                      ),
+                      kodTxtField(),
+                      kodHataMesaji != null
+                          ? Text(kodHataMesaji!,
+                          style: TextStyle(color: Colors.red)): Container(),
+                      customSizedBox(),
                       const SizedBox(height: 20),
                       CustomButton(
                         icon: Icons.person_add_alt,
@@ -125,6 +124,18 @@ class _kayitOlPageState extends State<kayitOlPage> {
           ),
         ),
       ),
+    );
+  }
+
+  TextFormField kodTxtField() {
+    return TextFormField(
+      decoration: textfielddec('Verilen Kodu Giriniz!'),
+      validator: (value) {
+        if (value!.isEmpty) {
+          return 'Lütfen kodu giriniz';
+        }
+        return null;
+      },
     );
   }
 
@@ -224,59 +235,58 @@ class _kayitOlPageState extends State<kayitOlPage> {
   void signUp() async {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
-        final result = await authService().signupHataYakalama(email, password, ad, soyad,telNo,rolName!);
-        if (result == 'success') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const AnaSayfa()),
-          );
-        } else {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: const Text('Hata'),
-                content: Text(result!),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Geri dön'),
-                  )
-                ],
-              );
-            },
-          );
-        }
+      final result = await authService()
+          .signupHataYakalama(email, password, ad, soyad, telNo, rolName!);
+      if (result == 'success') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const AnaSayfa()),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Hata'),
+              content: Text(result!),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Geri dön'),
+                )
+              ],
+            );
+          },
+        );
       }
     }
   }
+}
 
-
-  Widget customSizedBox() => const SizedBox(
-    height: 8,
-  );
-
-  InputDecoration textfielddec(String hintText) {
-    return InputDecoration(
-      hintText: hintText,
-      labelText: hintText,
-      hintStyle: const TextStyle(
-        color: Colors.black45,
-        fontSize: 18,
-      ),
-      enabledBorder: const UnderlineInputBorder(
-        borderSide: BorderSide(
-          color: Colors.grey,
-        ),
-      ),
-      focusedBorder: const UnderlineInputBorder(
-        borderSide: BorderSide(
-          color: Colors.black,
-        ),
-      ),
+Widget customSizedBox() => const SizedBox(
+      height: 8,
     );
-  }
 
+InputDecoration textfielddec(String hintText) {
+  return InputDecoration(
+    hintText: hintText,
+    labelText: hintText,
+    hintStyle: const TextStyle(
+      color: Colors.black45,
+      fontSize: 18,
+    ),
+    enabledBorder: const UnderlineInputBorder(
+      borderSide: BorderSide(
+        color: Colors.grey,
+      ),
+    ),
+    focusedBorder: const UnderlineInputBorder(
+      borderSide: BorderSide(
+        color: Colors.black,
+      ),
+    ),
+  );
+}
 
 class CustomButton extends StatelessWidget {
   final IconData icon;
@@ -334,4 +344,3 @@ class CustomButton extends StatelessWidget {
     );
   }
 }
-

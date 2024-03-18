@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hcareapp/main.dart';
 import 'package:flutter/material.dart';
 import 'package:hcareapp/pages/auth/ana_sayfa.dart';
+import 'package:hcareapp/pages/auth/nursePage.dart';
+import 'package:hcareapp/pages/auth/passwd.dart';
 
 void main() {
   runApp(const GirisYap());
@@ -15,8 +17,7 @@ class GirisYap extends StatefulWidget {
 }
 
 class _GirisYapState extends State<GirisYap> {
-
-  late String email , passwd;
+  late String email, passwd;
   final formKey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
 
@@ -86,7 +87,14 @@ class _GirisYapState extends State<GirisYap> {
                       CustomButton(
                         icon: Icons.lock_outlined,
                         text: 'Şifremi Unuttum',
-                        onPressed: forgotPasswd,
+                        onPressed:  () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Passwd(),
+                            ),
+                          );
+                        },
                       ),
                       customSizedBox(),
                       CustomButton(
@@ -101,6 +109,18 @@ class _GirisYapState extends State<GirisYap> {
                           );
                         },
                       ),
+                      customSizedBox(),
+                      //Şimdilik sayfayı görmek için açtım silersin canım
+                      CustomButton(icon: Icons.healing_outlined, text: 'Hemşire Sayfasına git', onPressed: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NursePage(),
+                          ),
+                        );
+                      }
+                      ),
+                      customSizedBox(),
                     ],
                   ),
                 ),
@@ -114,14 +134,14 @@ class _GirisYapState extends State<GirisYap> {
 
   Padding buildEmail() {
     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 22.0),
-                      child: emailTextField(),
-                    );
+      padding: const EdgeInsets.symmetric(horizontal: 22.0),
+      child: emailTextField(),
+    );
   }
 
   TextFormField emailTextField() {
     return TextFormField(
-      decoration: textfielddec('E Mail','E-Mail'),
+      decoration: textfielddec('E Mail', 'E-Mail'),
       controller: forgotPasswdController,
       validator: (value) {
         if (value!.isEmpty) {
@@ -166,25 +186,28 @@ class _GirisYapState extends State<GirisYap> {
     );
   }
 
-
   void forgotPasswd() async {
-      try {
-        await firebaseAuth.sendPasswordResetEmail(email: forgotPasswdController.text.trim());
-        showDialog(context: context, builder: (context) {
-          return const AlertDialog(
-            content: Text('Şifre Yenileme linki gönderildi. Lütfen Email Gelen Kutunuzu Kontrol Ediniz'),
-          );
-        }
-        );
-      } on FirebaseAuthException catch (e) {
-        showDialog(context: context, builder: (context) {
-          return const AlertDialog(
-            content: Text('Lütfen email kısmını bos bırakmayınız'),
-          );
-        }
-        );
-      }
-}
+    try {
+      await firebaseAuth.sendPasswordResetEmail(
+          email: forgotPasswdController.text.trim());
+      showDialog(
+          context: context,
+          builder: (context) {
+            return const AlertDialog(
+              content: Text(
+                  'Şifre Yenileme linki gönderildi. Lütfen Email Gelen Kutunuzu Kontrol Ediniz'),
+            );
+          });
+    } on FirebaseAuthException catch (e) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return const AlertDialog(
+              content: Text('Lütfen email kısmını bos bırakmayınız'),
+            );
+          });
+    }
+  }
 
   Future<String?> signInHataYakalama(String email, String password) async {
     String? res;
@@ -207,47 +230,47 @@ class _GirisYapState extends State<GirisYap> {
           res = "Kullanici Pasif";
           break;
         default:
-          res ='Failed with error code: ${e.code}';
+          res = 'Failed with error code: ${e.code}';
           break;
       }
     }
     return res;
   }
 
-
-  void signIn() async{
-    if(formKey.currentState!.validate()) {
+  void signIn() async {
+    if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
       final result = await signInHataYakalama(email, passwd);
-      if(result == 'success')
-      {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const AnaSayfa()));
-      }
-      else {
-        showDialog(context: context,
+      if (result == 'success') {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => const AnaSayfa()));
+      } else {
+        showDialog(
+            context: context,
             builder: (context) {
               return AlertDialog(
                 title: const Text('Hata'),
                 content: Text(result!),
                 actions: [
-                  TextButton(onPressed: () => Navigator.pop(context),
+                  TextButton(
+                      onPressed: () => Navigator.pop(context),
                       child: const Text('Geri dön'))
                 ],
               );
-            }
-        );
+            });
       }
     }
   }
 
-  //textfield'lar
-  // TextFormField txtfield(String hinttext, bool obsocureText) {
-  //   return TextFormField(
-  //     decoration: textfielddec(hinttext,),
-  //   //  obscureText: obsocureText,
-  //   );
-  // }
+//textfield'lar
+// TextFormField txtfield(String hinttext, bool obsocureText) {
+//   return TextFormField(
+//     decoration: textfielddec(hinttext,),
+//   //  obscureText: obsocureText,
+//   );
+// }
 }
+
 //textfieldların decoration;
 InputDecoration textfielddec(String hintText, String labelText) {
   return InputDecoration(
@@ -272,8 +295,8 @@ InputDecoration textfielddec(String hintText, String labelText) {
 }
 
 Widget customSizedBox() => const SizedBox(
-  height: 17,
-);
+      height: 17,
+    );
 
 class CustomButton extends StatelessWidget {
   final IconData icon;

@@ -21,7 +21,7 @@ class Main extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Geropital',
       routes: {
-        "/passwd":(context) => passwd(),
+        "/passwd":(context) => Passwd(),
         "/girisYap": (context) => Main(),
       },
       home: Navigator(

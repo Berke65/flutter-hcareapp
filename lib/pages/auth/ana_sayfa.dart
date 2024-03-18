@@ -11,7 +11,7 @@ class AnaSayfa extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: YoneticiHomePage(),
     );
   }
@@ -131,7 +131,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                   child: Column(
                     children: [
                       TableCalendar(
-                        daysOfWeekStyle: DaysOfWeekStyle(
+                        daysOfWeekStyle: const DaysOfWeekStyle(
                           weekdayStyle: TextStyle(color: Colors.cyan),
                           weekendStyle: TextStyle(color: Colors.redAccent),
                         ),
@@ -166,15 +166,15 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                           });
                         },
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       Text(
                         'Seçilen Gün: ${_selectedDay.day}/${_selectedDay.month}/${_selectedDay.year}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Expanded(
                         child: ListView.builder(
                           itemCount: randevular.length,
@@ -186,13 +186,13 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                               return ListTile(
                                 title: Text(
                                   '${randevu.dateTime.hour}.${randevu.dateTime.minute} --> ${randevu.detay}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 16,
                                   ),
                                 ),
                               );
                             } else {
-                              return SizedBox.shrink();
+                              return const SizedBox.shrink();
                             }
                           },
                         ),

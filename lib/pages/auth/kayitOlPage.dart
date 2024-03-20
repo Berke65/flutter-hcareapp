@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hcareapp/main.dart';
+import 'package:hcareapp/pages/auth/GirisYap.dart';
 import 'package:hcareapp/pages/auth/ana_sayfa.dart';
 import 'package:hcareapp/services/auth_services.dart';
 
@@ -15,7 +17,10 @@ class _kayitOlPageState extends State<kayitOlPage> {
   late String ad, soyad, telNo, email, password;
   final formKey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+
+  String? girilenKod;
   String? rolName;
   String? adHataMesaji;
   String? soyadHataMesaji;
@@ -26,8 +31,14 @@ class _kayitOlPageState extends State<kayitOlPage> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
+    final screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -65,37 +76,57 @@ class _kayitOlPageState extends State<kayitOlPage> {
                       adTxtField(),
                       adHataMesaji != null
                           ? Text(adHataMesaji!,
-                              style: TextStyle(color: Colors.red))
+                          style: TextStyle(color: Colors.red))
                           : Container(),
                       customSizedBox(),
                       soyadTxtField(),
                       soyadHataMesaji != null
                           ? Text(soyadHataMesaji!,
-                              style: TextStyle(color: Colors.red))
+                          style: TextStyle(color: Colors.red))
                           : Container(),
                       customSizedBox(),
                       telNoTxtField(),
                       telNoHataMesaji != null
                           ? Text(telNoHataMesaji!,
-                              style: TextStyle(color: Colors.red))
+                          style: TextStyle(color: Colors.red))
                           : Container(),
                       customSizedBox(),
                       emailTxtField(),
                       emailHataMesaji != null
                           ? Text(emailHataMesaji!,
-                              style: TextStyle(color: Colors.red))
+                          style: TextStyle(color: Colors.red))
                           : Container(),
                       customSizedBox(),
                       passwdTxtField(),
                       sifreHataMesaji != null
                           ? Text(sifreHataMesaji!,
-                              style: TextStyle(color: Colors.red))
+                          style: TextStyle(color: Colors.red))
                           : Container(),
+                      customSizedBox(),
+                      DropdownButtonFormField<String>(
+                        value: rolName,
+                        onChanged: (value) {
+                          setState(() {
+                            rolName = value;
+                          });
+                        },
+                        items: <String>[
+                          'Yönetim',
+                          'Hemşire',
+                          'Hasta',
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        decoration: textfielddec('Kullanıcı Tipi Seçiniz.'),
+                      ),
                       customSizedBox(),
                       kodTxtField(),
                       kodHataMesaji != null
                           ? Text(kodHataMesaji!,
-                          style: TextStyle(color: Colors.red)): Container(),
+                          style: TextStyle(color: Colors.red)) : Container(),
                       customSizedBox(),
                       const SizedBox(height: 20),
                       CustomButton(
@@ -135,6 +166,9 @@ class _kayitOlPageState extends State<kayitOlPage> {
           return 'Lütfen kodu giriniz';
         }
         return null;
+      },
+      onSaved: (value) {
+        girilenKod = value!;
       },
     );
   }
@@ -232,38 +266,171 @@ class _kayitOlPageState extends State<kayitOlPage> {
     );
   }
 
+  Future<void> getDataFromFirestore(String documentId) async {
+    if (rolName == 'Yönetim') {
+      try {
+        DocumentSnapshot documentSnapshot = await _firestore
+            .collection('Yönetim')
+            .doc(documentId)
+            .get();
+
+        if (documentSnapshot.exists) {
+          Map<String, dynamic>? userData =
+          documentSnapshot.data() as Map<String, dynamic>?;
+
+          if (userData != null && userData.containsKey('code')) {
+            String userCode = userData['code'] as String;
+            print('Firestore Verisi (code): $userCode');
+            print('$userCode');
+          } else {
+            print('Belge verisi veya code alanı bulunamadı.');
+          }
+        } else {
+          print('Belirtilen belge bulunamadı.');
+        }
+      } catch (e) {
+        print('Hata oluştu: $e');
+      }
+    } else if (rolName == 'Hemşire') {
+      try {
+        DocumentSnapshot documentSnapshot = await _firestore
+            .collection('hemsire')
+            .doc(documentId)
+            .get();
+
+        if (documentSnapshot.exists) {
+          Map<String, dynamic>? userData =
+          documentSnapshot.data() as Map<String, dynamic>?;
+
+          if (userData != null && userData.containsKey('code')) {
+            String userCode = userData['code'] as String;
+            print('Firestore Verisi (code): $userCode');
+            print('$userCode');
+          } else {
+            print('Belge verisi veya code alanı bulunamadı.');
+          }
+        } else {
+          print('Belirtilen belge bulunamadı.');
+        }
+      } catch (e) {
+        print('Hata oluştu: $e');
+      }
+    } else if (rolName == 'Hasta') {
+      try {
+        DocumentSnapshot documentSnapshot = await _firestore
+            .collection('hasta')
+            .doc(documentId)
+            .get();
+
+        if (documentSnapshot.exists) {
+          Map<String, dynamic>? userData =
+          documentSnapshot.data() as Map<String, dynamic>?;
+
+          if (userData != null && userData.containsKey('code')) {
+            String userCode = userData['code'] as String;
+            print('Firestore Verisi (code): $userCode');
+            print('$userCode');
+          } else {
+            print('Belge verisi veya code alanı bulunamadı.');
+          }
+        } else {
+          print('Belirtilen belge bulunamadı.');
+        }
+      } catch (e) {
+        print('Hata oluştu: $e');
+      }
+    } else {
+      print('Belirtilen rol için veri çekme izni yok.');
+    }
+  }
+
+
   void signUp() async {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
-      final result = await authService()
-          .signupHataYakalama(email, password, ad, soyad, telNo, rolName!);
-      if (result == 'success') {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const AnaSayfa()),
-        );
-      } else {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Hata'),
-              content: Text(result!),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Geri dön'),
-                )
-              ],
+
+      try {
+        // Firestore'dan veriyi doğrudan çekme
+        DocumentSnapshot<Map<String, dynamic>> kodData;
+
+        if (rolName == 'Yönetim') {
+          kodData = await FirebaseFirestore.instance.collection('yonetim')
+              .doc('aaa')
+              .get();
+        } else if (rolName == 'Hemşire') {
+          kodData = await FirebaseFirestore.instance.collection('hemsire')
+              .doc('aaa')
+              .get();
+        } else if (rolName == 'Hasta') {
+          kodData =
+          await FirebaseFirestore.instance.collection('hasta')
+              .doc('aaa')
+              .get();
+        } else {
+          // Tanımlı olmayan rol için işlem yapma
+          print('Hatalı rol seçimi!');
+          return;
+        }
+
+        if (kodData.exists && kodData.data()!['code'] == girilenKod) {
+          // Kodlar eşleştiğinde kayıt işlemi devam eder
+          final result = await authService().signupHataYakalama(
+            email,
+            password,
+            ad,
+            soyad,
+            telNo,
+            rolName!,
+          );
+          if (result == 'success') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const GirisYap()),
             );
-          },
-        );
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('Hata'),
+                  content: Text(result!),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Geri dön'),
+                    ),
+                  ],
+                );
+              },
+            );
+          }
+        } else {
+          // Kodlar eşleşmezse hata mesajı göster
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text('Hata'),
+                content: const Text(
+                    'Girilen kod yanlış! Lütfen tekrar deneyin.'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Tamam'),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      } catch (e) {
+        print('Hata oluştu: $e');
       }
     }
   }
 }
 
-Widget customSizedBox() => const SizedBox(
+  Widget customSizedBox() => const SizedBox(
       height: 8,
     );
 

@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 final firebaseAuth = FirebaseAuth.instance;
-final firebaseFireStoreDataUTypes = FirebaseFirestore.instance.collection('roles');
+final firebaseFireStoreDataUTypes = FirebaseFirestore.instance;
 
   class authService {
 
@@ -18,9 +18,7 @@ final firebaseFireStoreDataUTypes = FirebaseFirestore.instance.collection('roles
             'email' : email,
             'name' : ad,
             'surname' : soyad,
-            'telNo' : telNo
-          });
-          final resultDataUTypes = await firebaseFireStoreDataUTypes.add({
+            'telNo' : telNo,
             'roleName' : roleName
           });
         }

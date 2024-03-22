@@ -171,85 +171,11 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(user),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => YoneticiChat(),
-                ),
-              );
-            },
-          ),
-        ),
-        body: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: 0, // Kullanıcı mesajlarınızın sayısına göre ayarlayın.
-                itemBuilder: (context, index) {
-                  // Mesajları oluşturun
-                  return _buildMessage("Sample message");
-                },
-              ),
-            ),
-            _buildTextComposer(),
-          ],
-        ),
-        bottomNavigationBar: BottomAppBar(
-          elevation: 4.0,
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-              InkWell(
-              onTap: () {
-        Navigator.push(
-        context,
-        MaterialPageRoute(
-        builder: (context) => AnaSayfaYonetici(),
-        ),
-        );
-        },
-          child: const Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.home_outlined),
-              Text(
-                'Anasayfa',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-        InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => RandevuYonetici(),
-              ),
-            );
-          },
-          child: const Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.calendar_today),
-              Text(
-                'Randevu',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-        InkWell(
-          onTap: () {
+      appBar: AppBar(
+        title: Text(user),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -257,44 +183,118 @@ class ChatScreen extends StatelessWidget {
               ),
             );
           },
-          child: const Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.chat),
-              Text(
-                'Sohbet',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-        InkWell(
-        onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AnaSayfaYonetici(),
-        ),
-      );
-    },
-    child: const Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-    Icon(Icons.account_circle_outlined),
-      Text(
-        'Profil',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
         ),
       ),
-    ],
-    ),
-        ),
-              ],
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: 0, // Kullanıcı mesajlarınızın sayısına göre ayarlayın.
+              itemBuilder: (context, index) {
+                // Mesajları oluşturun
+                return _buildMessage("Sample message");
+              },
+            ),
           ),
+          _buildTextComposer(),
+        ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        elevation: 4.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AnaSayfaYonetici(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.home_outlined),
+                  Text(
+                    'Anasayfa',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RandevuYonetici(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.calendar_today),
+                  Text(
+                    'Randevu',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => YoneticiChat(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.chat),
+                  Text(
+                    'Sohbet',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileYonetici(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.account_circle_outlined),
+                  Text(
+                    'Profil',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
+      ),
     );
   }
 

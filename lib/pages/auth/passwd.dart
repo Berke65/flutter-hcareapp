@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hcareapp/main.dart';
 import 'package:flutter/material.dart';
 import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
+import 'package:hcareapp/pages/auth/GirisYap.dart';
 
 void main() {
   runApp(const Passwd());
@@ -212,7 +213,7 @@ class _PasswdState extends State<Passwd> {
       final result = await signInHataYakalama(email, passwd);
       if (result == 'success') {
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const AnaSayfaYonetici()));
+            context, MaterialPageRoute(builder: (context) => const GirisYap()));
       } else {
         showDialog(
             context: context,

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hcareapp/main.dart';
 import 'package:hcareapp/pages/auth/GirisYap.dart';
-import 'package:hcareapp/pages/auth/ana_sayfa.dart';
 import 'package:hcareapp/services/auth_services.dart';
 
 class kayitOlPage extends StatefulWidget {

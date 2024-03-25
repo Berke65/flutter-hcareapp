@@ -79,7 +79,8 @@ class ProfileScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        elevation: 4.0,
+        color: Colors.white, // BottomAppBar'ın arka plan rengini beyaza ayarladık
+        elevation: 1.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -88,7 +89,7 @@ class ProfileScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AnaSayfaYonetici(),
+                    builder: (context) => const AnaSayfaYonetici(),
                   ),
                 );
               },
@@ -110,7 +111,7 @@ class ProfileScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RandevuYonetici(),
+                    builder: (context) => const RandevuYonetici(),
                   ),
                 );
               },
@@ -132,7 +133,7 @@ class ProfileScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => UsersChat(),
+                    builder: (context) => const UsersChat(),
                   ),
                 );
               },

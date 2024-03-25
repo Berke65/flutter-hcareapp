@@ -1,8 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:hcareapp/main.dart';
-import 'package:hcareapp/pages/YoneticiPages/authService.dart';
 import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
+import 'package:hcareapp/pages/YoneticiPages/authService.dart';
+import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
+import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
+import 'package:hcareapp/pages/YoneticiPages/ProfileYonetici.dart';
+import 'package:hcareapp/pages/YoneticiPages/YoneticiChat.dart';
 
 class ChatPage extends StatelessWidget {
   final String receiverEmail;
@@ -14,25 +16,22 @@ class ChatPage extends StatelessWidget {
     required this.receiverID,
   });
 
-  //text controller
+  // Text controller
   final TextEditingController _messageController = TextEditingController();
 
-  // chat & auth services
+  // Chat & auth services
   final ChatService _chatService = ChatService();
   final AuthService _authService = AuthService();
 
-  //send message
-
+  // Send message function
   void sendMessage() async {
-    // if there is something inside the textfield
-    if(_messageController.text.isNotEmpty)
-      {
-        //send the message
-        await _chatService.sendMessage(receiverID, _messageController.text);
+    if (_messageController.text.isNotEmpty) {
+      // Send the message
+      await _chatService.sendMessage(receiverID, _messageController.text);
 
-        // clear textcontroller
-        _messageController.clear();
-      }
+      // Clear text controller
+      _messageController.clear();
+    }
   }
 
   @override
@@ -40,83 +39,156 @@ class ChatPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(receiverEmail),
-        backgroundColor: Colors.purple,
+        backgroundColor: Colors.white, // AppBar'ın arka plan rengi
+        iconTheme:
+            const IconThemeData(color: Colors.black), // Geri butonunun rengi
       ),
       body: Column(
         children: [
-          //display all messages
-            Expanded(
-              child: _buildMessageList(),
-            ),
-          //user input
+          // Tüm mesajları göster
+          Expanded(
+            child: _buildMessageList(),
+          ),
+          // Kullanıcı girişi
           _buildUserInput(),
+        ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white, // BottomAppBar'ın arka plan rengi
+        elevation: 1.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildBottomNavItem(
+                Icons.home_outlined,
+                'Anasayfa',
+                () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AnaSayfaYonetici()))),
+            _buildBottomNavItem(
+                Icons.calendar_today,
+                'Randevu',
+                () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const RandevuYonetici()))),
+            _buildBottomNavItem(
+                Icons.chat,
+                'Sohbet',
+                () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const UsersChat()))),
+            _buildBottomNavItem(
+                Icons.account_circle_outlined,
+                'Profil',
+                () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ProfileYonetici()))),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Alt gezinme öğesi oluşturma
+  Widget _buildBottomNavItem(IconData icon, String label, Function() onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon),
+          Text(
+            label,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
         ],
       ),
     );
   }
 
-  //build message list
-Widget _buildMessageList() {
+  // Mesaj listesini oluşturma
+  Widget _buildMessageList() {
     String senderID = _authService.getCurrentUser()!.uid;
     return StreamBuilder(
+      stream: _chatService.getMessages(receiverID, senderID),
+      builder: (context, snapshot) {
+        // Hatalar
+        if (snapshot.hasError) {
+          return const Center(child: Text("Hata"));
+        }
 
-        stream: _chatService.getMessages(receiverID, senderID),
-        builder: (context , snapshot) {
-          //errors
-          if(snapshot.hasError)
-            {
-              return const Text("error");
-            }
+        // Yükleniyor
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-          //loading
-          if(snapshot.connectionState == ConnectionState.waiting)
-            {
-              return const Text("loading...");
-            }
-              //return list view
-          return ListView(
-            children: snapshot.data!.docs.map((doc) => _buildMessageItem(doc)).toList(),
-          );
-
-        },
+        // Liste görünümü döndür
+        return ListView.builder(
+          itemCount: snapshot.data!.docs.length,
+          itemBuilder: (context, index) {
+            var data =
+                snapshot.data!.docs[index].data() as Map<String, dynamic>;
+            bool isCurrentUser =
+                data['senderID'] == _authService.getCurrentUser()!.uid;
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                alignment: isCurrentUser
+                    ? Alignment.centerRight
+                    : Alignment.centerLeft,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Text(
+                  data['message'],
+                  style: TextStyle(
+                    color: isCurrentUser ? Colors.white : Colors.black,
+                    backgroundColor: isCurrentUser ? Colors.blue : Colors.white,
+                    // borderRadius: BorderRadius.circular(8),
+                    // padding: EdgeInsets.all(12),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
-}
-// build message item
-Widget _buildMessageItem(DocumentSnapshot doc) {
-    Map<String, dynamic>data = doc.data() as Map<String, dynamic>;
+  }
 
-    //is current user
-
-    bool isCurrentUser = data['senderID'] == _authService.getCurrentUser()!.uid;
-
-    //align message to the right if sender is the current user, otherwise left
-
-    var alignment = isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
-
-    return Container(
-        alignment: alignment,
-        child: Column(
-          crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: [
-            Text(data['message']),
-          ],
-        ));
-}
-//build message input
-Widget _buildUserInput() {
-    return Row(
-      children: [
-        // textfield should take up most of the space
+  // Kullanıcı girişi oluşturma
+  Widget _buildUserInput() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          // Text alanı en çok boşluğu kaplamalı
           Expanded(
-            child: TextField( // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-            controller: _messageController,
-              //HINT TEXT GELECEK
-              obscureText: false,
+            child: TextField(
+              controller: _messageController,
+              decoration: InputDecoration(
+                hintText: 'Mesajınızı buraya yazın', // Placeholder metni
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 10, vertical: 8), // İçerik dolgusu
+                border: OutlineInputBorder(
+                  // Kenarlık
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide:
+                      const BorderSide(color: Colors.blue), // Kenarlık rengi
+                ),
+              ),
+            ),
           ),
+          // Gönder butonu
+          IconButton(
+            onPressed: sendMessage,
+            icon: const Icon(Icons.send_rounded),
           ),
-        //send button
-        IconButton(onPressed: sendMessage, icon: const Icon(Icons.arrow_upward),),
-      ],
+        ],
+      ),
     );
-}
+  }
 }

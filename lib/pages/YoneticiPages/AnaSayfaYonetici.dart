@@ -1,6 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:hcareapp/main.dart';
-import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
 import 'package:hcareapp/pages/YoneticiPages/YoneticiChat.dart';
 import 'package:hcareapp/pages/YoneticiPages/ProfileYonetici.dart';
 import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
@@ -14,8 +15,16 @@ class AnaSayfaYonetici extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: YoneticiHomePage(),
+    return MaterialApp(
+      theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          color: Colors.white54, // İstediğiniz rengi burada belirleyebilirsiniz
+        ),
+        bottomAppBarTheme: BottomAppBarTheme(
+          color: Colors.white,
+        )
+      ),
+      home: const YoneticiHomePage(),
     );
   }
 }
@@ -52,7 +61,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
           },
         ),
       ),
-      body: Center(
+      body: const Center(
         child: Text(
           'Boş Anasayfa Ekranı',
           style: TextStyle(
@@ -62,7 +71,8 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        elevation: 4.0,
+        color: Colors.white, // BottomAppBar'ın arka plan rengini beyaza ayarladık
+        elevation: 1.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -71,7 +81,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AnaSayfaYonetici(),
+                    builder: (context) => const AnaSayfaYonetici(),
                   ),
                 );
               },
@@ -93,7 +103,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RandevuYonetici(),
+                    builder: (context) => const RandevuYonetici(),
                   ),
                 );
               },
@@ -115,7 +125,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => UsersChat(),
+                    builder: (context) => const UsersChat(),
                   ),
                 );
               },

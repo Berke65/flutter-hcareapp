@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hcareapp/main.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -215,7 +216,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => YoneticiChat(),
+                    builder: (context) => UsersChat(),
                   ),
                 );
               },

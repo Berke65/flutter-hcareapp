@@ -240,6 +240,7 @@ class _GirisYapState extends State<GirisYap> {
   void signIn() async {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
+
       final result = await signInHataYakalama(email, passwd);
       if (result == 'success') {
         Navigator.pushReplacement(

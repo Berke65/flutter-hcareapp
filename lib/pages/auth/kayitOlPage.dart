@@ -345,6 +345,7 @@ class _kayitOlPageState extends State<kayitOlPage> {
 
 
   void signUp() async {
+
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
 
@@ -386,6 +387,12 @@ class _kayitOlPageState extends State<kayitOlPage> {
               context,
               MaterialPageRoute(builder: (context) => const GirisYap()),
             );
+            showDialog(context: context, builder: (context){
+              return AlertDialog(
+                title: const Text('Kayıt'),
+                content: Text('Kayıt İşlemi Başarılı'),
+              );
+            });
           } else {
             showDialog(
               context: context,

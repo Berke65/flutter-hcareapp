@@ -115,7 +115,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => YoneticiChat(),
+                    builder: (context) => UsersChat(),
                   ),
                 );
               },

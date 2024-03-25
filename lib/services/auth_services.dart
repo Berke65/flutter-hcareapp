@@ -2,46 +2,59 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 final firebaseAuth = FirebaseAuth.instance;
-final firebaseFireStoreDataUTypes = FirebaseFirestore.instance;
+final firebaseFirestore = FirebaseFirestore.instance;
 
-  class authService {
+class authService {
+  Future<String?> signupHataYakalama(String email, String password, String ad,
+      String soyad, String telNo, String roleName) async {
+    String? res;
+    try {
+      final result = await firebaseAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    Future<String?> signupHataYakalama(String email, String password, String ad,
-        String soyad,String telNo,String roleName) async {
-      String? res;
-      try {
-        final result = await firebaseAuth.createUserWithEmailAndPassword(
-          email: email,
-          password: password,);
+      // Kullanıcı başarıyla kaydedildiyse
+      if (result.user != null) {
+        String uid = result.user!.uid; // Kullanıcının UID'sini al
+
+        // Firestore'a kullanıcı bilgilerini ekle
         try {
-          final resultData = await FirebaseFirestore.instance.collection('users').add({
-            'email' : email,
-            'name' : ad,
-            'surname' : soyad,
-            'telNo' : telNo,
-            'roleName' : roleName
+          await firebaseFirestore.collection('users').doc(uid).set({
+            'uid': uid, // Kullanıcının UID'sini ekleyin
+            'email': email,
+            'name': ad,
+            'surname': soyad,
+            'telNo': telNo,
+            'roleName': roleName,
           });
+          res = "success";
+        } catch (e) {
+          print('Firestore veri ekleme hatası: $e');
+          res = "Bir hata oluştu, lütfen tekrar deneyin.";
         }
-        catch (e) {
-          print('$e');
-        }
-        res = "success";
-      } on FirebaseAuthException catch (e) {
-        switch (e.code) {
-          case "invalid-email":
-            res = "Lütfen dogru email biciminde girin";
-            break;
-          case "email-already-in-use":
-            res = "Bu Email Zaten Kullanımda";
-            break;
-          case "weak-password":
-            res = "Lütfen 8 karakter üstünde bi parola giriniz";
-            break;
-          default:
-            res = 'Failed with error code: ${e.code}';
-            break;
-        }
+      } else {
+        res = "Kullanıcı kaydedilirken bir hata oluştu.";
       }
-      return res;
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case "invalid-email":
+          res = "Lütfen doğru email biçiminde girin";
+          break;
+        case "email-already-in-use":
+          res = "Bu Email Zaten Kullanımda";
+          break;
+        case "weak-password":
+          res = "Lütfen 8 karakter üstünde bir parola giriniz";
+          break;
+        default:
+          res = 'Hata kodu: ${e.code}';
+          break;
+      }
+    } catch (e) {
+      print('Bilinmeyen bir hata oluştu: $e');
+      res = "Bir hata oluştu, lütfen tekrar deneyin.";
     }
+    return res;
   }
+}

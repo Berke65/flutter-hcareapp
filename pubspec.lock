@@ -73,6 +73,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
+  crypto:
+    dependency: transitive
+    description:
+      name: crypto
+      sha256: ff625774173754681d66daaf4a448684fb04b78f902da9cb3d308c19cc5e8bab
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.3"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -176,6 +184,22 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  google_fonts:
+    dependency: "direct main"
+    description:
+      name: google_fonts
+      sha256: "5b1726fee554d1cc9db1baef8061b126567ff0a1140a03ed7de936e62f2ab98b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.2.0"
+  http:
+    dependency: transitive
+    description:
+      name: http
+      sha256: "761a297c042deedc1ffbb156d6e2af13886bb305c2a343a4d972504cd67dd938"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.1"
   http_parser:
     dependency: transitive
     description:
@@ -264,6 +288,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.0"
+  path_provider:
+    dependency: transitive
+    description:
+      name: path_provider
+      sha256: b27217933eeeba8ff24845c34003b003b2b22151de3c908d0e679e8fe1aa078b
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.2"
+  path_provider_android:
+    dependency: transitive
+    description:
+      name: path_provider_android
+      sha256: "477184d672607c0a3bf68fbbf601805f92ef79c82b64b4d6eb318cbca4c48668"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.2"
+  path_provider_foundation:
+    dependency: transitive
+    description:
+      name: path_provider_foundation
+      sha256: "5a7999be66e000916500be4f15a3633ebceb8302719b47b9cc49ce924125350f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.2"
   path_provider_linux:
     dependency: transitive
     description:

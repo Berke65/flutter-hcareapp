@@ -2,8 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hcareapp/main.dart';
 import 'package:flutter/material.dart';
 import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
-import 'package:hcareapp/pages/auth/nursePage.dart';
+import 'package:hcareapp/pages/NursePages/NursePageHome.dart';
 import 'package:hcareapp/pages/auth/passwd.dart';
+
 
 void main() {
   runApp(const GirisYap());
@@ -115,7 +116,7 @@ class _GirisYapState extends State<GirisYap> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => NursePage(),
+                            builder: (context) => NursePageHome(),
                           ),
                         );
                       }

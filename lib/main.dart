@@ -1,3 +1,4 @@
+import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
 import 'package:hcareapp/pages/auth/GirisYap.dart';
 import 'package:hcareapp/pages/auth/kayitOlPage.dart';
 import 'package:hcareapp/pages/auth/passwd.dart';
@@ -69,6 +70,18 @@ class Main extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => const kayitOlPage(),
+                            ),
+                          );
+                        },
+                      ),
+                      buildGirisKutusu(
+                        icon: Icons.person_add_alt,
+                        text: 'YONETİCİ',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AnaSayfaYonetici(),
                             ),
                           );
                         },

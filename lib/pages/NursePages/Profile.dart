@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hcareapp/main.dart';
-import 'package:table_calendar/table_calendar.dart';
-import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
-import 'package:hcareapp/pages/YoneticiPages/YoneticiChat.dart';
-import 'package:hcareapp/pages/YoneticiPages/Profile.dart';
-import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
-
+import 'package:hcareapp/pages/NursePages/BottomAppbarNurse.dart';
 void main() {
-  runApp(ProfileYonetici());
+  runApp(Profile());
 }
 
-class ProfileYonetici extends StatelessWidget {
+class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -28,7 +23,22 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.exit_to_app_outlined,
+            size: 30,
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Main(),
+              ),
+            );
+          },
+        ),
         title: const Text('My Profile'),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -78,103 +88,9 @@ class ProfileScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white, // BottomAppBar'ın arka plan rengini beyaza ayarladık
-        elevation: 1.0,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AnaSayfaYonetici(),
-                  ),
-                );
-              },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.home_outlined),
-                  Text(
-                    'Anasayfa',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RandevuYonetici(),
-                  ),
-                );
-              },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.calendar_today),
-                  Text(
-                    'Randevu',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const UsersChat(),
-                  ),
-                );
-              },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.chat),
-                  Text(
-                    'Sohbet',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileYonetici(),
-                  ),
-                );
-              },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.account_circle_outlined),
-                  Text(
-                    'Profil',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      bottomNavigationBar: BottomAppbarNurse(context),
     );
   }
 }
+
+

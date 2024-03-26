@@ -3,7 +3,7 @@ import 'package:hcareapp/main.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
 import 'package:hcareapp/pages/YoneticiPages/YoneticiChat.dart';
-import 'package:hcareapp/pages/YoneticiPages/ProfileYonetici.dart';
+import 'package:hcareapp/pages/YoneticiPages/Profile.dart';
 import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
 
 void main() {

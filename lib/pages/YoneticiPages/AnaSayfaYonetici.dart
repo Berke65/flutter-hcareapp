@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hcareapp/main.dart';
 import 'package:hcareapp/pages/YoneticiPages/YoneticiChat.dart';
-import 'package:hcareapp/pages/YoneticiPages/ProfileYonetici.dart';
+import 'package:hcareapp/pages/YoneticiPages/Profile.dart';
 import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
 
 void main() {
@@ -17,10 +17,10 @@ class AnaSayfaYonetici extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        appBarTheme: AppBarTheme(
+        appBarTheme: const AppBarTheme(
           color: Colors.white54, // İstediğiniz rengi burada belirleyebilirsiniz
         ),
-        bottomAppBarTheme: BottomAppBarTheme(
+        bottomAppBarTheme: const BottomAppBarTheme(
           color: Colors.white,
         )
       ),

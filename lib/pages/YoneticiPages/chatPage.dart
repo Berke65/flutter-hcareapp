@@ -3,8 +3,9 @@ import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/authService.dart';
 import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
 import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
-import 'package:hcareapp/pages/YoneticiPages/ProfileYonetici.dart';
+import 'package:hcareapp/pages/YoneticiPages/Profile.dart';
 import 'package:hcareapp/pages/YoneticiPages/YoneticiChat.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ChatPage extends StatelessWidget {
   final String receiverEmail;
@@ -110,7 +111,7 @@ class ChatPage extends StatelessWidget {
     );
   }
 
-  // Mesaj listesini oluşturma
+// Mesaj listesini oluşturma
   Widget _buildMessageList() {
     String senderID = _authService.getCurrentUser()!.uid;
     return StreamBuilder(
@@ -132,23 +133,29 @@ class ChatPage extends StatelessWidget {
           itemBuilder: (context, index) {
             var data =
                 snapshot.data!.docs[index].data() as Map<String, dynamic>;
-            bool isCurrentUser =
-                data['senderID'] == _authService.getCurrentUser()!.uid;
+            bool isCurrentUser = data['senderId'] ==
+                receiverID; // Gönderici, alıcı ile eşleşiyorsa, bu mesaj mevcut kullanıcı tarafından gönderildi demektir.
             return Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Container(
+              child: Align(
                 alignment: isCurrentUser
-                    ? Alignment.centerRight
-                    : Alignment.centerLeft,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Text(
-                  data['message'],
-                  style: TextStyle(
-                    color: isCurrentUser ? Colors.white : Colors.black,
-                    backgroundColor: isCurrentUser ? Colors.blue : Colors.white,
-                    // borderRadius: BorderRadius.circular(8),
-                    // padding: EdgeInsets.all(12),
+                    ? Alignment.centerLeft
+                    : Alignment.centerRight,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isCurrentUser ? Colors.blue[100] : Colors.grey[300],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.all(14),
+                  child: Text(
+                    data['message'],
+                    style: GoogleFonts.nunito(
+                      textStyle: TextStyle(
+                        color: Colors.black,
+                        letterSpacing: 0.5,
+                        fontSize: 16,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -159,7 +166,29 @@ class ChatPage extends StatelessWidget {
     );
   }
 
-  // Kullanıcı girişi oluşturma
+// data['message']
+/* Container(
+        decoration: BoxDecoration(
+          color: Colors.blue[100],
+          borderRadius: BorderRadius.circular(12),
+        ),
+        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 17),
+        padding: EdgeInsets.all(20),
+        child: Row(
+          children: [
+            Icon(Icons.person_outline),
+            const SizedBox(width: 20,),
+            Text(
+              text,
+              style: GoogleFonts.tauri(
+                textStyle: TextStyle(color: Colors.black, letterSpacing: .5),
+              ),
+            ),
+          ],
+        ),
+      ),*/
+
+// Kullanıcı girişi oluşturma
   Widget _buildUserInput() {
     return Padding(
       padding: const EdgeInsets.all(8.0),

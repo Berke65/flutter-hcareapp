@@ -6,13 +6,13 @@ import 'chatPage.dart';
 
 import 'package:flutter/material.dart';
 import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
-import 'package:hcareapp/pages/YoneticiPages/ProfileYonetici.dart';
+import 'package:hcareapp/pages/YoneticiPages/Profile.dart';
 import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
 
 
 
 void main() {
-  runApp(UsersChat());
+  runApp(const UsersChat());
 }
 
 class UsersChat extends StatefulWidget {
@@ -30,12 +30,23 @@ class _UsersChatState extends State<UsersChat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chat'),
+        titleSpacing: 150, // Başlık ile diğer öğeler arasındaki boşluğu sıfıra ayarlar
+        title: const Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Icon(Icons.message_outlined),
+            SizedBox(width: 8), // İkon ile başlık arasına bir boşluk ekler
+            Text('Sohbet'),
+          ],
+        ),
+        automaticallyImplyLeading: false, // Geri tuşunu kaldırır
+        centerTitle: true, // Başlığı ortalamaz
       ),
+
       body: _buildUserList(),
       bottomNavigationBar: BottomAppBar(
         color: Colors.white, // BottomAppBar'ın arka plan rengini beyaza ayarladık
-        elevation: 1.0,
+        elevation: .0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -142,7 +153,7 @@ class _UsersChatState extends State<UsersChat> {
           return const Text('Error');
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('loading');
+          return const Center(child: CircularProgressIndicator());
         }
         return ListView(
           children: snapshot.data!

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
+import 'package:hcareapp/pages/NursePages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/authService.dart';
-import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
-import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
-import 'package:hcareapp/pages/YoneticiPages/Profile.dart';
-import 'package:hcareapp/pages/YoneticiPages/YoneticiChat.dart';
+import 'package:hcareapp/pages/NursePages/BottomAppbarNurse.dart';
 
 class ChatPage extends StatelessWidget {
   final String receiverEmail;
@@ -53,43 +50,7 @@ class ChatPage extends StatelessWidget {
           _buildUserInput(),
         ],
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white, // BottomAppBar'ın arka plan rengi
-        elevation: 1.0,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _buildBottomNavItem(
-                Icons.home_outlined,
-                'Anasayfa',
-                () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const AnaSayfaYonetici()))),
-            _buildBottomNavItem(
-                Icons.calendar_today,
-                'Randevu',
-                () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const RandevuYonetici()))),
-            _buildBottomNavItem(
-                Icons.chat,
-                'Sohbet',
-                () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const UsersChat()))),
-            _buildBottomNavItem(
-                Icons.account_circle_outlined,
-                'Profil',
-                () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ProfileYonetici()))),
-          ],
-        ),
-      ),
+      bottomNavigationBar: BottomAppbarNurse(context),
     );
   }
 

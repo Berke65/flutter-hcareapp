@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 
 class UserTile extends StatelessWidget {
   final String text;
@@ -16,16 +18,21 @@ class UserTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.errorContainer,
+          color: Colors.blue[100],
           borderRadius: BorderRadius.circular(12),
         ),
-        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 25),
+        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 17),
         padding: EdgeInsets.all(20),
         child: Row(
           children: [
-            Icon(Icons.person),
+            Icon(Icons.person_outline),
             const SizedBox(width: 20,),
-            Text(text,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12),)
+            Text(
+              text,
+              style: GoogleFonts.tauri(
+                textStyle: TextStyle(color: Colors.black, letterSpacing: .5),
+              ),
+            ),
           ],
         ),
       ),

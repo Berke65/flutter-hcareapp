@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/authService.dart';
@@ -6,8 +7,10 @@ import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
 import 'package:hcareapp/pages/YoneticiPages/Profile.dart';
 import 'package:hcareapp/pages/YoneticiPages/YoneticiChat.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
-class ChatPage extends StatelessWidget {
+
+class ChatPage extends StatefulWidget {
   final String receiverEmail;
   final String receiverID;
 
@@ -17,18 +20,63 @@ class ChatPage extends StatelessWidget {
     required this.receiverID,
   });
 
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
   // Text controller
   final TextEditingController _messageController = TextEditingController();
 
   // Chat & auth services
   final ChatService _chatService = ChatService();
   final AuthService _authService = AuthService();
+  // fbase messaging
 
+  // for textfield focus
+
+  FocusNode myFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    //add listener to focus mode
+    myFocusNode.addListener(() {
+      if(myFocusNode.hasFocus)
+      {
+        // cause a delay so that the keyboard has time show up
+        //then the amount of remaining space will be calculated,
+        // the scroll down
+        Future.delayed(const Duration(milliseconds: 500),
+              () => scrollDown(),
+        );
+      }
+    });
+    // wait a bit for listview to be built , then scroll the bottom
+    Future.delayed(const Duration(milliseconds: 500),
+          () => scrollDown(),);
+  }
+  @override
+  void dispose() {
+    myFocusNode.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  // scroll controller
+  final ScrollController _scrollController = ScrollController();
+  void scrollDown(){
+    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+        duration: const Duration(seconds: 1),
+        curve: Curves.fastOutSlowIn);
+  }
   // Send message function
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
       // Send the message
-      await _chatService.sendMessage(receiverID, _messageController.text);
+      await _chatService.sendMessage(widget.receiverID, _messageController.text);
+
+      scrollDown();
 
       // Clear text controller
       _messageController.clear();
@@ -39,10 +87,10 @@ class ChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(receiverEmail),
+        title: Text(widget.receiverEmail),
         backgroundColor: Colors.white, // AppBar'ın arka plan rengi
         iconTheme:
-            const IconThemeData(color: Colors.black), // Geri butonunun rengi
+        const IconThemeData(color: Colors.black), // Geri butonunun rengi
       ),
       body: Column(
         children: [
@@ -63,28 +111,28 @@ class ChatPage extends StatelessWidget {
             _buildBottomNavItem(
                 Icons.home_outlined,
                 'Anasayfa',
-                () => Navigator.push(
+                    () => Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => const AnaSayfaYonetici()))),
             _buildBottomNavItem(
                 Icons.calendar_today,
                 'Randevu',
-                () => Navigator.push(
+                    () => Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => const RandevuYonetici()))),
             _buildBottomNavItem(
                 Icons.chat,
                 'Sohbet',
-                () => Navigator.push(
+                    () => Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => const UsersChat()))),
             _buildBottomNavItem(
                 Icons.account_circle_outlined,
                 'Profil',
-                () => Navigator.push(
+                    () => Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => ProfileYonetici()))),
@@ -115,7 +163,7 @@ class ChatPage extends StatelessWidget {
   Widget _buildMessageList() {
     String senderID = _authService.getCurrentUser()!.uid;
     return StreamBuilder(
-      stream: _chatService.getMessages(receiverID, senderID),
+      stream: _chatService.getMessages(widget.receiverID, senderID),
       builder: (context, snapshot) {
         // Hatalar
         if (snapshot.hasError) {
@@ -129,66 +177,71 @@ class ChatPage extends StatelessWidget {
 
         // Liste görünümü döndür
         return ListView.builder(
+          controller: _scrollController,
           itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) {
-            var data =
-                snapshot.data!.docs[index].data() as Map<String, dynamic>;
-            bool isCurrentUser = data['senderId'] ==
-                receiverID; // Gönderici, alıcı ile eşleşiyorsa, bu mesaj mevcut kullanıcı tarafından gönderildi demektir.
+            var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+            bool isCurrentUser = data['senderId'] == widget.receiverID;
+
             return Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Align(
-                alignment: isCurrentUser
-                    ? Alignment.centerLeft
-                    : Alignment.centerRight,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: isCurrentUser ? Colors.blue[100] : Colors.grey[300],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.all(14),
-                  child: Text(
-                    data['message'],
-                    style: GoogleFonts.nunito(
-                      textStyle: TextStyle(
-                        color: Colors.black,
-                        letterSpacing: 0.5,
-                        fontSize: 16,
-                      ),
+              child: Row(
+                mainAxisAlignment: isCurrentUser ? MainAxisAlignment.start : MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Container(
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.7, // Max genişlik ayarı
+                    ),
+                    decoration: BoxDecoration(
+                      color: isCurrentUser ? Colors.blue[100] : Colors.grey[300],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.all(14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          data['message'],
+                          style: GoogleFonts.nunito(
+                            textStyle: TextStyle(
+                              color: Colors.black,
+                              letterSpacing: 0.5,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
+                  SizedBox(width: 4), // Saat bilgisinden mesaj kutusuna bir boşluk ekleyin
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        DateFormat('HH:mm').format(data['timestamp'].toDate()),
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                      SizedBox(height: 2), // İki column arasına boşluk ekleyin
+                    ],
+                  ),
+                ],
               ),
             );
           },
         );
+
       },
     );
   }
 
-// data['message']
-/* Container(
-        decoration: BoxDecoration(
-          color: Colors.blue[100],
-          borderRadius: BorderRadius.circular(12),
-        ),
-        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 17),
-        padding: EdgeInsets.all(20),
-        child: Row(
-          children: [
-            Icon(Icons.person_outline),
-            const SizedBox(width: 20,),
-            Text(
-              text,
-              style: GoogleFonts.tauri(
-                textStyle: TextStyle(color: Colors.black, letterSpacing: .5),
-              ),
-            ),
-          ],
-        ),
-      ),*/
+  //fbase get messaging token
 
-// Kullanıcı girişi oluşturma
+
+// data['message']
   Widget _buildUserInput() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -197,6 +250,7 @@ class ChatPage extends StatelessWidget {
           // Text alanı en çok boşluğu kaplamalı
           Expanded(
             child: TextField(
+              focusNode: myFocusNode,
               controller: _messageController,
               decoration: InputDecoration(
                 hintText: 'Mesajınızı buraya yazın', // Placeholder metni
@@ -206,13 +260,14 @@ class ChatPage extends StatelessWidget {
                   // Kenarlık
                   borderRadius: BorderRadius.circular(20),
                   borderSide:
-                      const BorderSide(color: Colors.blue), // Kenarlık rengi
+                  const BorderSide(color: Colors.blue), // Kenarlık rengi
                 ),
               ),
             ),
           ),
           // Gönder butonu
           IconButton(
+            focusNode: myFocusNode,
             onPressed: sendMessage,
             icon: const Icon(Icons.send_rounded),
           ),
@@ -221,3 +276,4 @@ class ChatPage extends StatelessWidget {
     );
   }
 }
+

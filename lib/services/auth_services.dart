@@ -6,13 +6,15 @@ final firebaseFirestore = FirebaseFirestore.instance;
 
 class authService {
   Future<String?> signupHataYakalama(String email, String password, String ad,
-      String soyad, String telNo, String roleName) async {
+      String soyad, String telNo, String roleName ,String bosImage) async {
     String? res;
     try {
       final result = await firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      bosImage = 'burayaimagebaglantısıgelecekdokunmayın';
 
       // Kullanıcı başarıyla kaydedildiyse
       if (result.user != null) {
@@ -27,6 +29,7 @@ class authService {
             'surname': soyad,
             'telNo': telNo,
             'roleName': roleName,
+            'image' : bosImage,
           });
           res = "success";
         } catch (e) {

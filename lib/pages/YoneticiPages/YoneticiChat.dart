@@ -1,7 +1,6 @@
 import 'package:hcareapp/pages/YoneticiPages/authService.dart';
 import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/userTile.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'chatPage.dart';
 
 import 'package:flutter/material.dart';
@@ -12,17 +11,17 @@ import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
 
 
 void main() {
-  runApp(const UsersChat());
+  runApp(const YoneticiChat());
 }
 
-class UsersChat extends StatefulWidget {
-  const UsersChat({super.key});
+class YoneticiChat extends StatefulWidget {
+  const YoneticiChat({super.key});
 
   @override
-  State<UsersChat> createState() => _UsersChatState();
+  State<YoneticiChat> createState() => _YoneticiChatState();
 }
 
-class _UsersChatState extends State<UsersChat> {
+class _YoneticiChatState extends State<YoneticiChat> {
   final ChatService _chatService = ChatService();
   final AuthService _authService = AuthService();
 
@@ -99,7 +98,7 @@ class _UsersChatState extends State<UsersChat> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const UsersChat(),
+                    builder: (context) => const YoneticiChat(),
                   ),
                 );
               },
@@ -121,7 +120,7 @@ class _UsersChatState extends State<UsersChat> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProfileYonetici(),
+                    builder: (context) => ProfileScreen(),
                   ),
                 );
               },

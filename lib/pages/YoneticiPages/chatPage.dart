@@ -128,14 +128,14 @@ class _ChatPageState extends State<ChatPage> {
                     () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const UsersChat()))),
+                        builder: (context) => const YoneticiChat()))),
             _buildBottomNavItem(
                 Icons.account_circle_outlined,
                 'Profil',
                     () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ProfileYonetici()))),
+                        builder: (context) => ProfileScreen()))),
           ],
         ),
       ),
@@ -277,3 +277,6 @@ class _ChatPageState extends State<ChatPage> {
   }
 }
 
+// static - tanımlanan degisken sınıf seklinde tanımlandır
+// final  - tanımlanan degisken bir kere deger aldıktan sonra degistirilemez
+// future - tanımlanan degisken uzun süren islemler icin kullanılır

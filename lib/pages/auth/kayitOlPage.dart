@@ -372,6 +372,8 @@ class _kayitOlPageState extends State<kayitOlPage> {
           return;
         }
 
+        String bosImage = 'burayaImagebaglantısıgelecekdokunmayın';
+
         if (kodData.exists && kodData.data()!['code'] == girilenKod) {
           // Kodlar eşleştiğinde kayıt işlemi devam eder
           final result = await authService().signupHataYakalama(
@@ -381,6 +383,7 @@ class _kayitOlPageState extends State<kayitOlPage> {
             soyad,
             telNo,
             rolName!,
+            bosImage,
           );
           if (result == 'success') {
             Navigator.pushReplacement(

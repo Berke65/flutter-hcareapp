@@ -217,7 +217,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const UsersChat(),
+                    builder: (context) => const YoneticiChat(),
                   ),
                 );
               },
@@ -239,7 +239,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProfileYonetici(),
+                    builder: (context) => ProfileScreen(),
                   ),
                 );
               },

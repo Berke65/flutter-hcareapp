@@ -8,8 +8,6 @@ import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
 import 'package:hcareapp/pages/YoneticiPages/Profile.dart';
 import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
 
-
-
 void main() {
   runApp(const YoneticiChat());
 }
@@ -29,7 +27,7 @@ class _YoneticiChatState extends State<YoneticiChat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 150, // Başlık ile diğer öğeler arasındaki boşluğu sıfıra ayarlar
+        titleSpacing: 21, // Başlık ile diğer öğeler arasındaki boşluğu sıfıra ayarlar
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -39,7 +37,6 @@ class _YoneticiChatState extends State<YoneticiChat> {
           ],
         ),
         automaticallyImplyLeading: false, // Geri tuşunu kaldırır
-        centerTitle: true, // Başlığı ortalamaz
       ),
 
       body: _buildUserList(),

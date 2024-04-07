@@ -82,7 +82,7 @@ BottomAppBar BottomAppbarNurse(BuildContext context) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => Profile(),
+                builder: (context) => ProfileScreen(),
               ),
             );
           },

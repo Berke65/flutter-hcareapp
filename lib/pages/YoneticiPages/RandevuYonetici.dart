@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hcareapp/main.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -60,17 +59,10 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                 );
               },
             ),
-            //const Text('Çıkış Yap'),
           ],
         ),
       ),
       body: Container(
-        // decoration: const BoxDecoration(
-        // image: DecorationImage(
-        // image: AssetImage('images/bakalım1.png'),
-        // fit: BoxFit.cover,
-        // ),
-        // ),
         child: Column(
           children: [
             const SizedBox(height: 16),
@@ -145,6 +137,36 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                                 style: const TextStyle(
                                   fontSize: 16,
                                 ),
+                              ),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.cancel),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Randevuyu iptal etmek istediğinize emin misiniz?"),
+                                        content: const Text(
+                                            "Bu işlem geri alınamaz, emin misiniz?"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () => Navigator.of(context).pop(),
+                                            child: const Text("İptal"),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                randevular.removeAt(index);
+                                              });
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("Evet, İptal Et"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
                               ),
                             );
                           } else {

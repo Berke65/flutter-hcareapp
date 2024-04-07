@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -27,19 +26,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Kullanıcı Profilim'),
+        title: const Text('Kullanıcı Profilim'),
       ),
       body: FutureBuilder<DocumentSnapshot>(
         future: _firestore.collection('users').doc(_auth.currentUser!.uid).get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text("Hata"));
+            return const Center(child: Text("Hata"));
           }
           if (!snapshot.hasData || snapshot.data == null) {
-            return Center(child: Text("Veri bulunamadı"));
+            return const Center(child: Text("Veri bulunamadı"));
           }
 
           var userData = snapshot.data!.data() as Map<String, dynamic>;
@@ -91,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           await FirebaseFirestore.instance.collection('users').doc(userID).update({
                             'image': imageUrl, // Ekstra alanı ve değerini güncelle
                           });
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Profil Resminizin aktifleşmesi icin lütfen sayfayı yenileyin')));
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profil Resminizin aktifleşmesi icin lütfen sayfayı yenileyin')));
                         } catch (error) {
                           // Hata durumunda yapılacak işlemler
                           print('Hata oluştu: $error');
@@ -110,7 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           },
                         );
                       },
-                      child: SizedBox(),
+                      child: const SizedBox(),
                     ),
                   ),
                 ),
@@ -169,7 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onChanged: (value) {
               _editedProfileData['name'] = value;
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Ad',
             ),
           ),
@@ -178,7 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onChanged: (value) {
               _editedProfileData['surname'] = value;
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Soyad',
             ),
           ),
@@ -187,7 +186,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onChanged: (value) {
               _editedProfileData['email'] = value;
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'E-posta',
             ),
           ),
@@ -196,7 +195,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onChanged: (value) {
               _editedProfileData['telNo'] = value;
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Telefon Numarası',
             ),
           ),
@@ -205,7 +204,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () {
               _saveProfileChanges(_editedProfileData);
             },
-            child: Text('Değişiklikleri Kaydet'),
+            child: const Text('Değişiklikleri Kaydet'),
           ),
         ],
       ),

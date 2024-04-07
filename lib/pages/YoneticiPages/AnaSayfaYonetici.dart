@@ -1,13 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:hcareapp/main.dart';
 import 'package:hcareapp/pages/YoneticiPages/bottomAppBarYonetici.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 void main() {
   runApp(const AnaSayfaYonetici());
 }
 
-class AnaSayfaYonetici extends StatelessWidget {
+final FirebaseAuth _auth = FirebaseAuth.instance;
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+
+class AnaSayfaYonetici extends StatefulWidget {
   const AnaSayfaYonetici({Key? key}) : super(key: key);
+
+
+  @override
+  State<AnaSayfaYonetici> createState() => _AnaSayfaYoneticiState();
+}
+
+class _AnaSayfaYoneticiState extends State<AnaSayfaYonetici> {
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +66,8 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
   Hemsire? secilenHemsire;
   Hasta? secilenHasta;
   List<Esipariser> esiparisler = [];
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -174,6 +192,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
   }
 }
 
+
 class Hemsire {
   final String adSoyad;
   final String unvan;
@@ -193,3 +212,7 @@ class Esipariser {
 
   Esipariser({required this.hemHemHemsire, required this.hemHemHasta});
 }
+
+
+
+

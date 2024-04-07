@@ -16,6 +16,10 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  String imageUrl = '';
+
+
   bool _isEditingProfile = false;
   Map<String, dynamic> _editedProfileData = {};
 
@@ -65,8 +69,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextButton(
-                      onPressed: () {
-                        _showEditProfileDialog();
+                      onPressed: () async {
+
+                        final file = await ImagePicker().pickImage(source: ImageSource.gallery);
+                        if (file == null) return;
+
+                        String fileName = DateTime.now().microsecondsSinceEpoch.toString();
+
+                        Reference referenceRoot = FirebaseStorage.instance.ref();
+                        Reference referenceDirImages = referenceRoot.child('images');
+                        Reference referenceImagesToUpload = referenceDirImages.child(fileName);
+
+                        try {
+                          await referenceImagesToUpload.putFile(File(file.path));
+                          imageUrl = await referenceImagesToUpload.getDownloadURL();
+
+                          // Burada veritabanına ekleme yapılacak
+                          User? user = _auth.currentUser;
+                          String userID = user!.uid;
+
+                          await FirebaseFirestore.instance.collection('users').doc(userID).update({
+                            'image': imageUrl, // Ekstra alanı ve değerini güncelle
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Profil Resminizin aktifleşmesi icin lütfen sayfayı yenileyin')));
+                        } catch (error) {
+                          // Hata durumunda yapılacak işlemler
+                          print('Hata oluştu: $error');
+                        }
                       },
                       onLongPress: () {
                         showDialog(
@@ -75,13 +104,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             return AlertDialog(
                               content: Image.network(
                                 userData['image'],
-                                fit: BoxFit.contain,
+                                fit: BoxFit.contain, // Resmi AlertDialog içinde büyük göster
                               ),
                             );
                           },
                         );
                       },
-                      child: const SizedBox(),
+                      child: SizedBox(),
                     ),
                   ),
                 ),

@@ -2,6 +2,7 @@ import 'package:hcareapp/pages/YoneticiPages/authService.dart';
 import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/userTile.dart';
 import 'chatPage.dart';
+import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
@@ -164,13 +165,14 @@ class _YoneticiChatState extends State<YoneticiChat> {
       Map<String, dynamic> userData, BuildContext context) {
     if (userData['email'] != _authService.getCurrentUser()!.email) {
       return UserTile(
-          text: userData['email'],
+          text: userData['name'],
+          imageProvider: NetworkImage(userData['image']),
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => ChatPage(
-                  receiverEmail: userData['email'],
+                  receiverEmail: userData['name'],
                   receiverID: userData['uid'],
                 ),
               ),

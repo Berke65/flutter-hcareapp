@@ -209,7 +209,9 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  //fbase get messaging token
+  //okundu bilgisi
+
+  
 
 // data['message']
   Widget _buildUserInput() {

@@ -5,15 +5,26 @@ import 'package:hcareapp/pages/YoneticiPages/Profile.dart';
 import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
 import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/authService.dart';
+import 'package:hcareapp/services/auth_services.dart';
+
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hcareapp/services/auth_services.dart';
 
 
 void main() {
   runApp(const AnaSayfaYonetici());
 }
 
-class AnaSayfaYonetici extends StatelessWidget {
+class AnaSayfaYonetici extends StatefulWidget {
   const AnaSayfaYonetici({Key? key}) : super(key: key);
 
+  @override
+  State<AnaSayfaYonetici> createState() => _AnaSayfaYoneticiState();
+}
+
+class _AnaSayfaYoneticiState extends State<AnaSayfaYonetici> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -64,7 +75,11 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
           },
         ),
       ),
-      body: _buildUserList(),
+      body: Column(
+        children: [
+          _buildUserList()
+        ],
+      ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.white, // BottomAppBar'ın arka plan rengini beyaza ayarladık
         elevation: 1.0,
@@ -166,6 +181,9 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
   }
 
   Widget _buildUserList() {
+    String? selectedNurse;
+    String? selectedSick;
+
     return StreamBuilder(
       stream: _chatService.getUsersStream(),
       builder: (context, snapshot) {
@@ -191,22 +209,99 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _dropdownlist('Hemşire seçmek için tıklayınız', nurseUserNames, context),
-            _dropdownlist('Hasta seçmek için tıklayınız', sickUserNames, context),
+            _dropdownlist('Hemşire seçmek için tıklayınız', nurseUserNames, context, (value) {
+              selectedNurse = value;
+            }),
+            _dropdownlist('Hasta seçmek için tıklayınız', sickUserNames, context, (value) {
+              selectedSick = value;
+            }),
+            const SizedBox(height: 20), // Buton ile dropdown arasında bir boşluk ekledim
+            Center(
+              child: Column(
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      authService().addDropdownValuesToFirestore(
+                        context: context,
+                        selectedNurse: selectedNurse,
+                        selectedSick: selectedSick,
+                      );
+
+                      setState(() {
+                        selectedNurse = null;
+                        selectedSick = null;
+                      });
+
+                    },
+                    child: Text(
+                      'Kaydet',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20.0,),
+                  TextButton(
+                    onPressed: () {
+                        authService().showPairedValuesPopup(context);
+                    },
+                    child: Text(
+                      'Eşleştirilmiş Kişileri Gör',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+            ),
+
           ],
         );
       },
     );
   }
 //sabir
-  Widget _dropdownlist(String hintText, List<String> userNames, BuildContext context) {
-    return DropdownMenu(
-      hintText: hintText,
-      dropdownMenuEntries: userNames.map<DropdownMenuEntry<String>>((userName) {
-        return DropdownMenuEntry(value: userName, label: userName);
+  Widget _dropdownlist(String hintText, List<String> userNames, BuildContext context, Function(String?) onValueChanged) {
+    String? selectedValue;
+
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        hintText: hintText,
+        border: OutlineInputBorder(),
+      ),
+      value: selectedValue,
+      onChanged: (value) {
+        onValueChanged(value);
+        selectedValue = value; // Seçilen değeri güncelle
+      },
+      items: userNames.map((userName) {
+        return DropdownMenuItem<String>(
+          value: userName,
+          child: Text(userName),
+        );
       }).toList(),
     );
   }
+
+
 
 
 }

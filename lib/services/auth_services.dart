@@ -1,10 +1,98 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; // Ekleme
+
 
 final firebaseAuth = FirebaseAuth.instance;
 final firebaseFirestore = FirebaseFirestore.instance;
 
 class authService {
+
+  Future<List<Map<String, dynamic>>> getPairedValues() async {
+    try {
+      List<Map<String, dynamic>> pairedValues = [];
+
+      // Veritabanından belirli koleksiyondaki tüm belgeleri al
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('nurseSickMatch').get();
+
+      // Her bir belgeyi dön ve eşleştirilmiş değerleri listeye ekle
+      querySnapshot.docs.forEach((doc) {
+        pairedValues.add({
+          'nurse': doc['nurseName'],
+          'sick': doc['SickName'],
+        });
+      });
+
+      return pairedValues;
+    } catch (e) {
+      print('Error getting paired values: $e');
+      return [];
+    }
+  }
+
+  Future<void> showPairedValuesPopup(BuildContext context) async {
+    try {
+      List<Map<String, dynamic>> pairedValues = await getPairedValues();
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Eşleştirilmiş Kişiler'),
+            content: pairedValues.isEmpty
+                ? Text('Eşleştirilmiş kişiler bulunamadı.')
+                : ListView.builder(
+              shrinkWrap: true,
+              itemCount: pairedValues.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: Text(
+                    'Hemşire: ${pairedValues[index]['nurse']}, Hasta: ${pairedValues[index]['sick']}',
+                  ),
+                );
+              },
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Kapat'),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (e) {
+      print('Error showing paired values popup: $e');
+    }
+  }
+
+
+
+  Future<void> addDropdownValuesToFirestore({
+    required BuildContext context,
+    required String? selectedNurse,
+    required String? selectedSick,
+  }) async {
+    try {
+      await FirebaseFirestore.instance.collection('nurseSickMatch').add({
+        'SickName': selectedNurse,
+        'nurseName': selectedSick,
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Başarıyla Eşleştirildi')));
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('$error'), // const kaldırıldı
+        ),
+      );
+    }
+  }
+
   Future<String?> signupHataYakalama(String email, String password, String ad,
       String soyad, String telNo, String roleName ,String bosImage) async {
     String? res;

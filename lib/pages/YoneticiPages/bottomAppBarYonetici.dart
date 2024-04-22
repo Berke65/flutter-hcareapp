@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:hcareapp/pages/NursePages/NursePageHome.dart';
-import 'package:hcareapp/pages/NursePages/NurseChat.dart';
-import 'package:hcareapp/pages/NursePages/NurseMedicine.dart';
-import 'package:hcareapp/pages/NursePages/Profile.dart';
+import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
+import 'package:hcareapp/pages/YoneticiPages/Profile.dart';
+import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
+import 'package:hcareapp/pages/YoneticiPages/YoneticiChat.dart';
 
-BottomAppBar BottomAppbarNurse(BuildContext context) {
+BottomAppBar BottomAppBarYonetici(BuildContext context) {
   return BottomAppBar(
     color: Colors.white, // BottomAppBar'ın arka plan rengini beyaza ayarladık
-    elevation: .0,
+    elevation: 1.0,
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -16,7 +16,7 @@ BottomAppBar BottomAppbarNurse(BuildContext context) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const NursePageHome(),
+                builder: (context) => const AnaSayfaYonetici(),
               ),
             );
           },
@@ -38,16 +38,16 @@ BottomAppBar BottomAppbarNurse(BuildContext context) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const NurseMedicine(),
+                builder: (context) => const RandevuYonetici(),
               ),
             );
           },
           child: const Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.local_pharmacy),
+              Icon(Icons.calendar_today),
               Text(
-                'İlaç Kontrolü',
+                'Randevu',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
@@ -60,7 +60,7 @@ BottomAppBar BottomAppbarNurse(BuildContext context) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const UsersChat(),
+                builder: (context) => const YoneticiChat(),
               ),
             );
           },

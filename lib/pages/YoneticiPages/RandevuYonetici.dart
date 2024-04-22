@@ -1,10 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hcareapp/main.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
-import 'package:hcareapp/pages/YoneticiPages/YoneticiChat.dart';
-import 'package:hcareapp/pages/YoneticiPages/Profile.dart';
+import 'package:hcareapp/pages/YoneticiPages/bottomAppBarYonetici.dart';
 
 void main() {
   runApp(const RandevuYonetici());
@@ -62,17 +59,10 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                 );
               },
             ),
-            //const Text('Çıkış Yap'),
           ],
         ),
       ),
       body: Container(
-        // decoration: const BoxDecoration(
-        // image: DecorationImage(
-        // image: AssetImage('images/bakalım1.png'),
-        // fit: BoxFit.cover,
-        // ),
-        // ),
         child: Column(
           children: [
             const SizedBox(height: 16),
@@ -148,6 +138,36 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                                   fontSize: 16,
                                 ),
                               ),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.cancel),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Randevuyu iptal etmek istediğinize emin misiniz?"),
+                                        content: const Text(
+                                            "Bu işlem geri alınamaz, emin misiniz?"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () => Navigator.of(context).pop(),
+                                            child: const Text("İptal"),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                randevular.removeAt(index);
+                                              });
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("Evet, İptal Et"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
                             );
                           } else {
                             return const SizedBox.shrink();
@@ -162,103 +182,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white, // BottomAppBar'ın arka plan rengini beyaza ayarladık
-        elevation: 1.0,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AnaSayfaYonetici(),
-                  ),
-                );
-              },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.home_outlined),
-                  Text(
-                    'Anasayfa',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RandevuYonetici(),
-                  ),
-                );
-              },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.calendar_today),
-                  Text(
-                    'Randevu',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const YoneticiChat(),
-                  ),
-                );
-              },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.chat),
-                  Text(
-                    'Sohbet',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileScreen(),
-                  ),
-                );
-              },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.account_circle_outlined),
-                  Text(
-                    'Profil',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      bottomNavigationBar: BottomAppBarYonetici(context),
     );
   }
 }

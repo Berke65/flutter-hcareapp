@@ -1,37 +1,26 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:hcareapp/main.dart';
 import 'package:hcareapp/pages/YoneticiPages/YoneticiChat.dart';
 import 'package:hcareapp/pages/YoneticiPages/Profile.dart';
 import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
-import 'package:hcareapp/pages/YoneticiPages/authService.dart';
-import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 
 void main() {
   runApp(const AnaSayfaYonetici());
 }
 
-class AnaSayfaYonetici extends StatefulWidget {
+class AnaSayfaYonetici extends StatelessWidget {
   const AnaSayfaYonetici({Key? key}) : super(key: key);
-
-  @override
-  State<AnaSayfaYonetici> createState() => _AnaSayfaYoneticiState();
-}
-
-class _AnaSayfaYoneticiState extends State<AnaSayfaYonetici> {
-
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
         appBarTheme: const AppBarTheme(
-          color: Colors.white54, // İstediğiniz rengi burada belirleyebilirsiniz
+          color: Colors.white54,
         ),
         bottomAppBarTheme: const BottomAppBarTheme(
           color: Colors.white,
-        )
+        ),
       ),
       home: const YoneticiHomePage(),
     );
@@ -47,9 +36,6 @@ class YoneticiHomePage extends StatefulWidget {
 
 class _YoneticiHomePageState extends State<YoneticiHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  final ChatService _chatService = ChatService();
-  final AuthService _authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +59,15 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
           },
         ),
       ),
-      body: _buildUserList(),
+      body: const Center(
+        child: Text(
+          'Boş Anasayfa Ekranı',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.white, // BottomAppBar'ın arka plan rengini beyaza ayarladık
         elevation: 1.0,
@@ -173,50 +167,4 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
       ),
     );
   }
-
-
-
-  Widget _buildUserList() {
-    return StreamBuilder(
-      stream: _chatService.getUsersStream(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return const Text('Error');
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        // Kullanıcı verilerini al
-        List<Map<String, dynamic>> usersData = snapshot.data as List<Map<String, dynamic>>;
-
-        // Hemşire rolüne sahip kullanıcıları filtrele
-        List<Map<String, dynamic>> nurseUsersData = usersData.where((userData) => userData['roleName'] == 'Hemşire').toList();
-        List<Map<String, dynamic>> sickUsersData = usersData.where((userData) => userData['roleName'] == 'Hasta').toList();
-
-
-        // Hemşire rolüne sahip kullanıcıların isimlerini al
-        List<String> nurseUserNames = nurseUsersData.map<String>((userData) => userData['name']).toList();
-        List<String> sickUserNames = sickUsersData.map<String>((userData) => userData['name']).toList();
-
-        // Hemşire ve hasta listelerini ayrı dropdownlarla oluştur
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _dropdownlist('Hemşire seçmek için tıklayınız', nurseUserNames, context),
-            _dropdownlist('Hasta seçmek için tıklayınız', sickUserNames, context),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _dropdownlist(String hintText, List<String> userNames, BuildContext context) {
-    return DropdownMenu(
-      hintText: hintText,
-      dropdownMenuEntries: userNames.map<DropdownMenuEntry<String>>((userName) {
-        return DropdownMenuEntry(value: userName, label: userName);
-      }).toList(),
-    );
-}
-
 }

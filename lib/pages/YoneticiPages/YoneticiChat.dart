@@ -1,14 +1,14 @@
 import 'package:hcareapp/pages/YoneticiPages/authService.dart';
+import 'package:hcareapp/pages/YoneticiPages/bottomAppBarYonetici.dart';
 import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/userTile.dart';
 import 'chatPage.dart';
+// import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
 import 'package:hcareapp/pages/YoneticiPages/Profile.dart';
 import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
-
-
 
 void main() {
   runApp(const YoneticiChat());
@@ -29,7 +29,7 @@ class _YoneticiChatState extends State<YoneticiChat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 150, // Başlık ile diğer öğeler arasındaki boşluğu sıfıra ayarlar
+        titleSpacing: 21, // Başlık ile diğer öğeler arasındaki boşluğu sıfıra ayarlar
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -39,107 +39,10 @@ class _YoneticiChatState extends State<YoneticiChat> {
           ],
         ),
         automaticallyImplyLeading: false, // Geri tuşunu kaldırır
-        centerTitle: true, // Başlığı ortalamaz
       ),
 
       body: _buildUserList(),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white, // BottomAppBar'ın arka plan rengini beyaza ayarladık
-        elevation: .0,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AnaSayfaYonetici(),
-                  ),
-                );
-              },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.home_outlined),
-                  Text(
-                    'Anasayfa',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RandevuYonetici(),
-                  ),
-                );
-              },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.calendar_today),
-                  Text(
-                    'Randevu',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const YoneticiChat(),
-                  ),
-                );
-              },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.chat),
-                  Text(
-                    'Sohbet',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileScreen(),
-                  ),
-                );
-              },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.account_circle_outlined),
-                  Text(
-                    'Profil',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      bottomNavigationBar: BottomAppBarYonetici(context),
 
     );
   }
@@ -167,13 +70,15 @@ class _YoneticiChatState extends State<YoneticiChat> {
       Map<String, dynamic> userData, BuildContext context) {
     if (userData['email'] != _authService.getCurrentUser()!.email) {
       return UserTile(
-          text: userData['email'],
+          text: userData['name'],
+          txt: '...',
+          imageProvider: NetworkImage(userData['image']),
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => ChatPage(
-                  receiverEmail: userData['email'],
+                  receiverEmail: userData['name'],
                   receiverID: userData['uid'],
                 ),
               ),

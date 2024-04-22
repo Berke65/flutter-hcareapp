@@ -2,13 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/authService.dart';
-import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
-import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
-import 'package:hcareapp/pages/YoneticiPages/Profile.dart';
-import 'package:hcareapp/pages/YoneticiPages/YoneticiChat.dart';
+import 'package:hcareapp/pages/YoneticiPages/bottomAppBarYonetici.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-
 
 class ChatPage extends StatefulWidget {
   final String receiverEmail;
@@ -31,6 +27,7 @@ class _ChatPageState extends State<ChatPage> {
   // Chat & auth services
   final ChatService _chatService = ChatService();
   final AuthService _authService = AuthService();
+
   // fbase messaging
 
   // for textfield focus
@@ -42,20 +39,23 @@ class _ChatPageState extends State<ChatPage> {
     super.initState();
     //add listener to focus mode
     myFocusNode.addListener(() {
-      if(myFocusNode.hasFocus)
-      {
+      if (myFocusNode.hasFocus) {
         // cause a delay so that the keyboard has time show up
         //then the amount of remaining space will be calculated,
         // the scroll down
-        Future.delayed(const Duration(milliseconds: 500),
-              () => scrollDown(),
+        Future.delayed(
+          const Duration(milliseconds: 500),
+          () => scrollDown(),
         );
       }
     });
     // wait a bit for listview to be built , then scroll the bottom
-    Future.delayed(const Duration(milliseconds: 500),
-          () => scrollDown(),);
+    Future.delayed(
+      const Duration(milliseconds: 500),
+      () => scrollDown(),
+    );
   }
+
   @override
   void dispose() {
     myFocusNode.dispose();
@@ -65,16 +65,18 @@ class _ChatPageState extends State<ChatPage> {
 
   // scroll controller
   final ScrollController _scrollController = ScrollController();
-  void scrollDown(){
+
+  void scrollDown() {
     _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-        duration: const Duration(seconds: 1),
-        curve: Curves.fastOutSlowIn);
+        duration: const Duration(seconds: 1), curve: Curves.fastOutSlowIn);
   }
+
   // Send message function
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
       // Send the message
-      await _chatService.sendMessage(widget.receiverID, _messageController.text);
+      await _chatService.sendMessage(
+          widget.receiverID, _messageController.text);
 
       scrollDown();
 
@@ -90,7 +92,7 @@ class _ChatPageState extends State<ChatPage> {
         title: Text(widget.receiverEmail),
         backgroundColor: Colors.white, // AppBar'ın arka plan rengi
         iconTheme:
-        const IconThemeData(color: Colors.black), // Geri butonunun rengi
+            const IconThemeData(color: Colors.black), // Geri butonunun rengi
       ),
       body: Column(
         children: [
@@ -102,43 +104,7 @@ class _ChatPageState extends State<ChatPage> {
           _buildUserInput(),
         ],
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white, // BottomAppBar'ın arka plan rengi
-        elevation: 1.0,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _buildBottomNavItem(
-                Icons.home_outlined,
-                'Anasayfa',
-                    () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const AnaSayfaYonetici()))),
-            _buildBottomNavItem(
-                Icons.calendar_today,
-                'Randevu',
-                    () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const RandevuYonetici()))),
-            _buildBottomNavItem(
-                Icons.chat,
-                'Sohbet',
-                    () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const YoneticiChat()))),
-            _buildBottomNavItem(
-                Icons.account_circle_outlined,
-                'Profil',
-                    () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ProfileScreen()))),
-          ],
-        ),
-      ),
+      bottomNavigationBar: BottomAppBarYonetici(context),
     );
   }
 
@@ -180,21 +146,26 @@ class _ChatPageState extends State<ChatPage> {
           controller: _scrollController,
           itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) {
-            var data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+            var data =
+                snapshot.data!.docs[index].data() as Map<String, dynamic>;
             bool isCurrentUser = data['senderId'] == widget.receiverID;
 
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
-                mainAxisAlignment: isCurrentUser ? MainAxisAlignment.start : MainAxisAlignment.end,
+                mainAxisAlignment: isCurrentUser
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Container(
                     constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * 0.7, // Max genişlik ayarı
+                      maxWidth: MediaQuery.of(context).size.width *
+                          0.7, // Max genişlik ayarı
                     ),
                     decoration: BoxDecoration(
-                      color: isCurrentUser ? Colors.blue[100] : Colors.grey[300],
+                      color:
+                          isCurrentUser ? Colors.blue[100] : Colors.grey[300],
                       borderRadius: BorderRadius.circular(12),
                     ),
                     padding: const EdgeInsets.all(14),
@@ -214,7 +185,8 @@ class _ChatPageState extends State<ChatPage> {
                       ],
                     ),
                   ),
-                  SizedBox(width: 4), // Saat bilgisinden mesaj kutusuna bir boşluk ekleyin
+                  SizedBox(width: 4),
+                  // Saat bilgisinden mesaj kutusuna bir boşluk ekleyin
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -233,13 +205,13 @@ class _ChatPageState extends State<ChatPage> {
             );
           },
         );
-
       },
     );
   }
 
-  //fbase get messaging token
+  //okundu bilgisi
 
+  
 
 // data['message']
   Widget _buildUserInput() {
@@ -260,7 +232,7 @@ class _ChatPageState extends State<ChatPage> {
                   // Kenarlık
                   borderRadius: BorderRadius.circular(20),
                   borderSide:
-                  const BorderSide(color: Colors.blue), // Kenarlık rengi
+                      const BorderSide(color: Colors.blue), // Kenarlık rengi
                 ),
               ),
             ),

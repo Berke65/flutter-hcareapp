@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hcareapp/main.dart';
-
 
 class UserTile extends StatelessWidget {
   final String text;
@@ -10,12 +8,12 @@ class UserTile extends StatelessWidget {
   final void Function()? onTap;
 
   const UserTile({
-    super.key,
+    Key? key,
     required this.text,
     required this.txt,
     required this.onTap,
     required this.imageProvider,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,31 +31,35 @@ class UserTile extends StatelessWidget {
             CircleAvatar(
               radius: 30.0,
               backgroundImage: imageProvider,
-              child: const Stack(
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                  )
-                ],
-              ),
+              child: imageProvider == null ? const Icon(Icons.person) : null, //default yerine ikon koyma ama çalışmıyor çok mantı
             ),
-            const SizedBox(width: 10,),
+            const SizedBox(width: 10),
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   text,
                   style: GoogleFonts.tauri(
-                    textStyle: const TextStyle(color: Colors.black, letterSpacing: .5,fontWeight: FontWeight.bold),
+                    textStyle: const TextStyle(
+                      color: Colors.black,
+                      letterSpacing: .5,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                Text(txt,
+                Text(
+                  txt,
                   style: GoogleFonts.tauri(
-                    textStyle: const TextStyle(color: Colors.black, letterSpacing: .5, fontSize: 15),
+                    textStyle: const TextStyle(
+                      color: Colors.black,
+                      letterSpacing: .5,
+                      fontSize: 15,
+                    ),
                   ),
                 ),
               ],
             ),
-          ]
+          ],
         ),
       ),
     );

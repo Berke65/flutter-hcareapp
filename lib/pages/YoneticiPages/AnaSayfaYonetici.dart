@@ -1,17 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hcareapp/main.dart';
-import 'package:hcareapp/pages/YoneticiPages/YoneticiChat.dart';
-import 'package:hcareapp/pages/YoneticiPages/Profile.dart';
-import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
+import 'package:hcareapp/pages/YoneticiPages/bottomAppBarYonetici.dart';
 import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/authService.dart';
 import 'package:hcareapp/services/auth_services.dart';
 
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hcareapp/services/auth_services.dart';
-
 
 void main() {
   runApp(const AnaSayfaYonetici());
@@ -76,107 +72,9 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
         ),
       ),
       body: Column(
-        children: [
-          _buildUserList()
-        ],
+        children: [_buildUserList()],
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white, // BottomAppBar'ın arka plan rengini beyaza ayarladık
-        elevation: 1.0,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AnaSayfaYonetici(),
-                  ),
-                );
-              },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.home_outlined),
-                  Text(
-                    'Anasayfa',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RandevuYonetici(),
-                  ),
-                );
-              },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.calendar_today),
-                  Text(
-                    'Randevu',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const YoneticiChat(),
-                  ),
-                );
-              },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.chat),
-                  Text(
-                    'Sohbet',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileScreen(),
-                  ),
-                );
-              },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.account_circle_outlined),
-                  Text(
-                    'Profil',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      bottomNavigationBar: BottomAppBarYonetici(context),
     );
   }
 
@@ -194,98 +92,225 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
           return const Center(child: CircularProgressIndicator());
         }
         // Kullanıcı verilerini al
-        List<Map<String, dynamic>> usersData = snapshot.data as List<Map<String, dynamic>>;
+        List<Map<String, dynamic>> usersData =
+            snapshot.data as List<Map<String, dynamic>>;
 
         // Hemşire rolüne sahip kullanıcıları filtrele
-        List<Map<String, dynamic>> nurseUsersData = usersData.where((userData) => userData['roleName'] == 'Hemşire').toList();
-        List<Map<String, dynamic>> sickUsersData = usersData.where((userData) => userData['roleName'] == 'Hasta').toList();
-
+        List<Map<String, dynamic>> nurseUsersData = usersData
+            .where((userData) => userData['roleName'] == 'Hemşire')
+            .toList();
+        List<Map<String, dynamic>> sickUsersData = usersData
+            .where((userData) => userData['roleName'] == 'Hasta')
+            .toList();
 
         // Hemşire rolüne sahip kullanıcıların isimlerini al
-        List<String> nurseUserNames = nurseUsersData.map<String>((userData) => userData['name']).toList();
-        List<String> sickUserNames = sickUsersData.map<String>((userData) => userData['name']).toList();
+        List<String> nurseUserNames =
+            nurseUsersData.map<String>((userData) => userData['name']).toList();
+        List<String> sickUserNames =
+            sickUsersData.map<String>((userData) => userData['name']).toList();
 
-        // Hemşire ve hasta listelerini ayrı dropdownlarla oluştur
+        // Hemşire ve hasta listelerini aynı container içinde dropdownlarla ve butonlarla oluştur
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _dropdownlist('Hemşire seçmek için tıklayınız', nurseUserNames, context, (value) {
-              selectedNurse = value;
-            }),
-            _dropdownlist('Hasta seçmek için tıklayınız', sickUserNames, context, (value) {
-              selectedSick = value;
-            }),
-            const SizedBox(height: 20), // Buton ile dropdown arasında bir boşluk ekledim
-            Center(
-              child: Column(
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      authService().addDropdownValuesToFirestore(
-                        context: context,
-                        selectedNurse: selectedNurse,
-                        selectedSick: selectedSick,
-                      );
-
-                      setState(() {
-                        selectedNurse = null;
-                        selectedSick = null;
-                      });
-
-                    },
-                    child: Text(
-                      'Kaydet',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20.0,),
-                  TextButton(
-                    onPressed: () {
-                        authService().showPairedValuesPopup(context);
-                    },
-                    child: Text(
-                      'Eşleştirilmiş Kişileri Gör',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
+            const Center(
+              child: Text(
+                'Yönetim Sayfasına Hoşgeldiniz!',
+                style: TextStyle(
+                  fontSize: 23,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+            SizedBox(height: 40),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white54,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
+              child: Center(
+                child: Column(
+                  children: [
+                    const Text(
+                      'Hemşire Görevlendirme Sayfası',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 25),
+                    SizedBox(width: 240,
+                      height: 55,
+                      child: _dropdownlist(
+                        'Hemşire seçmek için tıklayınız',
+                        nurseUserNames,
+                        context,
+                        (value) {
+                          selectedNurse = value;
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 10), // Dropdownlar arası boşluk
+                    SizedBox(
+                      width: 240,
+                      height: 55,
+                      child: _dropdownlist(
+                        'Hasta seçmek için tıklayınız',
+                        sickUserNames,
+                        context,
+                        (value) {
+                          selectedSick = value;
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 10),
+                        TextButton(
+                          onPressed: () {
+                            authService().addDropdownValuesToFirestore(
+                              context: context,
+                              selectedNurse: selectedNurse,
+                              selectedSick: selectedSick,
+                            );
 
+                            setState(() {
+                              selectedNurse = null;
+                              selectedSick = null;
+                            });
+                          },
+                          style: TextButton.styleFrom(
+                            side: BorderSide(color: Colors.grey),
+                            backgroundColor: Colors.grey[300],
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 80,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          child: const Text(
+                            'Kaydet',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            authService().showPairedValuesPopup(context);
+                          },
+                          style: TextButton.styleFrom(
+                            side: BorderSide(color: Colors.grey),
+                            backgroundColor: Colors.grey[300],
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 38,
+
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          child: const Text(
+                            'Eşleştirilmiş Kişileri Gör',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
-
+            const SizedBox(height: 20),
+            // Center(
+            //   child: Column(
+            //     children: [
+            //       TextButton(
+            //         onPressed: () {
+            //           authService().addDropdownValuesToFirestore(
+            //             context: context,
+            //             selectedNurse: selectedNurse,
+            //             selectedSick: selectedSick,
+            //           );
+            //
+            //           setState(() {
+            //             selectedNurse = null;
+            //             selectedSick = null;
+            //           });
+            //         },
+            //         style: TextButton.styleFrom(
+            //           backgroundColor: Colors.blue,
+            //           padding: const EdgeInsets.symmetric(
+            //               horizontal: 40, vertical: 15),
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.circular(30),
+            //           ),
+            //         ),
+            //         child: const Text(
+            //           'Kaydet',
+            //           style: TextStyle(
+            //             color: Colors.white,
+            //             fontWeight: FontWeight.bold,
+            //           ),
+            //         ),
+            //       ),
+            //       const SizedBox(height: 20.0),
+            //       TextButton(
+            //         onPressed: () {
+            //           authService().showPairedValuesPopup(context);
+            //         },
+            //         style: TextButton.styleFrom(
+            //           backgroundColor: Colors.blue,
+            //           padding: const EdgeInsets.symmetric(
+            //               horizontal: 40, vertical: 15),
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.circular(30),
+            //           ),
+            //         ),
+            //         child: const Text(
+            //           'Eşleştirilmiş Kişileri Gör',
+            //           style: TextStyle(
+            //             color: Colors.white,
+            //             fontWeight: FontWeight.bold,
+            //           ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         );
       },
     );
   }
-//sabir
-  Widget _dropdownlist(String hintText, List<String> userNames, BuildContext context, Function(String?) onValueChanged) {
+
+  Widget _dropdownlist(String hintText, List<String> userNames,
+      BuildContext context, Function(String?) onValueChanged) {
     String? selectedValue;
 
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         hintText: hintText,
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
       ),
       value: selectedValue,
       onChanged: (value) {
@@ -300,8 +325,4 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
       }).toList(),
     );
   }
-
-
-
-
 }

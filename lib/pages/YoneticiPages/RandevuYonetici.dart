@@ -1,4 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hcareapp/main.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:hcareapp/pages/YoneticiPages/bottomAppBarYonetici.dart';
@@ -41,7 +45,13 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
       key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Image.asset('images/gero1.jpg', fit: BoxFit.cover, height: 38),
+        title: const Text(
+          'Randevular',
+          style: TextStyle(
+            fontSize: 27,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         centerTitle: true,
         leading: Column(
           children: [
@@ -58,6 +68,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                   ),
                 );
               },
+
             ),
           ],
         ),
@@ -66,13 +77,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
         child: Column(
           children: [
             const SizedBox(height: 16),
-            const Text(
-              'Randevular',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),

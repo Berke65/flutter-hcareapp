@@ -74,18 +74,7 @@ class Main extends StatelessWidget {
                           );
                         },
                       ),
-                      buildGirisKutusu(
-                        icon: Icons.person_add_alt,
-                        text: 'YONETİCİ',
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const AnaSayfaYonetici(),
-                            ),
-                          );
-                        },
-                      ),
+
                     ],
                   ),
                 ),

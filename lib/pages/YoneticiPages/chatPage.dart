@@ -33,6 +33,7 @@ class _ChatPageState extends State<ChatPage> {
   // for textfield focus
 
   FocusNode myFocusNode = FocusNode();
+  String userProfileImageURL = '';
 
   @override
   void initState() {
@@ -83,13 +84,32 @@ class _ChatPageState extends State<ChatPage> {
       // Clear text controller
       _messageController.clear();
     }
+    getUserProfileImageURL(widget.receiverID).then((url) {
+      setState(() {
+        userProfileImageURL = url;
+      });
+    });
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.receiverEmail),
+        title: Row(
+          children: [
+            // Profil resmi
+            CircleAvatar(
+              backgroundImage: userProfileImageURL.isNotEmpty
+                  ? NetworkImage(userProfileImageURL)
+                  : AssetImage('assets/default_avatar.jpg') as ImageProvider, // Varsayılan bir avatar ekleyebilirsiniz
+              radius: 20,
+            ),
+
+            SizedBox(width: 8), // Resim ile başlık arasındaki boşluk
+            Text(widget.receiverEmail),
+          ],
+        ),
         backgroundColor: Colors.white, // AppBar'ın arka plan rengi
         iconTheme:
             const IconThemeData(color: Colors.black), // Geri butonunun rengi
@@ -106,7 +126,7 @@ class _ChatPageState extends State<ChatPage> {
       ),
       bottomNavigationBar: BottomAppBarYonetici(context),
     );
-  }
+  } // resim sonra bakılacak !!!!!!!
 
   // Alt gezinme öğesi oluşturma
   Widget _buildBottomNavItem(IconData icon, String label, Function() onTap) {
@@ -124,6 +144,13 @@ class _ChatPageState extends State<ChatPage> {
       ),
     );
   }
+  // Firestore'dan kullanıcının profil resim URL'sini almak için bir metod
+  Future<String> getUserProfileImageURL(String userID) async {
+    var userDoc = await FirebaseFirestore.instance.collection('users').doc(userID).get();
+    // Kullanıcının belgesinden "image" alanını döndür
+    return userDoc['image'] ?? ''; // Eğer image alanı yoksa veya boşsa, boş bir string döndürür
+  }
+
 
 // Mesaj listesini oluşturma
   Widget _buildMessageList() {
@@ -211,7 +238,7 @@ class _ChatPageState extends State<ChatPage> {
 
   //okundu bilgisi
 
-  
+
 
 // data['message']
   Widget _buildUserInput() {

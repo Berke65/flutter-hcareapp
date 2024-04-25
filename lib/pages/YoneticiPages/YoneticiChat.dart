@@ -1,14 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:hcareapp/pages/YoneticiPages/authService.dart';
 import 'package:hcareapp/pages/YoneticiPages/bottomAppBarYonetici.dart';
 import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/userTile.dart';
 import 'chatPage.dart';
-// import 'package:intl/intl.dart';
 
-import 'package:flutter/material.dart';
 void main() {
   runApp(const YoneticiChat());
 }
+
 class YoneticiChat extends StatefulWidget {
   const YoneticiChat({Key? key}) : super(key: key);
 
@@ -19,6 +19,8 @@ class YoneticiChat extends StatefulWidget {
 class _YoneticiChatState extends State<YoneticiChat> {
   final ChatService _chatService = ChatService();
   final AuthService _authService = AuthService();
+
+  String selectedRole = 'Yönetim'; // Default selected role
 
   @override
   Widget build(BuildContext context) {
@@ -43,19 +45,25 @@ class _YoneticiChatState extends State<YoneticiChat> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  // İlk butona tıklandığında yapılacak işlemler
+                  setState(() {
+                    selectedRole = 'Yönetim';
+                  });
                 },
                 child: Text('Yönetim'),
               ),
               ElevatedButton(
                 onPressed: () {
-                  // İkinci butona tıklandığında yapılacak işlemler
+                  setState(() {
+                    selectedRole = 'Hasta';
+                  });
                 },
                 child: Text('Hasta'),
               ),
               ElevatedButton(
                 onPressed: () {
-                  // Üçüncü butona tıklandığında yapılacak işlemler
+                  setState(() {
+                    selectedRole = 'Hemşire';
+                  });
                 },
                 child: Text('Hemşire'),
               ),
@@ -79,9 +87,13 @@ class _YoneticiChatState extends State<YoneticiChat> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
+        // Filtreleme işlemi
+        final filteredUsers = snapshot.data!.where((userData) =>
+        userData['roleName'] == selectedRole
+        ).toList();
         return Expanded(
           child: ListView(
-            children: snapshot.data!
+            children: filteredUsers
                 .map<Widget>((userData) =>
                 _buildUserListItem(userData, context))
                 .toList(),
@@ -91,12 +103,14 @@ class _YoneticiChatState extends State<YoneticiChat> {
     );
   }
 
+
   Widget _buildUserListItem(
       Map<String, dynamic> userData, BuildContext context) {
     if (userData['email'] != _authService.getCurrentUser()!.email) {
       return UserTile(
         text: userData['name'],
         txt: '...',
+        roleTxt: userData['roleName'],
         imageProvider: NetworkImage(userData['image']),
         onTap: () {
           Navigator.push(

@@ -4,12 +4,14 @@ import 'package:google_fonts/google_fonts.dart';
 class UserTile extends StatelessWidget {
   final String text;
   final String txt;
+  final String roleTxt;
   final ImageProvider<Object>? imageProvider;
   final void Function()? onTap;
 
   const UserTile({
     Key? key,
     required this.text,
+    required this.roleTxt,
     required this.txt,
     required this.onTap,
     required this.imageProvider,
@@ -21,7 +23,7 @@ class UserTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.blue[100],
+          color: Colors.white,
           borderRadius: BorderRadius.circular(12),
         ),
         margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 17),
@@ -57,6 +59,10 @@ class UserTile extends StatelessWidget {
                     ),
                   ),
                 ),
+                Text(
+                  roleTxt,
+
+                )
               ],
             ),
           ],

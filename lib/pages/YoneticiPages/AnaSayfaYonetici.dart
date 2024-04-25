@@ -109,7 +109,6 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
         List<String> sickUserNames =
             sickUsersData.map<String>((userData) => userData['name']).toList();
 
-        // Hemşire ve hasta listelerini aynı container içinde dropdownlarla ve butonlarla oluştur
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
-import 'package:hcareapp/pages/YoneticiPages/Profile.dart';
+import 'package:hcareapp/pages/SickPages/Profile.dart';
 import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
 import 'package:hcareapp/pages/YoneticiPages/YoneticiChat.dart';
 

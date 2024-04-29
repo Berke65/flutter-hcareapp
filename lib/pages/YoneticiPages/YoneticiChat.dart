@@ -44,6 +44,7 @@ class _YoneticiChatState extends State<YoneticiChat> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ElevatedButton(
+                //style:  ButtonStyle(textStyle:  ),
                 onPressed: () {
                   setState(() {
                     selectedRole = 'Yönetim';

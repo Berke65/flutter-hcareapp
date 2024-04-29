@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
 import 'package:hcareapp/pages/NursePages/NursePageHome.dart';
 import 'package:hcareapp/pages/auth/passwd.dart';
+import 'package:hcareapp/pages/SickPages/SickAnasayfa.dart';
 
 
 void main() {
@@ -116,12 +117,25 @@ class _GirisYapState extends State<GirisYap> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => NursePageHome(),
+                            builder: (context) => SickAnasayfa(),
                           ),
                         );
                       }
                       ),
                       customSizedBox(),
+
+                      CustomButton(
+                        icon: Icons.sick,
+                        text: 'Hasta Sayfasına Giriş',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>SickAnasayfa(),
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),

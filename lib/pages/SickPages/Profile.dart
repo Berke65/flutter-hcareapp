@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:hcareapp/pages/YoneticiPages/bottomAppBarYonetici.dart';
+import 'package:hcareapp/pages/SickPages/BottomAppBarSick.dart';
 import 'package:hcareapp/main.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -64,7 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               : _buildUserProfile(userData);
         },
       ),
-      bottomNavigationBar: BottomAppBarYonetici(context),
+      bottomNavigationBar:BottomAppBarSick(context),
     );
   }
 
@@ -164,15 +164,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 16.0),
           ListTile(
             leading: const Icon(Icons.email_outlined),
-            title: Text(userData['email'],style: TextStyle(fontSize: 18),),
+            title: Text(
+              userData['email'],
+              style: TextStyle(fontSize: 18),
+            ),
           ),
           ListTile(
             leading: const Icon(Icons.phone_outlined),
-            title: Text(userData['telNo'],style: TextStyle(fontSize: 18),),
+            title: Text(
+              userData['telNo'],
+              style: TextStyle(fontSize: 18),
+            ),
           ),
           ListTile(
             leading: const Icon(Icons.account_circle_outlined),
-            title: Text(userData['surname'],style: TextStyle(fontSize: 18),),
+            title: Text(
+              userData['surname'],
+              style: TextStyle(fontSize: 18),
+            ),
           ),
           const SizedBox(height: 16.0),
           ElevatedButton(

@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hcareapp/main.dart';
 import 'package:flutter/material.dart';
+import 'package:hcareapp/pages/SickPages/SickInformation.dart';
 import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
 import 'package:hcareapp/pages/NursePages/NursePageHome.dart';
 import 'package:hcareapp/pages/auth/passwd.dart';
 import 'package:hcareapp/pages/SickPages/SickAnasayfa.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 void main() {
@@ -258,8 +260,58 @@ class _GirisYapState extends State<GirisYap> {
 
       final result = await signInHataYakalama(email, passwd);
       if (result == 'success') {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const AnaSayfaYonetici()));
+
+        QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore.instance
+            .collection('users')
+            .where('email', isEqualTo: email)
+            .get();
+
+        QuerySnapshot<Map<String, dynamic>> sickQuery = await FirebaseFirestore.instance
+            .collection('hastaBilgileri')
+            .get();
+
+        // Eğer kullanıcı bulunduysa ve sadece bir tane varsa
+        if (userQuery.docs.isNotEmpty && userQuery.docs.length == 1) {
+
+          String roleName = userQuery.docs.first.data()['roleName'];
+
+
+          var hastaMail = sickQuery.docs.first.data()['hastaMail'];
+
+          if (roleName == "Yönetim") {
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => AnaSayfaYonetici()));
+          } else if (roleName == "Hemşire") {
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => NursePageHome()));
+          } else if (roleName == "Hasta") {
+
+            if (hastaMail != email) {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text(
+                  'Bilgilerinizi Eksiksiz Doldurunuz! (GEROPİTAL EVDE SAĞLIK HİZMETLERİ)',
+                ),
+              ));
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (context) => SickInformation()));
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text(
+                  'Aşama Tamamlandı Anasayfaya yönlendiriliyorsunuz (GEROPİTAL EVDE SAĞLIK HİZMETLERİ)',
+                ),
+              ));
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (context) => SickAnasayfa()));
+            }
+          }
+
+        } else {
+          // Kullanıcı bulunamadı veya birden fazla kullanıcı varsa null döndür
+          return null;
+        }
+
+        //Navigator.pushReplacement(
+         //   context, MaterialPageRoute(builder: (context) => const AnaSayfaYonetici()));
       } else {
         showDialog(
             context: context,

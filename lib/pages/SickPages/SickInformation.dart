@@ -228,14 +228,8 @@ class _SickInformationState extends State<SickInformation> {
     String? res;
     String? uid = FirebaseAuth.instance.currentUser?.uid;
 
-    QuerySnapshot<Map<String, dynamic>> sickMail = await FirebaseFirestore.instance
-        .collection('users')
-        .where('email')
-        .get();
-
     try {
       await firebaseFirestore.collection('hastaBilgileri').doc(uid).set({
-        'hastaAd' : sickMail,
         'hastaKaliciHastalik': selectedKaliciHastaliklar,
         'hastaKanGrup' : selectedKanGrubu,
         'hastaKullanılanİlaclar' : ilaclar,
@@ -247,10 +241,8 @@ class _SickInformationState extends State<SickInformation> {
           context, MaterialPageRoute(builder: (context) => SickAnasayfa()));
     } catch (e) {
       print('Firestore veri ekleme hatası: $e');
-      res = "Bir hata oluştu, lütfen tekrar deneyin.";
+      res = "Bir hata oluştu, lütfen tekrar deneyin."; //forhotrestart
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Bilinmeyen bir hata oluştu lütfen tekrar deneyiniz')));
     }
   }
-
-
 }

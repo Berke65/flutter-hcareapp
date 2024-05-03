@@ -154,7 +154,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           const SizedBox(height: 8.0),
-          Text(
+          Text("rol: " +
             userData['roleName'],
             style: const TextStyle(
               fontSize: 16.0,
@@ -172,8 +172,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           ListTile(
             leading: const Icon(Icons.account_circle_outlined),
-            title: Text(userData['surname'],style: TextStyle(fontSize: 18),),
+            title: Text(userData['name'] + " " +userData['surname'],style: TextStyle(fontSize: 18),),
           ),
+
           const SizedBox(height: 16.0),
           ElevatedButton(
             onPressed: () {

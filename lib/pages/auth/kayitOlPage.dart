@@ -14,6 +14,7 @@ class kayitOlPage extends StatefulWidget {
 
 class _kayitOlPageState extends State<kayitOlPage> {
   late String ad, soyad, telNo, email, password;
+  String bosImage = 'https://firebasestorage.googleapis.com/v0/b/hcareapp-ee339.appspot.com/o/images%2Fdefaul_user.jpg?alt=media&token=9758a7d1-027e-4a31-901e-40bd6b1d5ad6';
   final formKey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -372,7 +373,6 @@ class _kayitOlPageState extends State<kayitOlPage> {
           return;
         }
 
-        String ImageYer = 'https://firebasestorage.googleapis.com/v0/b/hcareapp-ee339.appspot.com/o/images%2Fdefaul_user.jpg?alt=media&token=9758a7d1-027e-4a31-901e-40bd6b1d5ad6';
 
         if (kodData.exists && kodData.data()!['code'] == girilenKod) {
           // Kodlar eşleştiğinde kayıt işlemi devam eder
@@ -383,7 +383,7 @@ class _kayitOlPageState extends State<kayitOlPage> {
             soyad,
             telNo,
             rolName!,
-            ImageYer,
+            bosImage,
           );
           if (result == 'success') {
             Navigator.pushReplacement(

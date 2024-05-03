@@ -154,6 +154,7 @@ class _ChatPageState extends State<ChatPage> {
 
 // Mesaj listesini oluşturma
   Widget _buildMessageList() {
+
     String senderID = _authService.getCurrentUser()!.uid;
     return StreamBuilder(
       stream: _chatService.getMessages(widget.receiverID, senderID),

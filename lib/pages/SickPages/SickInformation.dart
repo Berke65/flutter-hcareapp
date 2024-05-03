@@ -228,8 +228,17 @@ class _SickInformationState extends State<SickInformation> {
     String? res;
     String? uid = FirebaseAuth.instance.currentUser?.uid;
 
+    QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore.instance
+        .collection('users')
+        .where('uid', isEqualTo: uid)
+        .get();
+
+    String currentUserEmail = userQuery.docs.first.data()['email'];
+
+
     try {
       await firebaseFirestore.collection('hastaBilgileri').doc(uid).set({
+        'hastaMail' : currentUserEmail,
         'hastaKaliciHastalik': selectedKaliciHastaliklar,
         'hastaKanGrup' : selectedKanGrubu,
         'hastaKullanılanİlaclar' : ilaclar,

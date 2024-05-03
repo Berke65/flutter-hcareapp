@@ -102,7 +102,7 @@ class authService {
         password: password,
       );
 
-      bosImage = 'burayaimagebaglantısıgelecekdokunmayın';
+      bosImage = 'https://firebasestorage.googleapis.com/v0/b/hcareapp-ee339.appspot.com/o/images%2Fdefaul_user.jpg?alt=media&token=9758a7d1-027e-4a31-901e-40bd6b1d5ad6';
 
       // Kullanıcı başarıyla kaydedildiyse
       if (result.user != null) {

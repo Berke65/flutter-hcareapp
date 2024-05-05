@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+import 'package:hcareapp/main.dart';
+import 'package:hcareapp/pages/NursePages/NursePageHome.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:hcareapp/pages/NursePages/BottomAppbarNurse.dart';
+
 class ProfileScreen extends StatefulWidget {
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -17,7 +19,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   String imageUrl = '';
 
-
   bool _isEditingProfile = false;
   Map<String, dynamic> _editedProfileData = {};
 
@@ -25,10 +26,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kullanıcı Profilim'),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.home_outlined,
+            size: 30,
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => NursePageHome(),
+              ),
+            );
+          },
+        ),
+        automaticallyImplyLeading: false,
+        title: const Text('Profil'),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        height: 72,
+        color: Colors.white, // BottomAppBar'ın arka plan rengi
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Main(),
+                  ),
+                );
+              },
+              child: const Row(
+                children: <Widget>[
+                  Icon(Icons.exit_to_app, color: Colors.red), // Çıkış ikonu
+                  SizedBox(width: 5.0),
+                  Text(
+                    'Çıkış Yap',
+                    style: TextStyle(color: Colors.red),
+                  ), // Çıkış yazısı
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
       body: FutureBuilder<DocumentSnapshot>(
-        future: _firestore.collection('users').doc(_auth.currentUser!.uid).get(),
+        future:
+        _firestore.collection('users').doc(_auth.currentUser!.uid).get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -47,7 +93,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               : _buildUserProfile(userData);
         },
       ),
-      bottomNavigationBar: BottomAppbarNurse(context),
     );
   }
 
@@ -68,28 +113,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: TextButton(
                       onPressed: () async {
-
-                        final file = await ImagePicker().pickImage(source: ImageSource.gallery);
+                        final file = await ImagePicker()
+                            .pickImage(source: ImageSource.gallery);
                         if (file == null) return;
 
-                        String fileName = DateTime.now().microsecondsSinceEpoch.toString();
+                        String fileName =
+                        DateTime.now().microsecondsSinceEpoch.toString();
 
-                        Reference referenceRoot = FirebaseStorage.instance.ref();
-                        Reference referenceDirImages = referenceRoot.child('images');
-                        Reference referenceImagesToUpload = referenceDirImages.child(fileName);
+                        Reference referenceRoot =
+                        FirebaseStorage.instance.ref();
+                        Reference referenceDirImages =
+                        referenceRoot.child('images');
+                        Reference referenceImagesToUpload =
+                        referenceDirImages.child(fileName);
 
                         try {
-                          await referenceImagesToUpload.putFile(File(file.path));
-                          imageUrl = await referenceImagesToUpload.getDownloadURL();
+                          await referenceImagesToUpload
+                              .putFile(File(file.path));
+                          imageUrl =
+                          await referenceImagesToUpload.getDownloadURL();
 
                           // Burada veritabanına ekleme yapılacak
                           User? user = _auth.currentUser;
                           String userID = user!.uid;
 
-                          await FirebaseFirestore.instance.collection('users').doc(userID).update({
-                            'image': imageUrl, // Ekstra alanı ve değerini güncelle
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(userID)
+                              .update({
+                            'image': imageUrl,
+                            // Ekstra alanı ve değerini güncelle
                           });
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profil Resminizin aktifleşmesi icin lütfen sayfayı yenileyin')));
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text(
+                                  'Profil Resminizin aktifleşmesi icin lütfen sayfayı yenileyin')));
                         } catch (error) {
                           // Hata durumunda yapılacak işlemler
                           print('Hata oluştu: $error');
@@ -102,7 +159,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             return AlertDialog(
                               content: Image.network(
                                 userData['image'],
-                                fit: BoxFit.contain, // Resmi AlertDialog içinde büyük göster
+                                fit: BoxFit
+                                    .contain, // Resmi AlertDialog içinde büyük göster
                               ),
                             );
                           },
@@ -124,8 +182,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           const SizedBox(height: 8.0),
-          Text("rol: " +
-            userData['roleName'],
+          Text(
+            "rol: " + userData['roleName'],
             style: const TextStyle(
               fontSize: 16.0,
               color: Colors.grey,
@@ -134,15 +192,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 16.0),
           ListTile(
             leading: const Icon(Icons.email_outlined),
-            title: Text(userData['email']),
+            title: Text(
+              userData['email'],
+              style: const TextStyle(fontSize: 18),
+            ),
           ),
           ListTile(
             leading: const Icon(Icons.phone_outlined),
-            title: Text(userData['telNo']),
+            title: Text(
+              userData['telNo'],
+              style: const TextStyle(fontSize: 18),
+            ),
           ),
           ListTile(
             leading: const Icon(Icons.account_circle_outlined),
-            title: Text(userData['name'] + " " + userData['surname']),
+            title: Text(
+              userData['name'] + " " + userData['surname'],
+              style: const TextStyle(fontSize: 18),
+            ),
           ),
           const SizedBox(height: 16.0),
           ElevatedButton(
@@ -205,6 +272,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
             },
             child: const Text('Değişiklikleri Kaydet'),
           ),
+          const SizedBox(height: 0.0),
+          SizedBox(
+            width: 150,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(),
+                  ),
+                );
+              },
+              child: const Text('İptal Et'),
+            ),
+          ),
         ],
       ),
     );
@@ -221,14 +303,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     String userID = user!.uid;
 
     try {
-      await FirebaseFirestore.instance.collection('users').doc(userID).update(newProfileData);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profil başarıyla güncellendi')));
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userID)
+          .update(newProfileData);
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profil başarıyla güncellendi')));
       setState(() {
         _isEditingProfile = false;
       });
     } catch (error) {
       print('Profil güncelleme hatası: $error');
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profil güncellenirken bir hata oluştu')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Profil güncellenirken bir hata oluştu')));
     }
   }
 }

@@ -1,11 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/rendering.dart';
 import 'package:hcareapp/main.dart';
 import 'package:hcareapp/pages/auth/GirisYap.dart';
 import 'package:hcareapp/services/auth_services.dart';
-
-class kayitOlPage extends StatefulWidget {
+void main() {
+  runApp(const kayitOlPage());
+}
+class kayitOlPage extends StatefulWidget   {
   const kayitOlPage({Key? key}) : super(key: key);
 
   @override
@@ -14,11 +17,11 @@ class kayitOlPage extends StatefulWidget {
 
 class _kayitOlPageState extends State<kayitOlPage> {
   late String ad, soyad, telNo, email, password;
-  String bosImage = 'https://firebasestorage.googleapis.com/v0/b/hcareapp-ee339.appspot.com/o/images%2Fdefaul_user.jpg?alt=media&token=9758a7d1-027e-4a31-901e-40bd6b1d5ad6';
+  String bosImage =
+      'https://firebasestorage.googleapis.com/v0/b/hcareapp-ee339.appspot.com/o/images%2Fdefaul_user.jpg?alt=media&token=9758a7d1-027e-4a31-901e-40bd6b1d5ad6';
   final formKey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
 
   String? girilenKod;
   String? rolName;
@@ -31,14 +34,8 @@ class _kayitOlPageState extends State<kayitOlPage> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
-    final screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -50,6 +47,9 @@ class _kayitOlPageState extends State<kayitOlPage> {
           ),
         ),
         child: SingleChildScrollView(
+          // scrollDirection: Axis.vertical,
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
@@ -60,13 +60,24 @@ class _kayitOlPageState extends State<kayitOlPage> {
                   height: screenHeight * 0.15,
                   child: Image.asset('images/gero1.jpg'),
                 ),
-                const Text(
-                  'Kayıt Ol',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24,
-                    fontFamily: 'Roboto',
-                  ),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center, // Yeni ekleme
+                  children: [
+                    Icon(
+                      Icons.add_circle_outline_sharp,
+                      color: Colors.black,
+                      size: 24,
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      'Kayıt Ol',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                        fontFamily: 'Roboto',
+                      ),
+                    ),
+                  ],
                 ),
                 customSizedBox(),
                 Form(
@@ -76,31 +87,31 @@ class _kayitOlPageState extends State<kayitOlPage> {
                       adTxtField(),
                       adHataMesaji != null
                           ? Text(adHataMesaji!,
-                          style: TextStyle(color: Colors.red))
+                              style: const TextStyle(color: Colors.red))
                           : Container(),
                       customSizedBox(),
                       soyadTxtField(),
                       soyadHataMesaji != null
                           ? Text(soyadHataMesaji!,
-                          style: TextStyle(color: Colors.red))
+                              style: const TextStyle(color: Colors.red))
                           : Container(),
                       customSizedBox(),
                       telNoTxtField(),
                       telNoHataMesaji != null
                           ? Text(telNoHataMesaji!,
-                          style: TextStyle(color: Colors.red))
+                              style: const TextStyle(color: Colors.red))
                           : Container(),
                       customSizedBox(),
                       emailTxtField(),
                       emailHataMesaji != null
                           ? Text(emailHataMesaji!,
-                          style: TextStyle(color: Colors.red))
+                              style: const TextStyle(color: Colors.red))
                           : Container(),
                       customSizedBox(),
                       passwdTxtField(),
                       sifreHataMesaji != null
                           ? Text(sifreHataMesaji!,
-                          style: TextStyle(color: Colors.red))
+                              style: const TextStyle(color: Colors.red))
                           : Container(),
                       customSizedBox(),
                       DropdownButtonFormField<String>(
@@ -126,7 +137,8 @@ class _kayitOlPageState extends State<kayitOlPage> {
                       kodTxtField(),
                       kodHataMesaji != null
                           ? Text(kodHataMesaji!,
-                          style: TextStyle(color: Colors.red)) : Container(),
+                              style: const TextStyle(color: Colors.red))
+                          : Container(),
                       customSizedBox(),
                       const SizedBox(height: 20),
                       CustomButton(
@@ -160,7 +172,8 @@ class _kayitOlPageState extends State<kayitOlPage> {
 
   TextFormField kodTxtField() {
     return TextFormField(
-      decoration: textfielddec('Verilen Kodu Giriniz!'),
+      keyboardType: TextInputType.number,
+      decoration:textfielddec('Verilen Kodu Giriniz'),
       validator: (value) {
         if (value!.isEmpty) {
           return 'Lütfen kodu giriniz';
@@ -269,14 +282,12 @@ class _kayitOlPageState extends State<kayitOlPage> {
   Future<void> getDataFromFirestore(String documentId) async {
     if (rolName == 'Yönetim') {
       try {
-        DocumentSnapshot documentSnapshot = await _firestore
-            .collection('Yönetim')
-            .doc(documentId)
-            .get();
+        DocumentSnapshot documentSnapshot =
+            await _firestore.collection('Yönetim').doc(documentId).get();
 
         if (documentSnapshot.exists) {
           Map<String, dynamic>? userData =
-          documentSnapshot.data() as Map<String, dynamic>?;
+              documentSnapshot.data() as Map<String, dynamic>?;
 
           if (userData != null && userData.containsKey('code')) {
             String userCode = userData['code'] as String;
@@ -293,14 +304,12 @@ class _kayitOlPageState extends State<kayitOlPage> {
       }
     } else if (rolName == 'Hemşire') {
       try {
-        DocumentSnapshot documentSnapshot = await _firestore
-            .collection('hemsire')
-            .doc(documentId)
-            .get();
+        DocumentSnapshot documentSnapshot =
+            await _firestore.collection('hemsire').doc(documentId).get();
 
         if (documentSnapshot.exists) {
           Map<String, dynamic>? userData =
-          documentSnapshot.data() as Map<String, dynamic>?;
+              documentSnapshot.data() as Map<String, dynamic>?;
 
           if (userData != null && userData.containsKey('code')) {
             String userCode = userData['code'] as String;
@@ -317,14 +326,12 @@ class _kayitOlPageState extends State<kayitOlPage> {
       }
     } else if (rolName == 'Hasta') {
       try {
-        DocumentSnapshot documentSnapshot = await _firestore
-            .collection('hasta')
-            .doc(documentId)
-            .get();
+        DocumentSnapshot documentSnapshot =
+            await _firestore.collection('hasta').doc(documentId).get();
 
         if (documentSnapshot.exists) {
           Map<String, dynamic>? userData =
-          documentSnapshot.data() as Map<String, dynamic>?;
+              documentSnapshot.data() as Map<String, dynamic>?;
 
           if (userData != null && userData.containsKey('code')) {
             String userCode = userData['code'] as String;
@@ -344,9 +351,7 @@ class _kayitOlPageState extends State<kayitOlPage> {
     }
   }
 
-
   void signUp() async {
-
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
 
@@ -355,16 +360,18 @@ class _kayitOlPageState extends State<kayitOlPage> {
         DocumentSnapshot<Map<String, dynamic>> kodData;
 
         if (rolName == 'Yönetim') {
-          kodData = await FirebaseFirestore.instance.collection('yonetim')
+          kodData = await FirebaseFirestore.instance
+              .collection('yonetim')
               .doc('aaa')
               .get();
         } else if (rolName == 'Hemşire') {
-          kodData = await FirebaseFirestore.instance.collection('hemsire')
+          kodData = await FirebaseFirestore.instance
+              .collection('hemsire')
               .doc('aaa')
               .get();
         } else if (rolName == 'Hasta') {
-          kodData =
-          await FirebaseFirestore.instance.collection('hasta')
+          kodData = await FirebaseFirestore.instance
+              .collection('hasta')
               .doc('aaa')
               .get();
         } else {
@@ -372,7 +379,6 @@ class _kayitOlPageState extends State<kayitOlPage> {
           print('Hatalı rol seçimi!');
           return;
         }
-
 
         if (kodData.exists && kodData.data()!['code'] == girilenKod) {
           // Kodlar eşleştiğinde kayıt işlemi devam eder
@@ -390,12 +396,14 @@ class _kayitOlPageState extends State<kayitOlPage> {
               context,
               MaterialPageRoute(builder: (context) => const GirisYap()),
             );
-            showDialog(context: context, builder: (context){
-              return AlertDialog(
-                title: const Text('Kayıt'),
-                content: Text('Kayıt İşlemi Başarılı'),
-              );
-            });
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return const AlertDialog(
+                    title: Text('Kayıt'),
+                    content: Text('Kayıt İşlemi Başarılı'),
+                  );
+                });
           } else {
             showDialog(
               context: context,
@@ -420,8 +428,8 @@ class _kayitOlPageState extends State<kayitOlPage> {
             builder: (context) {
               return AlertDialog(
                 title: const Text('Hata'),
-                content: const Text(
-                    'Girilen kod yanlış! Lütfen tekrar deneyin.'),
+                content:
+                    const Text('Girilen kod yanlış! Lütfen tekrar deneyin.'),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
@@ -439,7 +447,7 @@ class _kayitOlPageState extends State<kayitOlPage> {
   }
 }
 
-  Widget customSizedBox() => const SizedBox(
+Widget customSizedBox() => const SizedBox(
       height: 8,
     );
 
@@ -470,11 +478,11 @@ class CustomButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const CustomButton({
-    super.key,
+    Key? key,
     required this.icon,
     required this.text,
     required this.onPressed,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -520,3 +528,5 @@ class CustomButton extends StatelessWidget {
     );
   }
 }
+
+

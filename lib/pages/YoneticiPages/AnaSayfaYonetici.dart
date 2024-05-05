@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:hcareapp/main.dart';
+import 'package:hcareapp/pages/YoneticiPages/Profile.dart';
 import 'package:hcareapp/pages/YoneticiPages/bottomAppBarYonetici.dart';
 import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/authService.dart';
@@ -54,22 +56,33 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Image.asset('images/gero1.jpg', fit: BoxFit.cover, height: 38),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.exit_to_app_outlined,
-            size: 30,
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Main(),
+        actions: [
+
+          Container(
+            margin: EdgeInsets.all(5.0), // Container'ın kenar boşlukları
+            decoration: BoxDecoration(
+              shape: BoxShape.circle, // Container'ı daire şeklinde yap
+              color: Colors.grey[200], // Container'ın arka plan rengi
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.person,
+                size: 30,
               ),
-            );
-          },
-        ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [_buildUserList()],
@@ -114,7 +127,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
           children: [
             const Center(
               child: Text(
-                'Yönetim Sayfasına Hoşgeldiniz!',
+                'Mobil Uygulamamıza Hoşgeldiniz!',
                 style: TextStyle(
                   fontSize: 23,
                   fontWeight: FontWeight.bold,
@@ -122,7 +135,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                 ),
               ),
             ),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
               padding: const EdgeInsets.all(16),
@@ -150,7 +163,8 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                       ),
                     ),
                     const SizedBox(height: 25),
-                    SizedBox(width: 240,
+                    SizedBox(
+                      width: 240,
                       height: 55,
                       child: _dropdownlist(
                         'Hemşire seçmek için tıklayınız',
@@ -193,7 +207,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                             });
                           },
                           style: TextButton.styleFrom(
-                            side: BorderSide(color: Colors.grey),
+                            side: const BorderSide(color: Colors.grey),
                             backgroundColor: Colors.grey[300],
                             padding: const EdgeInsets.symmetric(
                               horizontal: 80,
@@ -215,11 +229,10 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                             authService().showPairedValuesPopup(context);
                           },
                           style: TextButton.styleFrom(
-                            side: BorderSide(color: Colors.grey),
+                            side: const BorderSide(color: Colors.grey),
                             backgroundColor: Colors.grey[300],
                             padding: const EdgeInsets.symmetric(
                               horizontal: 38,
-
                             ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
@@ -240,62 +253,6 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
               ),
             ),
             const SizedBox(height: 20),
-            // Center(
-            //   child: Column(
-            //     children: [
-            //       TextButton(
-            //         onPressed: () {
-            //           authService().addDropdownValuesToFirestore(
-            //             context: context,
-            //             selectedNurse: selectedNurse,
-            //             selectedSick: selectedSick,
-            //           );
-            //
-            //           setState(() {
-            //             selectedNurse = null;
-            //             selectedSick = null;
-            //           });
-            //         },
-            //         style: TextButton.styleFrom(
-            //           backgroundColor: Colors.blue,
-            //           padding: const EdgeInsets.symmetric(
-            //               horizontal: 40, vertical: 15),
-            //           shape: RoundedRectangleBorder(
-            //             borderRadius: BorderRadius.circular(30),
-            //           ),
-            //         ),
-            //         child: const Text(
-            //           'Kaydet',
-            //           style: TextStyle(
-            //             color: Colors.white,
-            //             fontWeight: FontWeight.bold,
-            //           ),
-            //         ),
-            //       ),
-            //       const SizedBox(height: 20.0),
-            //       TextButton(
-            //         onPressed: () {
-            //           authService().showPairedValuesPopup(context);
-            //         },
-            //         style: TextButton.styleFrom(
-            //           backgroundColor: Colors.blue,
-            //           padding: const EdgeInsets.symmetric(
-            //               horizontal: 40, vertical: 15),
-            //           shape: RoundedRectangleBorder(
-            //             borderRadius: BorderRadius.circular(30),
-            //           ),
-            //         ),
-            //         child: const Text(
-            //           'Eşleştirilmiş Kişileri Gör',
-            //           style: TextStyle(
-            //             color: Colors.white,
-            //             fontWeight: FontWeight.bold,
-            //           ),
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
           ],
         );
       },

@@ -60,7 +60,7 @@ BottomAppBar BottomAppbarNurse(BuildContext context) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const UsersChat(),
+                builder: (context) => const NurseChat(),
               ),
             );
           },
@@ -77,28 +77,28 @@ BottomAppBar BottomAppbarNurse(BuildContext context) {
             ],
           ),
         ),
-        InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProfileScreen(),
-              ),
-            );
-          },
-          child: const Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.account_circle_outlined),
-              Text(
-                'Profil',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
+        // InkWell(
+        //   onTap: () {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //         builder: (context) => ProfileScreen(),
+        //       ),
+        //     );
+        //   },
+        //   child: const Column(
+        //     mainAxisSize: MainAxisSize.min,
+        //     children: [
+        //       Icon(Icons.account_circle_outlined),
+        //       Text(
+        //         'Profil',
+        //         style: TextStyle(
+        //           fontWeight: FontWeight.bold,
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
       ],
     ),
   );

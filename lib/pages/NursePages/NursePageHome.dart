@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hcareapp/main.dart';
 import 'package:hcareapp/pages/NursePages/BottomAppbarNurse.dart';
+
+import 'Profile.dart';
 void main() {
   runApp(const NursePageHome());
 }
@@ -41,22 +43,33 @@ class _NursePageState extends State<NursePage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Image.asset('images/gero1.jpg', fit: BoxFit.cover, height: 38),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.exit_to_app_outlined,
-            size: 30,
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Main(),
+        actions: [
+
+          Container(
+            margin: EdgeInsets.all(5.0), // Container'ın kenar boşlukları
+            decoration: BoxDecoration(
+              shape: BoxShape.circle, // Container'ı daire şeklinde yap
+              color: Colors.grey[200], // Container'ın arka plan rengi
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.person,
+                size: 30,
               ),
-            );
-          },
-        ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
       body: const Center(
         child: Text(

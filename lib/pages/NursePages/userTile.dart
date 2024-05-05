@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class UserTile extends StatelessWidget {
   final String text;
+  final String roleTxt;
+  final ImageProvider<Object>? imageProvider;
   final void Function()? onTap;
 
   const UserTile({
-    super.key,
+    Key? key,
     required this.text,
+    required this.roleTxt,
     required this.onTap,
-  });
+    required this.imageProvider,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,16 +21,38 @@ class UserTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.errorContainer,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(12),
         ),
-        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 25),
-        padding: EdgeInsets.all(20),
+        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 17),
+        padding: const EdgeInsets.all(5),
         child: Row(
           children: [
-            Icon(Icons.person),
-            const SizedBox(width: 20,),
-            Text(text,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12),)
+            CircleAvatar(
+              radius: 30.0,
+              backgroundImage: imageProvider,
+              child: imageProvider == null ? const Icon(Icons.person) : null, //default yerine ikon koyma ama çalışmıyor çok mantı
+            ),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  text,
+                  style: GoogleFonts.tauri(
+                    textStyle: const TextStyle(
+                      color: Colors.black,
+                      letterSpacing: .5,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  roleTxt,
+
+                )
+              ],
+            ),
           ],
         ),
       ),

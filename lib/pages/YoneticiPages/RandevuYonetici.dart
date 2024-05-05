@@ -7,6 +7,8 @@ import 'package:hcareapp/main.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:hcareapp/pages/YoneticiPages/bottomAppBarYonetici.dart';
 
+import 'Profile.dart';
+
 void main() {
   runApp(const RandevuYonetici());
 }
@@ -45,33 +47,32 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
       key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text(
-          'Randevular',
-          style: TextStyle(
-            fontSize: 27,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        automaticallyImplyLeading: false,
+        title: Image.asset('images/gero1.jpg', fit: BoxFit.cover, height: 38),
         centerTitle: true,
-        leading: Column(
-          children: [
-            IconButton(
+        actions: [
+          Container(
+            margin: EdgeInsets.all(5.0), // Container'ın kenar boşlukları
+            decoration: BoxDecoration(
+              shape: BoxShape.circle, // Container'ı daire şeklinde yap
+              color: Colors.grey[200], // Container'ın arka plan rengi
+            ),
+            child: IconButton(
               icon: const Icon(
-                Icons.exit_to_app_outlined,
+                Icons.person,
                 size: 30,
               ),
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Main(),
+                    builder: (context) => ProfileScreen(),
                   ),
                 );
               },
-
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       body: Container(
         child: Column(
@@ -121,7 +122,8 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Seçilen Gün: ${_selectedDay.day}/${_selectedDay.month}/${_selectedDay.year}',
+                      'Seçilen Gün: ${_selectedDay.day}/${_selectedDay
+                          .month}/${_selectedDay.year}',
                       style: const TextStyle(
                         fontSize: 19,
                         fontWeight: FontWeight.bold,
@@ -138,7 +140,8 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                               randevu.dateTime.year == _selectedDay.year) {
                             return ListTile(
                               title: Text(
-                                '${randevu.dateTime.hour}.${randevu.dateTime.minute} --> ${randevu.detay}',
+                                '${randevu.dateTime.hour}.${randevu.dateTime
+                                    .minute} --> ${randevu.detay}',
                                 style: const TextStyle(
                                   fontSize: 16,
                                 ),
@@ -150,12 +153,14 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        title: const Text("Randevuyu iptal etmek istediğinize emin misiniz?"),
+                                        title: const Text(
+                                            "Randevuyu iptal etmek istediğinize emin misiniz?"),
                                         content: const Text(
                                             "Bu işlem geri alınamaz, emin misiniz?"),
                                         actions: <Widget>[
                                           TextButton(
-                                            onPressed: () => Navigator.of(context).pop(),
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
                                             child: const Text("İptal"),
                                           ),
                                           TextButton(

@@ -69,10 +69,10 @@ class _PasswdState extends State<Passwd> {
                         ),
                       ),
                       const SizedBox(
-                        height: 50,
+                        height: 40,
                       ),
                       buildEmail(),
-                    SizedBox(height: 70,),
+                    SizedBox(height: 60,),
                       CustomButton(
                         icon: Icons.lock_outlined,
                         text: 'Şifremi Unuttum',

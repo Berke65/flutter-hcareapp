@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+import 'package:hcareapp/main.dart';
+import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:hcareapp/pages/YoneticiPages/bottomAppBarYonetici.dart';
-import 'package:hcareapp/main.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -28,20 +28,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(
-            Icons.exit_to_app_outlined,
+            Icons.home_outlined,
             size: 30,
           ),
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => Main(),
+                builder: (context) => YoneticiHomePage(),
               ),
             );
           },
         ),
         automaticallyImplyLeading: false,
-        title: const Text('Kullanıcı Profilim'),
+        title: const Text('Profil'),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        height: 72,
+        color: Colors.white, // BottomAppBar'ın arka plan rengi
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Main(),
+                  ),
+                );
+              },
+              child: const Row(
+                children: <Widget>[
+                  Icon(Icons.exit_to_app, color: Colors.red), // Çıkış ikonu
+                  SizedBox(width: 5.0),
+                  Text(
+                    'Çıkış Yap',
+                    style: TextStyle(color: Colors.red),
+                  ), // Çıkış yazısı
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
       body: FutureBuilder<DocumentSnapshot>(
         future:
@@ -64,7 +93,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               : _buildUserProfile(userData);
         },
       ),
-      bottomNavigationBar: BottomAppBarYonetici(context),
     );
   }
 
@@ -154,8 +182,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           const SizedBox(height: 8.0),
-          Text("rol: " +
-            userData['roleName'],
+          Text(
+            "rol: " + userData['roleName'],
             style: const TextStyle(
               fontSize: 16.0,
               color: Colors.grey,
@@ -164,17 +192,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 16.0),
           ListTile(
             leading: const Icon(Icons.email_outlined),
-            title: Text(userData['email'],style: TextStyle(fontSize: 18),),
+            title: Text(
+              userData['email'],
+              style: const TextStyle(fontSize: 18),
+            ),
           ),
           ListTile(
             leading: const Icon(Icons.phone_outlined),
-            title: Text(userData['telNo'],style: TextStyle(fontSize: 18),),
+            title: Text(
+              userData['telNo'],
+              style: const TextStyle(fontSize: 18),
+            ),
           ),
           ListTile(
             leading: const Icon(Icons.account_circle_outlined),
-            title: Text(userData['name'] + " " +userData['surname'],style: TextStyle(fontSize: 18),),
+            title: Text(
+              userData['name'] + " " + userData['surname'],
+              style: const TextStyle(fontSize: 18),
+            ),
           ),
-
           const SizedBox(height: 16.0),
           ElevatedButton(
             onPressed: () {

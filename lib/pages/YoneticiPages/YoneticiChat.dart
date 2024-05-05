@@ -3,6 +3,7 @@ import 'package:hcareapp/pages/YoneticiPages/authService.dart';
 import 'package:hcareapp/pages/YoneticiPages/bottomAppBarYonetici.dart';
 import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/userTile.dart';
+import 'Profile.dart';
 import 'chatPage.dart';
 
 void main() {
@@ -26,7 +27,30 @@ class _YoneticiChatState extends State<YoneticiChat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 21,
+        titleSpacing: 22,
+        actions: [
+          Container(
+            margin: EdgeInsets.all(5.0), // Container'ın kenar boşlukları
+            decoration: BoxDecoration(
+              shape: BoxShape.circle, // Container'ı daire şeklinde yap
+              color: Colors.grey[200], // Container'ın arka plan rengi
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.person,
+                size: 30,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -39,7 +63,7 @@ class _YoneticiChatState extends State<YoneticiChat> {
       ),
       body: Column(
         children: [
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -50,7 +74,12 @@ class _YoneticiChatState extends State<YoneticiChat> {
                     selectedRole = 'Yönetim';
                   });
                 },
-                child: Text('Yönetim'),
+                child: const Text('Yönetim'),
+              ),
+              Container(
+                width: 1,
+                height: 25,
+                color: Colors.black,
               ),
               ElevatedButton(
                 onPressed: () {
@@ -58,7 +87,12 @@ class _YoneticiChatState extends State<YoneticiChat> {
                     selectedRole = 'Hasta';
                   });
                 },
-                child: Text('Hasta'),
+                child: const Text('Hasta'),
+              ),
+              Container(
+                width: 1,
+                height: 25,
+                color: Colors.black,
               ),
               ElevatedButton(
                 onPressed: () {
@@ -66,11 +100,11 @@ class _YoneticiChatState extends State<YoneticiChat> {
                     selectedRole = 'Hemşire';
                   });
                 },
-                child: Text('Hemşire'),
+                child: const Text('Hemşire'),
               ),
             ],
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           _buildUserList(),
         ],
       ),
@@ -110,7 +144,7 @@ class _YoneticiChatState extends State<YoneticiChat> {
     if (userData['email'] != _authService.getCurrentUser()!.email) {
       return UserTile(
         text: userData['name'],
-        txt: '...',
+        // txt: '...',
         roleTxt: userData['roleName'],
         imageProvider: NetworkImage(userData['image']),
         onTap: () {

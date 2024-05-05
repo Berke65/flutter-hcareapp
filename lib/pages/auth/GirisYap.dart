@@ -8,7 +8,6 @@ import 'package:hcareapp/pages/auth/passwd.dart';
 import 'package:hcareapp/pages/SickPages/SickAnasayfa.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 void main() {
   runApp(const GirisYap());
 }
@@ -32,118 +31,129 @@ class _GirisYapState extends State<GirisYap> {
     return MaterialApp(
       home: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('images/bakalım1.png'), // Arka plan deseni
-              fit: BoxFit.cover,
+        body: Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('images/bakalım1.png'), // Arka plan deseni
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-          ),
-          child: Form(
-            key: formKey,
-            child: Column(
-              children: [
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 200,
-                        height: 200,
-                        child: Image.asset('images/gero1.jpg'), // Logo resmi
-                      ),
-                      const Row(
+            // SingleChildScrollView üzerine diğer widget'lar eklenir
+            SingleChildScrollView(
+              child: Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
-                            width: 100,
+                            width: 200,
+                            height: 200,
+                            child:
+                                Image.asset('images/gero1.jpg'), // Logo resmi
                           ),
-                          Icon(Icons.lock_person),
-                          SizedBox(
-                            width: 5,
+                          const Row(
+                            children: [
+                              SizedBox(
+                                width: 100,
+                              ),
+                              Icon(Icons.lock_person),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                'Giriş Ekranı',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 28,
+                                  fontFamily: 'Roboto',
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            'Giriş Ekranı',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 28,
-                              fontFamily: 'Roboto',
-                            ),
+                          const SizedBox(
+                            height: 50,
+                          ),
+                          buildEmail(),
+                          customSizedBox(),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 22.0),
+                            child: passwdTxtField(),
+                          ),
+                          customSizedBox(),
+                          customSizedBox(),
+                          CustomButton(
+                            icon: Icons.admin_panel_settings_outlined,
+                            text: 'Giriş Yap',
+                            onPressed: signIn,
+                          ),
+                          customSizedBox(),
+                          CustomButton(
+                            icon: Icons.lock_outlined,
+                            text: 'Şifremi Unuttum',
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Passwd(),
+                                ),
+                              );
+                            },
+                          ),
+                          customSizedBox(),
+                          CustomButton(
+                            icon: Icons.home_outlined,
+                            text: 'Ana Ekrana Dön',
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Main(),
+                                ),
+                              );
+                            },
+                          ),
+                          customSizedBox(),
+                          //Şimdilik sayfayı görmek için açtım silersin canım
+                          CustomButton(
+                              icon: Icons.healing_outlined,
+                              text: 'Hemşire Sayfasına git',
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => NursePageHome(),
+                                  ),
+                                );
+                              }),
+                          customSizedBox(),
+
+                          CustomButton(
+                            icon: Icons.sick,
+                            text: 'Hasta Sayfasına Giriş',
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SickAnasayfa(),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      buildEmail(),
-                      customSizedBox(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 22.0),
-                        child: passwdTxtField(),
-                      ),
-                      customSizedBox(),
-                      customSizedBox(),
-                      CustomButton(
-                        icon: Icons.admin_panel_settings_outlined,
-                        text: 'Giriş Yap',
-                        onPressed: signIn,
-                      ),
-                      customSizedBox(),
-                      CustomButton(
-                        icon: Icons.lock_outlined,
-                        text: 'Şifremi Unuttum',
-                        onPressed:  () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Passwd(),
-                            ),
-                          );
-                        },
-                      ),
-                      customSizedBox(),
-                      CustomButton(
-                        icon: Icons.home_outlined,
-                        text: 'Ana Ekrana Dön',
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Main(),
-                            ),
-                          );
-                        },
-                      ),
-                      customSizedBox(),
-                      //Şimdilik sayfayı görmek için açtım silersin canım
-                      CustomButton(icon: Icons.healing_outlined, text: 'Hemşire Sayfasına git', onPressed: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SickAnasayfa(),
-                          ),
-                        );
-                      }
-                      ),
-                      customSizedBox(),
-
-                      CustomButton(
-                        icon: Icons.sick,
-                        text: 'Hasta Sayfasına Giriş',
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>SickAnasayfa(),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -260,58 +270,53 @@ class _GirisYapState extends State<GirisYap> {
 
       final result = await signInHataYakalama(email, passwd);
       if (result == 'success') {
-
-        QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore.instance
+        QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore
+            .instance
             .collection('users')
             .where('email', isEqualTo: email)
             .get();
 
-        QuerySnapshot<Map<String, dynamic>> sickQuery = await FirebaseFirestore.instance
-            .collection('hastaBilgileri')
-            .get();
+        QuerySnapshot<Map<String, dynamic>> sickQuery =
+            await FirebaseFirestore.instance.collection('hastaBilgileri').get();
 
         // Eğer kullanıcı bulunduysa ve sadece bir tane varsa
         if (userQuery.docs.isNotEmpty && userQuery.docs.length == 1) {
-
           String roleName = userQuery.docs.first.data()['roleName'];
-
 
           var hastaMail = sickQuery.docs.first.data()['hastaMail'];
 
           if (roleName == "Yönetim") {
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => AnaSayfaYonetici()));
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => AnaSayfaYonetici()));
           } else if (roleName == "Hemşire") {
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => NursePageHome()));
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => NursePageHome()));
           } else if (roleName == "Hasta") {
-
             if (hastaMail != email) {
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text(
                   'Bilgilerinizi Eksiksiz Doldurunuz! (GEROPİTAL EVDE SAĞLIK HİZMETLERİ)',
                 ),
               ));
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => SickInformation()));
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => SickInformation()));
             } else {
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text(
                   'Aşama Tamamlandı Anasayfaya yönlendiriliyorsunuz (GEROPİTAL EVDE SAĞLIK HİZMETLERİ)',
                 ),
               ));
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => SickAnasayfa()));
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => SickAnasayfa()));
             }
           }
-
         } else {
           // Kullanıcı bulunamadı veya birden fazla kullanıcı varsa null döndür
           return null;
         }
 
         //Navigator.pushReplacement(
-         //   context, MaterialPageRoute(builder: (context) => const AnaSayfaYonetici()));
+        //   context, MaterialPageRoute(builder: (context) => const AnaSayfaYonetici()));
       } else {
         showDialog(
             context: context,
@@ -329,14 +334,6 @@ class _GirisYapState extends State<GirisYap> {
       }
     }
   }
-
-//textfield'lar
-// TextFormField txtfield(String hinttext, bool obsocureText) {
-//   return TextFormField(
-//     decoration: textfielddec(hinttext,),
-//   //  obscureText: obsocureText,
-//   );
-// }
 }
 
 //textfieldların decoration;

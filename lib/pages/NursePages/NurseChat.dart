@@ -1,40 +1,115 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:hcareapp/pages/NursePages/authService.dart';
 import 'package:hcareapp/pages/NursePages/BottomAppbarNurse.dart';
-import 'package:hcareapp/pages/YoneticiPages/authService.dart';
 import 'package:hcareapp/pages/NursePages/chatService.dart';
 import 'package:hcareapp/pages/NursePages/userTile.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'chatPage.dart';
-
-import 'package:flutter/material.dart';
-import 'package:hcareapp/pages/NursePages/NursePageHome.dart';
-import 'package:hcareapp/pages/NursePages/NurseMedicine.dart';
-import 'package:hcareapp/pages/NursePages/NurseChat.dart';
-import 'package:hcareapp/pages/NursePages/Profile.dart';
+import 'ChatPage.dart';
+import 'Profile.dart';
 
 void main() {
-  runApp(UsersChat());
+  runApp(const NurseChat());
 }
 
-class UsersChat extends StatefulWidget {
-  const UsersChat({super.key});
+class NurseChat extends StatefulWidget {
+  const NurseChat({Key? key}) : super(key: key);
 
   @override
-  State<UsersChat> createState() => _UsersChatState();
+  _NurseChatState createState() => _NurseChatState();
 }
 
-class _UsersChatState extends State<UsersChat> {
+class _NurseChatState extends State<NurseChat> {
   final ChatService _chatService = ChatService();
   final AuthService _authService = AuthService();
+
+  String selectedRole = 'Yönetim'; // Default selected role
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chat'),
+        titleSpacing: 22,
+        actions: [
+          Container(
+            margin: EdgeInsets.all(5.0), // Container'ın kenar boşlukları
+            decoration: BoxDecoration(
+              shape: BoxShape.circle, // Container'ı daire şeklinde yap
+              color: Colors.grey[200], // Container'ın arka plan rengi
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.person,
+                size: 30,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+        title: const Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Icon(Icons.message_outlined),
+            SizedBox(width: 8),
+            Text('Sohbet'),
+          ],
+        ),
+        automaticallyImplyLeading: false,
       ),
-      body: _buildUserList(),
+      body: Column(
+        children: [
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                //style:  ButtonStyle(textStyle:  ),
+                onPressed: () {
+                  setState(() {
+                    selectedRole = 'Yönetim';
+                  });
+                },
+                child: Text('Yönetim'),
+              ),
+              Container(
+                width: 1,
+                height: 25,
+                color: Colors.black,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    selectedRole = 'Hasta';
+                  });
+                },
+                child: Text('Hasta'),
+              ),
+              Container(
+                width: 1,
+                height: 25,
+                color: Colors.black,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    selectedRole = 'Hemşire';
+                  });
+                },
+                child: Text('Hemşire'),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          _buildUserList(),
+        ],
+      ),
       bottomNavigationBar: BottomAppbarNurse(context),
-
     );
   }
 
@@ -46,33 +121,44 @@ class _UsersChatState extends State<UsersChat> {
           return const Text('Error');
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('loading');
+          return const Center(child: CircularProgressIndicator());
         }
-        return ListView(
-          children: snapshot.data!
-              .map<Widget>((userData) => _buildUserListItem(userData, context))
-              .toList(),
+        // Filtreleme işlemi
+        final filteredUsers = snapshot.data!.where((userData) =>
+        userData['roleName'] == selectedRole
+        ).toList();
+        return Expanded(
+          child: ListView(
+            children: filteredUsers
+                .map<Widget>((userData) =>
+                _buildUserListItem(userData, context))
+                .toList(),
+          ),
         );
       },
     );
   }
 
+
   Widget _buildUserListItem(
       Map<String, dynamic> userData, BuildContext context) {
     if (userData['email'] != _authService.getCurrentUser()!.email) {
       return UserTile(
-          text: userData['email'],
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ChatPage(
-                  receiverEmail: userData['email'],
-                  receiverID: userData['uid'],
-                ),
+        text: userData['name'],
+        roleTxt: userData['roleName'],
+        imageProvider: NetworkImage(userData['image']),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatPage(
+                receiverEmail: userData['name'],
+                receiverID: userData['uid'],
               ),
-            );
-          });
+            ),
+          );
+        },
+      );
     } else {
       return Container();
     }

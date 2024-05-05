@@ -1,9 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hcareapp/pages/YoneticiPages/authService.dart';
+import 'package:hcareapp/pages/SickPages/authService.dart';
 import 'package:hcareapp/pages/SickPages/BottomAppBarSick.dart';
-import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
-import 'package:hcareapp/pages/YoneticiPages/userTile.dart';
+import 'package:hcareapp/pages/SickPages/chatService.dart';
+import 'package:hcareapp/pages/SickPages/userTile.dart';
 import 'ChatPage.dart';
+import 'Profile.dart';
 
 void main() {
   runApp(const SickChat());
@@ -26,7 +28,30 @@ class _SickChatState extends State<SickChat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 21,
+        titleSpacing: 22,
+        actions: [
+          Container(
+            margin: EdgeInsets.all(5.0), // Container'ın kenar boşlukları
+            decoration: BoxDecoration(
+              shape: BoxShape.circle, // Container'ı daire şeklinde yap
+              color: Colors.grey[200], // Container'ın arka plan rengi
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.person,
+                size: 30,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -52,13 +77,18 @@ class _SickChatState extends State<SickChat> {
                 },
                 child: Text('Yönetim'),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    selectedRole = 'Hasta';
-                  });
-                },
-                child: Text('Hasta'),
+              // ElevatedButton(
+              //   onPressed: () {
+              //     setState(() {
+              //       selectedRole = 'Hasta';
+              //     });
+              //   },
+              //   child: Text('Hasta'),
+              // ),
+              Container(
+                width: 1,
+                height: 25,
+                color: Colors.black,
               ),
               ElevatedButton(
                 onPressed: () {
@@ -110,7 +140,6 @@ class _SickChatState extends State<SickChat> {
     if (userData['email'] != _authService.getCurrentUser()!.email) {
       return UserTile(
         text: userData['name'],
-        txt: '...',
         roleTxt: userData['roleName'],
         imageProvider: NetworkImage(userData['image']),
         onTap: () {

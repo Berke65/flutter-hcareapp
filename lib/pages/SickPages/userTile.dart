@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 class UserTile extends StatelessWidget {
   final String text;
-  final String txt;
   final String roleTxt;
   final ImageProvider<Object>? imageProvider;
   final void Function()? onTap;
@@ -12,7 +11,6 @@ class UserTile extends StatelessWidget {
     Key? key,
     required this.text,
     required this.roleTxt,
-    required this.txt,
     required this.onTap,
     required this.imageProvider,
   }) : super(key: key);
@@ -46,16 +44,6 @@ class UserTile extends StatelessWidget {
                       color: Colors.black,
                       letterSpacing: .5,
                       fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Text(
-                  txt,
-                  style: GoogleFonts.tauri(
-                    textStyle: const TextStyle(
-                      color: Colors.black,
-                      letterSpacing: .5,
-                      fontSize: 15,
                     ),
                   ),
                 ),

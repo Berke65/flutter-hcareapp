@@ -65,13 +65,6 @@ class _NurseMedicineState extends State<NurseMedicine> {
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('images/bakalım1.png'), // Arka plan deseni
-                fit: BoxFit.cover,
-                alignment: Alignment.topCenter,
-              ),
-            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -217,6 +210,10 @@ class _NurseMedicineState extends State<NurseMedicine> {
                   onPressed: () {
                     // Acil durum butonuna basıldığında yapılacak işlemler
                   },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.red),
+                  ),
                   child: const Padding(
                     padding: EdgeInsets.all(16.0),
                     child: Text(
@@ -227,10 +224,6 @@ class _NurseMedicineState extends State<NurseMedicine> {
                         color: Colors.white,
                       ),
                     ),
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.red),
                   ),
                 ),
                 SizedBox(height: MediaQuery.of(context).viewInsets.bottom),

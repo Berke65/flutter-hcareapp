@@ -56,28 +56,28 @@ BottomAppBar BottomAppBarSick(BuildContext context) {
             ],
           ),
         ),
-        InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SickInformation(),
-              ),
-            );
-          },
-          child: const Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.info_outline),
-              Text(
-                'Sağlık Bilgileri',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
+        // InkWell(
+        //   onTap: () {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //         builder: (context) => SickInformation(),
+        //       ),
+        //     );
+        //   },
+        //   child: const Column(
+        //     mainAxisSize: MainAxisSize.min,
+        //     children: [
+        //       Icon(Icons.info_outline),
+        //       Text(
+        //         'Sağlık Bilgileri',
+        //         style: TextStyle(
+        //           fontWeight: FontWeight.bold,
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
         InkWell(
           onTap: () {
             Navigator.push(

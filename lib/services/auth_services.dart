@@ -69,6 +69,65 @@ class authService {
     }
   }
 
+  Future<void> removePairedValuesPopup(BuildContext context) async {
+    try {
+      List<Map<String, dynamic>> pairedValues = await getPairedValues();
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Eşleştirilmiş Kişiler'),
+            content: pairedValues.isEmpty
+                ? Text('Eşleştirilmiş kişiler bulunamadı.')
+                : ListView.builder(
+              shrinkWrap: true,
+              itemCount: pairedValues.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ListTile(
+                      title: Text(
+                        'Hemşire: ${pairedValues[index]['nurse']}',
+                      ),
+                    ),
+                    ListTile(
+                      title: Text(
+                        'Hasta: ${pairedValues[index]['sick']}',
+                      ),
+                      trailing: TextButton(
+                        onPressed: () {
+                          // Burada kaldırma işlemi yapılacak
+                        },
+                        child: Text(
+                          'Kaldır',
+                          style: TextStyle(color: Colors.red), // Kırmızı renkte metin
+                        ),
+                      ),
+                    ),
+                    Divider(), // Her öğe arasına bir ayırıcı ekleyelim
+                  ],
+                );
+              },
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Kapat'),
+              ),
+            ],
+          );
+
+        },
+      );
+    } catch (e) {
+      print('Error showing paired values popup: $e');
+    }
+  }
+
 
 
   Future<void> addDropdownValuesToFirestore({

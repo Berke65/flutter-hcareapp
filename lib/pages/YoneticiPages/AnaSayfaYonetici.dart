@@ -246,6 +246,29 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                             ),
                           ),
                         ),
+                        TextButton(
+                          onPressed: () {
+                            authService().removePairedValuesPopup(context);
+
+                          },
+                          style: TextButton.styleFrom(
+                            side: const BorderSide(color: Colors.grey),
+                            backgroundColor: Colors.grey[300],
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 38,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          child: const Text(
+                            'Eşleştirilmiş Kişileri Kaldır',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -274,11 +297,20 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
         selectedValue = value; // Seçilen değeri güncelle
       },
       items: userNames.map((userName) {
+        // Eşleştirilmiş kişileri kontrol et ve seçilemez yap
+        bool isMatched = userName.contains('(Eşleştirilmiş)');
         return DropdownMenuItem<String>(
           value: userName,
-          child: Text(userName),
+          child: Text(
+            userName,
+            style: TextStyle(
+              color: isMatched ? Colors.grey : Colors.black, // Eşleştirilmişse gri renkte göster
+            ),
+          ),
+          onTap: isMatched ? null : () => onValueChanged(userName), // Eşleştirilmişse tıklanamaz yap
         );
       }).toList(),
     );
   }
+
 }

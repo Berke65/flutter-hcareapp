@@ -1,11 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:hcareapp/main.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:hcareapp/pages/YoneticiPages/bottomAppBarYonetici.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 import 'Profile.dart';
 
@@ -35,10 +35,14 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late DateTime _selectedDay;
 
+  final firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   @override
   void initState() {
     super.initState();
     _selectedDay = DateTime.now();
+    _getRandevular(); // initState içinde randevu bilgilerini almak için çağrı yapılıyor
   }
 
   @override
@@ -140,10 +144,16 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                               randevu.dateTime.year == _selectedDay.year) {
                             return ListTile(
                               title: Text(
-                                '${randevu.dateTime.hour}.${randevu.dateTime
-                                    .minute} --> ${randevu.detay}',
+                                '${randevu.saat} --> ${randevu.detay}',
                                 style: const TextStyle(
                                   fontSize: 16,
+                                ),
+                              ),
+                              subtitle: Text(
+                                'Randevu Alan Kişi: ${randevu.userName}', // userName'i görüntüle
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
                                 ),
                               ),
                               trailing: IconButton(
@@ -159,15 +169,27 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                                             "Bu işlem geri alınamaz, emin misiniz?"),
                                         actions: <Widget>[
                                           TextButton(
-                                            onPressed: () =>
-                                                Navigator.of(context).pop(),
+                                            onPressed: () => Navigator.of(context).pop(),
                                             child: const Text("İptal"),
                                           ),
                                           TextButton(
-                                            onPressed: () {
+                                            onPressed: () async {
+                                              // Tıklanan satırdaki randevuyu Firestore'dan kaldır
+                                              await FirebaseFirestore.instance.collection('randevu')
+                                                  .where('tarih', isEqualTo: randevu.dateTime)
+                                                  .where('sağlıkAlanı', isEqualTo: randevu.detay)
+                                                  .where('userName', isEqualTo: randevu.userName)
+                                                  .where('saat', isEqualTo: randevu.saat)
+                                                  .get().then((querySnapshot) {
+                                                querySnapshot.docs.forEach((doc) {
+                                                  doc.reference.delete();
+                                                });
+                                              });
+                                              // Liste içinden tıklanan randevuyu kaldır
                                               setState(() {
                                                 randevular.removeAt(index);
                                               });
+                                              // İletişim kutusunu kapat
                                               Navigator.of(context).pop();
                                             },
                                             child: const Text("Evet, İptal Et"),
@@ -184,6 +206,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                           }
                         },
                       ),
+
                     ),
                   ],
                 ),
@@ -195,18 +218,39 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
       bottomNavigationBar: BottomAppBarYonetici(context),
     );
   }
+  // _getRandevular fonksiyonu _YoneticiHomePageState sınıfının bir parçası olarak tanımlanmalıdır
+  Future<void> _getRandevular() async {
+    // Firestore'dan randevu bilgilerini al
+    QuerySnapshot<Map<String, dynamic>> querySnapshot =
+    await FirebaseFirestore.instance.collection('randevu').get();
+
+    setState(() {
+      // Alınan randevu bilgilerini listeye ekle
+      randevular = querySnapshot.docs
+          .map((doc) => Randevu(
+        doc['tarih'].toDate(),
+        doc['sağlıkAlanı'],
+        doc['userName'] ?? '', // Eğer userName alanı null ise boş bir string olarak ata
+        doc['saat']
+      ))
+          .toList();
+    });
+  }
+
 }
 
 class Randevu {
   final DateTime dateTime;
   final String detay;
+  final String userName;
+  final String saat;
 
-  Randevu(this.dateTime, this.detay);
+  Randevu(this.dateTime, this.detay, this.userName, this.saat);
 }
 
 List<Randevu> randevular = [
-  Randevu(DateTime(2024, 3, 12, 10, 0), 'Kardiyoloji'),
-  Randevu(DateTime(2024, 3, 12, 14, 30), 'Dahiliye'),
-  Randevu(DateTime(2024, 3, 13, 9, 0), 'Ortopedi'),
-  Randevu(DateTime(2024, 3, 14, 11, 0), 'Göz Hastalıkları'),
+  Randevu(DateTime(2024, 3, 12, 10, 0), 'Kardiyoloji', 'isim1',''),
+  Randevu(DateTime(2024, 3, 12, 14, 30), 'Dahiliye', 'isim2',''),
+  Randevu(DateTime(2024, 3, 13, 9, 0), 'Ortopedi', 'isim3',''),
+  Randevu(DateTime(2024, 3, 14, 11, 0), 'Göz Hastalıkları', 'isim4',''),
 ];

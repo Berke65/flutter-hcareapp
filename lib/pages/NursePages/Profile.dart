@@ -51,14 +51,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Main(),
-                  ),
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text("Emin misiniz?"),
+                      content: Text("Çıkış yapmak istediğinize emin misiniz?"),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text("İptal"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Önce alert dialogu kapat
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Main(),
+                              ),
+                            );
+                          },
+                          child: Text("Evet"),
+                        ),
+                      ],
+                    );
+                  },
                 );
               },
-              child: const Row(
+              child: Row(
                 children: <Widget>[
                   Icon(Icons.exit_to_app, color: Colors.red), // Çıkış ikonu
                   SizedBox(width: 5.0),
@@ -69,6 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
+
           ],
         ),
       ),

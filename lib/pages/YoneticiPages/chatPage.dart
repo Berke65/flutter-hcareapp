@@ -39,6 +39,9 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
     //add listener to focus mode
+
+    userProfile();
+
     myFocusNode.addListener(() {
       if (myFocusNode.hasFocus) {
         // cause a delay so that the keyboard has time show up
@@ -68,29 +71,44 @@ class _ChatPageState extends State<ChatPage> {
   final ScrollController _scrollController = ScrollController();
 
   void scrollDown() {
-    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-        duration: const Duration(seconds: 1), curve: Curves.fastOutSlowIn);
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
   }
+
+void userProfile() {
+  getUserProfileImageURL().then((url) {
+    setState(() {
+      userProfileImageURL = url;
+    });
+  });
+}
 
   // Send message function
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
       // Send the message
-      await _chatService.sendMessage(
-          widget.receiverID, _messageController.text);
-
-      scrollDown();
-
+      await _chatService.sendMessage(widget.receiverID, _messageController.text);
       // Clear text controller
       _messageController.clear();
+      // Scroll down
+      scrollDown();
     }
-    getUserProfileImageURL(widget.receiverID).then((url) {
-      setState(() {
-        userProfileImageURL = url;
-      });
-    });
   }
 
+
+  Future<String> getUserProfileImageURL() async {
+    var userQuery = await FirebaseFirestore.instance.collection('users').where('name', isEqualTo: widget.receiverEmail).get();
+    if (userQuery.docs.isNotEmpty) {
+      var userData = userQuery.docs.first.data();
+      String profileImageURL = userData['image'] ?? ''; // Varsayılan profil resmi URL'si
+      return profileImageURL;
+    } else {
+      return 'varsayilan_profil_resmi_urlsi';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +120,7 @@ class _ChatPageState extends State<ChatPage> {
             CircleAvatar(
               backgroundImage: userProfileImageURL.isNotEmpty
                   ? NetworkImage(userProfileImageURL)
-                  : AssetImage('assets/default_avatar.jpg') as ImageProvider, // Varsayılan bir avatar ekleyebilirsiniz
+                  : const AssetImage('assets/default_avatar.jpg') as ImageProvider, // Varsayılan bir avatar ekleyebilirsiniz
               radius: 20,
             ),
 
@@ -144,13 +162,6 @@ class _ChatPageState extends State<ChatPage> {
       ),
     );
   }
-  // Firestore'dan kullanıcının profil resim URL'sini almak için bir metod
-  Future<String> getUserProfileImageURL(String userID) async {
-    var userDoc = await FirebaseFirestore.instance.collection('users').doc(userID).get();
-    // Kullanıcının belgesinden "image" alanını döndür
-    return userDoc['image'] ?? ''; // Eğer image alanı yoksa veya boşsa, boş bir string döndürür
-  }
-
 
 // Mesaj listesini oluşturma
   Widget _buildMessageList() {
@@ -168,7 +179,9 @@ class _ChatPageState extends State<ChatPage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
-
+        WidgetsBinding.instance!.addPostFrameCallback((_) {
+          scrollDown();
+        });
         // Liste görünümü döndür
         return ListView.builder(
           controller: _scrollController,

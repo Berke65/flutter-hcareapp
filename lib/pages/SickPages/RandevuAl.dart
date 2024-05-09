@@ -146,7 +146,7 @@ class _RandevuPageState extends State<RandevuPage>
                 border: OutlineInputBorder(),
               ),
               inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')), // AAAAAAAAAAAAAA
                 // Yalnızca rakam ve iki nokta karakterine izin verir
               ],
               onChanged: (value) {
@@ -171,6 +171,7 @@ class _RandevuPageState extends State<RandevuPage>
                 } else {
                   // Firestore'a randevu bilgilerini ve kullanıcının adını ekleme fonksiyonunu çağır
                   addAppointmentToFirestore(selectedDate, selectedDepartment!, selectedHour, userName);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Randevunuz Başarıyla oluşturuldu")));
                 }
               },
               child: const Text('Randevu Al'),

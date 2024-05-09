@@ -187,7 +187,6 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                                               });
                                               // Liste içinden tıklanan randevuyu kaldır
                                               setState(() {
-                                                randevular.removeAt(index);
                                               });
                                               // İletişim kutusunu kapat
                                               Navigator.of(context).pop();

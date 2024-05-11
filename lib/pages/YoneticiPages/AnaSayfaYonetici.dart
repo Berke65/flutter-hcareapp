@@ -225,7 +225,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                         ),
                         TextButton(
                           onPressed: () {
-                            authService().showPairedValuesPopup(context);
+                              removePairedValuesPopup(context);
                           },
                           style: TextButton.styleFrom(
                             side: const BorderSide(color: Colors.grey),
@@ -238,30 +238,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                             ),
                           ),
                           child: const Text(
-                            'Eşleştirilmiş Kişileri Gör',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            authService().removePairedValuesPopup(context);
-
-                          },
-                          style: TextButton.styleFrom(
-                            side: const BorderSide(color: Colors.grey),
-                            backgroundColor: Colors.grey[300],
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 38,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          child: const Text(
-                            'Eşleştirilmiş Kişileri Kaldır',
+                            'Görüntüle Ve Düzenle',
                             style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
@@ -280,6 +257,121 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
       },
     );
   }
+
+  Future<void> removePairedValuesPopup(BuildContext context) async {
+    try {
+      List<Map<String, dynamic>> pairedValues = await getPairedValues();
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Eşleştirilmiş Kişiler"),
+            content: Container(
+              width: MediaQuery.of(context).size.width * 0.8, // Genişliği ayarla
+              child: pairedValues.isEmpty
+                  ? const Text('Eşleştirilmiş kişiler bulunamadı.')
+                  : ListView.builder(
+                shrinkWrap: true,
+                itemCount: pairedValues.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ListTile(
+                        title: Text(
+                          'Hemşire: ${pairedValues[index]['sick']}',
+                        ),
+                      ),
+                      ListTile(
+                        title: Text(
+                          'Hasta: ${pairedValues[index]['nurse']}',
+                        ),
+                        trailing: TextButton(
+                          onPressed: () async {
+                            // Belirli bir eşleşmiş değeri silmek için ilgili veritabanı işlemlerini yap
+                            String nurseName = pairedValues[index]['nurse'];
+                            String sickName = pairedValues[index]['sick'];
+                            await deletePairFromDatabase(nurseName, sickName);
+                            // Listeyi güncelle ve alert dialogu yeniden göster
+                            setState(() {
+                              pairedValues.removeAt(index);
+                            });
+                          },
+                          child: const Text(
+                            'Kaldır',
+                            style: TextStyle(
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const Divider(),
+                      Text('Pencereyi kapatıp açtığınızda işlemin sonuçları gözükecektir'),
+                      const Divider(), // Her öğe arasına bir ayırıcı ekleyelim
+                    ],
+                  );
+                },
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Kapat'),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (e) {
+      print('Error showing paired values popup: $e');
+    }
+  }
+
+  Future<void> deletePairFromDatabase(String nurseName, String sickName) async {
+    try {
+      // Veritabanından belirli bir eşleşmiş değeri sil
+      await FirebaseFirestore.instance.collection('nurseSickMatch')
+          .where('nurseName', isEqualTo: nurseName)
+          .where('SickName', isEqualTo: sickName)
+          .get()
+          .then((querySnapshot) {
+        querySnapshot.docs.forEach((doc) {
+          doc.reference.delete();
+        });
+      });
+    } catch (e) {
+      print('Error deleting paired values: $e');
+    }
+  }
+
+
+
+  Future<List<Map<String, dynamic>>> getPairedValues() async {
+    try {
+      List<Map<String, dynamic>> pairedValues = [];
+
+      // Veritabanından belirli koleksiyondaki tüm belgeleri al
+      QuerySnapshot querySnapshot =
+      await FirebaseFirestore.instance.collection('nurseSickMatch').get();
+
+      // Her bir belgeyi dön ve eşleştirilmiş değerleri listeye ekle
+      querySnapshot.docs.forEach((doc) {
+        pairedValues.add({
+          'nurse': doc['nurseName'],
+          'sick': doc['SickName'],
+        });
+      });
+
+      return pairedValues;
+    } catch (e) {
+      print('Error getting paired values: $e');
+      return [];
+    }
+  }
+
 
   Widget _dropdownlist(String hintText, List<String> userNames,
       BuildContext context, Function(String?) onValueChanged) {

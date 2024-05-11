@@ -7,131 +7,6 @@ final firebaseAuth = FirebaseAuth.instance;
 final firebaseFirestore = FirebaseFirestore.instance;
 
 class authService {
-  Future<List<Map<String, dynamic>>> getPairedValues() async {
-    try {
-      List<Map<String, dynamic>> pairedValues = [];
-
-      // Veritabanından belirli koleksiyondaki tüm belgeleri al
-      QuerySnapshot querySnapshot =
-          await FirebaseFirestore.instance.collection('nurseSickMatch').get();
-
-      // Her bir belgeyi dön ve eşleştirilmiş değerleri listeye ekle
-      querySnapshot.docs.forEach((doc) {
-        pairedValues.add({
-          'nurse': doc['nurseName'],
-          'sick': doc['SickName'],
-        });
-      });
-
-      return pairedValues;
-    } catch (e) {
-      print('Error getting paired values: $e');
-      return [];
-    }
-  }
-
-  Future<void> showPairedValuesPopup(BuildContext context) async {
-    try {
-      List<Map<String, dynamic>> pairedValues = await getPairedValues();
-
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Eşleştirilmiş Kişiler'),
-            content: Container(
-              width: MediaQuery.of(context).size.width * 0.8, // Genişliği ayarla
-              child: pairedValues.isEmpty
-                  ? const Text('Eşleştirilmiş kişiler bulunamadı.')
-                  : ListView.builder(
-                shrinkWrap: true,
-                itemCount: pairedValues.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Text(
-                      'Hemşire: ${pairedValues[index]['nurse']}, Hasta: ${pairedValues[index]['sick']}',
-                    ),
-                  );
-                },
-              ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Kapat'),
-              ),
-            ],
-          );
-        },
-      );
-    } catch (e) {
-      print('Error showing paired values popup: $e');
-    }
-  }
-
-  Future<void> removePairedValuesPopup(BuildContext context) async {
-    try {
-      List<Map<String, dynamic>> pairedValues = await getPairedValues();
-
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Eşleştirilmiş Kişiler'),
-            content: Container(
-              width: MediaQuery.of(context).size.width * 0.8, // Genişliği ayarla
-              child: pairedValues.isEmpty
-                  ? const Text('Eşleştirilmiş kişiler bulunamadı.')
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: pairedValues.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ListTile(
-                              title: Text(
-                                'Hemşire: ${pairedValues[index]['nurse']}',
-                              ),
-                            ),
-                            ListTile(
-                              title: Text(
-                                'Hasta: ${pairedValues[index]['sick']}',
-                              ),
-                              trailing: TextButton(
-                                onPressed: () {
-                                  // Burada kaldırma işlemi yapılacak
-                                },
-                                child: const Text(
-                                  'Kaldır',
-                                  style: TextStyle(
-                                      color: Colors.red), // Kırmızı renkte metin
-                                ),
-                              ),
-                            ),
-                            const Divider(), // Her öğe arasına bir ayırıcı ekleyelim
-                          ],
-                        );
-                      },
-                    ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Kapat'),
-              ),
-            ],
-          );
-        },
-      );
-    } catch (e) {
-      print('Error showing paired values popup: $e');
-    }
-  }
 
   Future<void> addDropdownValuesToFirestore({
     required BuildContext context,
@@ -139,10 +14,28 @@ class authService {
     required String? selectedSick,
   }) async {
     try {
+
+
       await FirebaseFirestore.instance.collection('nurseSickMatch').add({
-        'SickName': selectedNurse,
-        'nurseName': selectedSick,
+        'nurseName': selectedNurse,
+        'SickName': selectedSick,
       });
+
+
+
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance
+          .collection('hastaBilgileri')
+          .where('SickName', isEqualTo: selectedSick)
+          .get();
+
+// Belirli bir sorgu sonucunda dönen belgeleri doğrudan kullanarak yeni sütun ekleyin
+      await Future.forEach(querySnapshot.docs, (DocumentSnapshot<Map<String, dynamic>> doc) async {
+        await FirebaseFirestore.instance.collection('hastaBilgileri').doc(doc.id).set({
+          'connectedNurse': selectedNurse
+        }, SetOptions(merge: true));
+      });
+
+
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Başarıyla Eşleştirildi')));
     } catch (error) {

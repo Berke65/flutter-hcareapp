@@ -47,6 +47,8 @@ class _SickInformationState extends State<SickInformation> {
   String? selectedKanGrubu;
   String? kullaniciNot;
   final firebaseFirestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 
 
@@ -233,8 +235,34 @@ class _SickInformationState extends State<SickInformation> {
         .where('uid', isEqualTo: uid)
         .get();
 
-    String currentUserEmail = userQuery.docs.first.data()['email'];
+    String? currentUsername;
+    userQuery.docs.forEach((doc) {
+      if (doc.exists) {
+        currentUsername = doc.data()['name'];
+      } else {
+        currentUsername = "Kullanıcı bulunamadı";
+      }
+    });
+    print(currentUsername);
 
+    QuerySnapshot<Map<String, dynamic>> sickQuery = await FirebaseFirestore.instance
+        .collection('nurseSickMatch')
+        .where('SickName', isEqualTo: currentUsername)
+        .get();
+
+
+
+    String? NurseName;
+    sickQuery.docs.forEach((doc) {
+      if (doc.exists) {
+        NurseName = doc.data()['nurseName'];
+      } else {
+        NurseName = "Kullanıcı bulunamadı";
+      }
+    });
+    print(NurseName);
+
+    String currentUserEmail = userQuery.docs.first.data()['email'];
 
     try {
       await firebaseFirestore.collection('hastaBilgileri').doc(uid).set({
@@ -242,7 +270,9 @@ class _SickInformationState extends State<SickInformation> {
         'hastaKaliciHastalik': selectedKaliciHastaliklar,
         'hastaKanGrup' : selectedKanGrubu,
         'hastaKullanılanİlaclar' : ilaclar,
-        'hastaNot' : kullaniciNot
+        'hastaNot' : kullaniciNot,
+        'connectedNurse': NurseName,
+        'SickName' : currentUsername,
       });
       res = "success";
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Bilgileriniz başarıyla kaydedildi. Hasta Anasayfasına yönlendiriliyorsunuz')));

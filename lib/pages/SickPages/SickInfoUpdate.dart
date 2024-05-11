@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:hcareapp/pages/SickPages/SickHomePage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 void main() => runApp(SickUpdate());
 
-class SickUpdate extends StatelessWidget {
+class Medicine {
+  String name;
+
+
+  Medicine(this.name);
+}
+
+class SickUpdate extends StatefulWidget {
+  @override
+  _SickUpdateState createState() => _SickUpdateState();
+}
+
+class _SickUpdateState extends State<SickUpdate> {
   final List<String> kanGruplari = [
     'A Rh(+)',
     'A Rh(-)',
@@ -26,31 +41,20 @@ class SickUpdate extends StatelessWidget {
     // İstediğiniz kadar hastalık ekleyebilirsiniz
   ];
 
+  final List<String> selectedKaliciHastaliklar = [];
   final List<String> ilaclar = [];
+  final List<String> hastaliklar = [];
+  String? selectedKanGrubu;
+  String? kullaniciNot;
+  final firebaseFirestore = FirebaseFirestore.instance;
+
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            size: 30,
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const SickHomePage(),
-              ),
-            );
-          },
-        ),
-        title: const Text(
-          'Sağlık Bilgilerinizi Güncelleyin.',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
+        title: const Text('Sağlık Bilgilerinizi Güncelleyin'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
@@ -63,14 +67,18 @@ class SickUpdate extends StatelessWidget {
             ),
             const SizedBox(height: 10.0),
             DropdownButtonFormField<String>(
-              value: null,
+              value: selectedKanGrubu, // Seçilen kan grubunu burada gösteriyoruz
               items: kanGruplari.map((String kanGrubu) {
                 return DropdownMenuItem<String>(
                   value: kanGrubu,
                   child: Text(kanGrubu),
                 );
               }).toList(),
-              onChanged: (_) {},
+              onChanged: (String? value) {
+                setState(() {
+                  selectedKanGrubu = value; // Seçilen kan grubunu değişkene atıyoruz
+                });
+              },
               decoration: const InputDecoration(
                 hintText: 'Kan grubunuzu seçin',
                 border: OutlineInputBorder(),
@@ -88,8 +96,16 @@ class SickUpdate extends StatelessWidget {
                   padding: const EdgeInsets.all(4.0),
                   child: FilterChip(
                     label: Text(hastalik),
-                    onSelected: (_) {},
-                    selected: false,
+                    onSelected: (bool selected) {
+                      setState(() {
+                        if (selected) {
+                          selectedKaliciHastaliklar.add(hastalik);
+                        } else {
+                          selectedKaliciHastaliklar.remove(hastalik);
+                        }
+                      });
+                    },
+                    selected: selectedKaliciHastaliklar.contains(hastalik),
                   ),
                 );
               }).toList(),
@@ -97,31 +113,17 @@ class SickUpdate extends StatelessWidget {
             const SizedBox(height: 20.0),
             _buildIlaclarDropdown(),
             const SizedBox(height: 20.0),
-            const Text(
-              'Eklemek İstediğiniz Notları Yazabilirsiniz',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10.0),
-            TextFormField(
-              maxLines: 3,
-              onChanged: (_) {},
-              decoration: const InputDecoration(
-                hintText: 'Eklemek İstediğiniz Notları Yazabilirsiniz',
-                border: OutlineInputBorder(),
-              ),
-            ),
+            _not(),
             const SizedBox(height: 20.0),
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  // Kaydetme işlevini buraya ekleyebilirsiniz.
-                },
+                onPressed: hastaBilgileriKayit,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                       vertical: 12.0, horizontal: 50.0),
                   backgroundColor: Colors.blueGrey[100],
-                  elevation: 2,
-                  shadowColor: Colors.blueGrey,
+                  elevation: 3, // Gölgelenme miktarı
+                  shadowColor: Colors.black, // Gölgelenme rengi
                 ),
                 child: const Text(
                   'Kaydet',
@@ -151,7 +153,7 @@ class SickUpdate extends StatelessWidget {
               child: FilterChip(
                 label: Text(ilac),
                 onSelected: (_) {},
-                selected: false,
+                selected: true,
               ),
             );
           }).toList(),
@@ -159,18 +161,134 @@ class SickUpdate extends StatelessWidget {
         const SizedBox(height: 10.0),
         ElevatedButton(
           onPressed: () {
+            _showIlaclarDialog();
           },
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(
-                vertical: 12.0, horizontal: 50.0),
-            backgroundColor: Colors.blueGrey[100],
-            elevation: 3, // Gölgelenme miktarı
-            shadowColor: Colors.blueGrey, // Gölgelenme rengi
-
-          ),
-          child: const Text('İlaç Ekle', style: TextStyle(color: Colors.black),),
+          child: const Text('İlaç Ekle'),
         ),
       ],
     );
+  }
+
+  Future<void> _showIlaclarDialog() async {
+    final TextEditingController ilacController = TextEditingController();
+
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('İlaç Ekle'),
+          content: TextFormField(
+            controller: ilacController,
+            decoration: const InputDecoration(
+              hintText: 'İlacı girin',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  ilaclar.add(ilacController.text);
+                });
+                Navigator.of(context).pop();
+              },
+              child: const Text('Ekle'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _not() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Eklemek İstediğiniz Notları Yazabilirsiniz',
+          style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10.0),
+        TextFormField(
+          maxLines: 3,
+          onChanged: (String value) {
+            setState(() {
+              kullaniciNot = value;
+            });
+          },
+          decoration: const InputDecoration(
+            hintText: 'Eklemek İstediğiniz Notları Yazabilirsiniz',
+            border: OutlineInputBorder(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void hastaBilgileriKayit() async {
+    String? res;
+    String? uid = FirebaseAuth.instance.currentUser?.uid;
+
+    QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore.instance
+        .collection('users')
+        .where('uid', isEqualTo: uid)
+        .get();
+
+    String? currentUsername;
+    userQuery.docs.forEach((doc) {
+      if (doc.exists) {
+        currentUsername = doc.data()['name'];
+      } else {
+        currentUsername = "Kullanıcı bulunamadı";
+      }
+    });
+    print(currentUsername);
+
+    QuerySnapshot<Map<String, dynamic>> sickQuery = await FirebaseFirestore.instance
+        .collection('nurseSickMatch')
+        .where('SickName', isEqualTo: currentUsername)
+        .get();
+
+
+
+    String? NurseName;
+    sickQuery.docs.forEach((doc) {
+      if (doc.exists) {
+        NurseName = doc.data()['nurseName'];
+      } else {
+        NurseName = "Kullanıcı bulunamadı";
+      }
+    });
+    print(NurseName);
+
+
+
+    String currentUserEmail = userQuery.docs.first.data()['email'];
+
+
+    try {
+      if(selectedKaliciHastaliklar == null || selectedKanGrubu == null || ilaclar == null || kullaniciNot == null)
+        {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Lütfen Hiçbir Bölümü Boş Geçmeyiniz')));
+        }
+      else
+        {
+          await firebaseFirestore.collection('hastaBilgileri').doc(uid).set({
+            'hastaMail' : currentUserEmail,
+            'hastaKaliciHastalik': selectedKaliciHastaliklar,
+            'hastaKanGrup' : selectedKanGrubu,
+            'hastaKullanılanİlaclar' : ilaclar,
+            'hastaNot' : kullaniciNot,
+            'connectedNurse': NurseName,
+          });
+          res = "success";
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => SickAnasayfa()));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Bilgileriniz başarıyla kaydedildi. Hasta Anasayfasına yönlendiriliyorsunuz')));
+        }
+    } catch (e) {
+      print('Firestore veri ekleme hatası: $e');
+      res = "Bir hata oluştu, lütfen tekrar deneyin."; //forhotrestart
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Bilinmeyen bir hata oluştu lütfen tekrar deneyiniz')));
+    }
   }
 }

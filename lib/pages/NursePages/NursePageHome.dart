@@ -1,8 +1,11 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hcareapp/main.dart';
 import 'package:hcareapp/pages/NursePages/BottomAppbarNurse.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'Profile.dart';
 void main() {
@@ -71,16 +74,88 @@ class _NursePageState extends State<NursePage> {
           ),
         ],
       ),
-      body: const Center(
-        child: Text(
-          'Boş Hemşire Ana Ekranı',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: _showSickUsers(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Veriler yüklenirken gösterilecek widget
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            // Hata durumunda gösterilecek widget
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            // Veriler başarıyla alındıysa gösterilecek widget
+            List<Map<String, dynamic>> sickUsers = snapshot.data!;
+            return ListView.builder(
+              itemCount: sickUsers.length,
+              itemBuilder: (context, index) {
+                Map<String, dynamic> user = sickUsers[index];
+                List<dynamic> kaliciHastaliklar = user['hastaKaliciHastalik'] ?? [];
+                List<dynamic> kullanilanIlaclar = user['hastaKullanılanİlaclar'] ?? [];
+
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ListTile(
+                      title: Text("Sorumlu Olduğu Hasta: " + user['SickName'] ,style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                      subtitle: Column(
+                        children: [
+                          Text("Hasta Notu: " + user['hastaNot']),
+                          Text("Sorumlu Olduğu Hemşire: " + user['connectedNurse']),
+                          Text("Kalıcı Hastalıklar: " + kaliciHastaliklar.join(', ')),
+                          Text("Kullanılan İlaçlar: " + kullanilanIlaclar.join(', ')),
+                          Text("Hasta Kan Grubu: " + user['hastaKanGrup']),
+                        ],
+                      ),
+                      onTap: () {
+                        // Kullanıcıya tıklandığında yapılacak işlemler buraya eklenir
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+
+          }
+        },
       ),
       bottomNavigationBar: BottomAppbarNurse(context),
     );
   }
+  Future<List<Map<String, dynamic>>> _showSickUsers() async {
+    try {
+      String? uid = FirebaseAuth.instance.currentUser?.uid;
+
+      QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore.instance
+          .collection('users')
+          .where('uid', isEqualTo: uid)
+          .get();
+
+      String? currentUsername;
+      userQuery.docs.forEach((doc) {
+        if (doc.exists) {
+          currentUsername = doc.data()['name'];
+        } else {
+          currentUsername = "Kullanıcı bulunamadı";
+        }
+      });
+      print(currentUsername);
+
+      // Firestore'dan kullanıcıları al
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+      await FirebaseFirestore.instance.collection('hastaBilgileri').where('connectedNurse', isEqualTo: currentUsername).get();
+
+      // Alınan kullanıcı verilerini işleyerek görüntüleme işlemini yap
+      List<Map<String, dynamic>> sickUsers = querySnapshot.docs.map((doc) => doc.data()).toList();
+
+      return sickUsers;
+    } catch (e) {
+      print('Error fetching sick users: $e');
+      // Hata durumunda kullanıcıya bilgi verme veya uygun bir şekilde işlem yapma
+      throw e; // Hata durumunda döndürülen future'ı hata durumu ile işlemek için hatayı yeniden fırlatır
+    }
+  }
+
+
+
 }

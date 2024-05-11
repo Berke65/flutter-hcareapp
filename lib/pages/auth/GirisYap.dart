@@ -299,7 +299,8 @@ class _GirisYapState extends State<GirisYap> {
                 ),
               ));
               Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => SickInformation()));
+                  MaterialPageRoute(builder: (context) => SickInformation()
+                  ));
             } else {
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text(

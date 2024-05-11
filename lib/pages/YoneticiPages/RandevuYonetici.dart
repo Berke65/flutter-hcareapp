@@ -174,23 +174,30 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                                           ),
                                           TextButton(
                                             onPressed: () async {
-                                              // Tıklanan satırdaki randevuyu Firestore'dan kaldır
-                                              await FirebaseFirestore.instance.collection('randevu')
-                                                  .where('tarih', isEqualTo: randevu.dateTime)
-                                                  .where('sağlıkAlanı', isEqualTo: randevu.detay)
-                                                  .where('userName', isEqualTo: randevu.userName)
-                                                  .where('saat', isEqualTo: randevu.saat)
-                                                  .get().then((querySnapshot) {
-                                                querySnapshot.docs.forEach((doc) {
-                                                  doc.reference.delete();
+                                              try {
+                                                // Tıklanan satırdaki randevuyu Firestore'dan kaldır
+                                                await FirebaseFirestore.instance.collection('randevu')
+                                                    .where('tarih', isEqualTo: randevu.dateTime)
+                                                    .where('sağlıkAlanı', isEqualTo: randevu.detay)
+                                                    .where('userName', isEqualTo: randevu.userName)
+                                                    .where('saat', isEqualTo: randevu.saat)
+                                                    .get().then((querySnapshot) {
+                                                  querySnapshot.docs.forEach((doc) {
+                                                    doc.reference.delete();
+                                                  });
                                                 });
-                                              });
-                                              // Liste içinden tıklanan randevuyu kaldır
-                                              setState(() {
-                                              });
-                                              // İletişim kutusunu kapat
-                                              Navigator.of(context).pop();
+                                                // Liste içinden tıklanan randevuyu kaldır
+                                                setState(() {
+                                                  randevular.remove(randevu); // Randevuyu listeden kaldır
+                                                });
+                                                // İletişim kutusunu kapat
+                                                Navigator.of(context).pop();
+                                              } catch (e) {
+                                                print("Hataaaaaaaa: $e");
+                                                // Hata durumunda kullanıcıya bilgi vermek için gerekli işlemler yapılabilir
+                                              }
                                             },
+
                                             child: const Text("Evet, İptal Et"),
                                           ),
                                         ],
@@ -217,6 +224,12 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
       bottomNavigationBar: BottomAppBarYonetici(context),
     );
   }
+
+
+  Future<void> _removeRandevu() async{
+
+  }
+
   // _getRandevular fonksiyonu _YoneticiHomePageState sınıfının bir parçası olarak tanımlanmalıdır
   Future<void> _getRandevular() async {
     // Firestore'dan randevu bilgilerini al
@@ -235,7 +248,6 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
           .toList();
     });
   }
-
 }
 
 class Randevu {

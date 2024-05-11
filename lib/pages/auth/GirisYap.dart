@@ -5,7 +5,7 @@ import 'package:hcareapp/pages/SickPages/SickInformation.dart';
 import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
 import 'package:hcareapp/pages/NursePages/NursePageHome.dart';
 import 'package:hcareapp/pages/auth/passwd.dart';
-import 'package:hcareapp/pages/SickPages/SickAnasayfa.dart';
+import 'package:hcareapp/pages/SickPages/SickHomePage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {

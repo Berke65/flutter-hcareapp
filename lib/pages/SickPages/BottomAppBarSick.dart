@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hcareapp/pages/SickPages/Profile.dart';
 import 'package:hcareapp/pages/SickPages/SickChat.dart';
 import 'package:hcareapp/pages/SickPages/SickInformation.dart';
-import 'package:hcareapp/pages/SickPages/SickAnasayfa.dart';
+import 'package:hcareapp/pages/SickPages/SickHomePage.dart';
 import 'package:hcareapp/pages/SickPages/MedicineControl.dart';
 
 BottomAppBar BottomAppBarSick(BuildContext context) {

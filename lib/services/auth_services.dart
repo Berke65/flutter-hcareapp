@@ -3,18 +3,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart'; // Ekleme
 
-
 final firebaseAuth = FirebaseAuth.instance;
 final firebaseFirestore = FirebaseFirestore.instance;
 
 class authService {
-
   Future<List<Map<String, dynamic>>> getPairedValues() async {
     try {
       List<Map<String, dynamic>> pairedValues = [];
 
       // Veritabanından belirli koleksiyondaki tüm belgeleri al
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('nurseSickMatch').get();
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('nurseSickMatch').get();
 
       // Her bir belgeyi dön ve eşleştirilmiş değerleri listeye ekle
       querySnapshot.docs.forEach((doc) {
@@ -39,26 +38,29 @@ class authService {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Eşleştirilmiş Kişiler'),
-            content: pairedValues.isEmpty
-                ? Text('Eşleştirilmiş kişiler bulunamadı.')
-                : ListView.builder(
-              shrinkWrap: true,
-              itemCount: pairedValues.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title: Text(
-                    'Hemşire: ${pairedValues[index]['nurse']}, Hasta: ${pairedValues[index]['sick']}',
-                  ),
-                );
-              },
+            title: const Text('Eşleştirilmiş Kişiler'),
+            content: Container(
+              width: MediaQuery.of(context).size.width * 0.8, // Genişliği ayarla
+              child: pairedValues.isEmpty
+                  ? const Text('Eşleştirilmiş kişiler bulunamadı.')
+                  : ListView.builder(
+                shrinkWrap: true,
+                itemCount: pairedValues.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    title: Text(
+                      'Hemşire: ${pairedValues[index]['nurse']}, Hasta: ${pairedValues[index]['sick']}',
+                    ),
+                  );
+                },
+              ),
             ),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Kapat'),
+                child: const Text('Kapat'),
               ),
             ],
           );
@@ -77,58 +79,59 @@ class authService {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Eşleştirilmiş Kişiler'),
-            content: pairedValues.isEmpty
-                ? Text('Eşleştirilmiş kişiler bulunamadı.')
-                : ListView.builder(
-              shrinkWrap: true,
-              itemCount: pairedValues.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ListTile(
-                      title: Text(
-                        'Hemşire: ${pairedValues[index]['nurse']}',
-                      ),
+            title: const Text('Eşleştirilmiş Kişiler'),
+            content: Container(
+              width: MediaQuery.of(context).size.width * 0.8, // Genişliği ayarla
+              child: pairedValues.isEmpty
+                  ? const Text('Eşleştirilmiş kişiler bulunamadı.')
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: pairedValues.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ListTile(
+                              title: Text(
+                                'Hemşire: ${pairedValues[index]['nurse']}',
+                              ),
+                            ),
+                            ListTile(
+                              title: Text(
+                                'Hasta: ${pairedValues[index]['sick']}',
+                              ),
+                              trailing: TextButton(
+                                onPressed: () {
+                                  // Burada kaldırma işlemi yapılacak
+                                },
+                                child: const Text(
+                                  'Kaldır',
+                                  style: TextStyle(
+                                      color: Colors.red), // Kırmızı renkte metin
+                                ),
+                              ),
+                            ),
+                            const Divider(), // Her öğe arasına bir ayırıcı ekleyelim
+                          ],
+                        );
+                      },
                     ),
-                    ListTile(
-                      title: Text(
-                        'Hasta: ${pairedValues[index]['sick']}',
-                      ),
-                      trailing: TextButton(
-                        onPressed: () {
-                          // Burada kaldırma işlemi yapılacak
-                        },
-                        child: Text(
-                          'Kaldır',
-                          style: TextStyle(color: Colors.red), // Kırmızı renkte metin
-                        ),
-                      ),
-                    ),
-                    Divider(), // Her öğe arasına bir ayırıcı ekleyelim
-                  ],
-                );
-              },
             ),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Kapat'),
+                child: const Text('Kapat'),
               ),
             ],
           );
-
         },
       );
     } catch (e) {
       print('Error showing paired values popup: $e');
     }
   }
-
-
 
   Future<void> addDropdownValuesToFirestore({
     required BuildContext context,
@@ -140,9 +143,8 @@ class authService {
         'SickName': selectedNurse,
         'nurseName': selectedSick,
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Başarıyla Eşleştirildi')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Başarıyla Eşleştirildi')));
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -153,7 +155,7 @@ class authService {
   }
 
   Future<String?> signupHataYakalama(String email, String password, String ad,
-      String soyad, String telNo, String roleName ,String bosImage) async {
+      String soyad, String telNo, String roleName, String bosImage) async {
     String? res;
     try {
       final result = await firebaseAuth.createUserWithEmailAndPassword(
@@ -161,7 +163,8 @@ class authService {
         password: password,
       );
 
-      bosImage = 'https://firebasestorage.googleapis.com/v0/b/hcareapp-ee339.appspot.com/o/images%2Fdefaul_user.jpg?alt=media&token=9758a7d1-027e-4a31-901e-40bd6b1d5ad6';
+      bosImage =
+          'https://firebasestorage.googleapis.com/v0/b/hcareapp-ee339.appspot.com/o/images%2Fdefaul_user.jpg?alt=media&token=9758a7d1-027e-4a31-901e-40bd6b1d5ad6';
 
       // Kullanıcı başarıyla kaydedildiyse
       if (result.user != null) {
@@ -176,7 +179,7 @@ class authService {
             'surname': soyad,
             'telNo': telNo,
             'roleName': roleName,
-            'image' : bosImage,
+            'image': bosImage,
           });
           res = "success";
         } catch (e) {

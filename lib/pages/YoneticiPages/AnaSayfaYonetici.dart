@@ -60,7 +60,6 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
         title: Image.asset('images/gero1.jpg', fit: BoxFit.cover, height: 38),
         centerTitle: true,
         actions: [
-
           Container(
             margin: EdgeInsets.all(5.0), // Container'ın kenar boşlukları
             decoration: BoxDecoration(

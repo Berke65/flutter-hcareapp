@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hcareapp/main.dart';
-
+import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 
 void main() {
   runApp(const CameraPage());
@@ -12,52 +11,56 @@ class CameraPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'IP Kamera Video Görüntüleyici',
       theme: ThemeData(
-        appBarTheme: const AppBarTheme(
-          color: Colors.white54,
-        ),
-        bottomAppBarTheme: const BottomAppBarTheme(
-          color: Colors.white,
-        ),
+        primarySwatch: Colors.blue,
       ),
-      home: const CameraPageState(),
+      home: CameraPageState(),
     );
   }
 }
 
 class CameraPageState extends StatefulWidget {
-  const CameraPageState({Key? key}) : super(key: key);
-
   @override
   _CameraPageStateState createState() => _CameraPageStateState();
 }
 
 class _CameraPageStateState extends State<CameraPageState> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late final VlcPlayerController _videoPlayerController;
+
+  @override
+  void initState() {
+    super.initState();
+    _videoPlayerController = VlcPlayerController.network(
+      'rtsp://admin:12345678Fb@192.168.1.45:554/onvif1',
+      hwAcc: HwAcc.disabled,
+      autoPlay: true,
+      options: VlcPlayerOptions(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _videoPlayerController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: Image.asset('images/gero1.jpg', fit: BoxFit.cover, height: 38),
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.exit_to_app_outlined,
-            size: 30,
+      appBar: AppBar(),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          VlcPlayer(
+            controller: _videoPlayerController,
+            aspectRatio: 16 / 9,
+            placeholder: const Center(
+              child: CircularProgressIndicator(),
+            ),
           ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Main(),
-              ),
-            );
-          },
-        ),
+        ],
       ),
-
     );
   }
 }

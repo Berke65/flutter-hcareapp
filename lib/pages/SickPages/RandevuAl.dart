@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hcareapp/main.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-
+import 'package:hcareapp/pages/SickPages/SickHomePage.dart';
 
 void main() async {
   runApp(const RandevuAl());
@@ -44,8 +42,6 @@ class _RandevuPageState extends State<RandevuPage>
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-
-
   // Seçilen günü takip etmek için bir değişken oluşturalım
   DateTime selectedDate = DateTime.now();
 
@@ -78,22 +74,22 @@ class _RandevuPageState extends State<RandevuPage>
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Image.asset('images/gero1.jpg', fit: BoxFit.cover, height: 38),
-        centerTitle: true,
         leading: IconButton(
           icon: const Icon(
-            Icons.exit_to_app_outlined,
+            Icons.arrow_back,
             size: 30,
           ),
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => Main(),
+                builder: (context) => const SickHomePage(),
               ),
             );
           },
         ),
+        title: const Text('Randevu Al',
+          style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20) ,),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -146,7 +142,8 @@ class _RandevuPageState extends State<RandevuPage>
                 border: OutlineInputBorder(),
               ),
               inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')), // AAAAAAAAAAAAAA
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                // AAAAAAAAAAAAAA
                 // Yalnızca rakam ve iki nokta karakterine izin verir
               ],
               onChanged: (value) {
@@ -163,15 +160,21 @@ class _RandevuPageState extends State<RandevuPage>
                 String? userName = await getUserName();
 
                 // Boş alan kontrolü
-                if (selectedDate == null || selectedDepartment == null || selectedHour.isEmpty || userName == null) {
+                if (selectedDate == null ||
+                    selectedDepartment == null ||
+                    selectedHour.isEmpty ||
+                    userName == null) {
                   // Kullanıcıya boş alanları doldurması gerektiğini belirten bir uyarı göster
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Lütfen tüm alanları doldurunuz!')),
+                    const SnackBar(
+                        content: Text('Lütfen tüm alanları doldurunuz!')),
                   );
                 } else {
                   // Firestore'a randevu bilgilerini ve kullanıcının adını ekleme fonksiyonunu çağır
-                  addAppointmentToFirestore(selectedDate, selectedDepartment!, selectedHour, userName);
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Randevunuz Başarıyla oluşturuldu")));
+                  addAppointmentToFirestore(selectedDate, selectedDepartment!,
+                      selectedHour, userName);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Randevunuz Başarıyla oluşturuldu")));
                 }
               },
               child: const Text('Randevu Al'),
@@ -182,19 +185,19 @@ class _RandevuPageState extends State<RandevuPage>
       // bottomNavigationBar: BottomAppBarSick(context),
     );
   }
-  void addAppointmentToFirestore(DateTime selectedDate, String selectedDepartment, String selectedHour ,String userName) {
+
+  void addAppointmentToFirestore(DateTime selectedDate,
+      String selectedDepartment, String selectedHour, String userName) {
     // Firestore'da yeni bir randevu dökümanı oluştur
     _firestore.collection('randevu').add({
       'tarih': selectedDate,
       'sağlıkAlanı': selectedDepartment,
       'saat': selectedHour,
       'userName': userName, // Kullanıcının adını ekle
-    })
-        .then((value) {
+    }).then((value) {
       // İşlem başarılı olduğunda yapılacak işlemler
       print('Randevu başarıyla eklendi!');
-    })
-        .catchError((error) {
+    }).catchError((error) {
       // Hata durumunda yapılacak işlemler
       print('Hata oluştu: $error');
     });
@@ -208,7 +211,8 @@ class _RandevuPageState extends State<RandevuPage>
 
     if (user != null) {
       // Firestore'dan belgeyi al
-      DocumentSnapshot<Map<String, dynamic>> snapshot = await _firestore.collection('users').doc(user.uid).get();
+      DocumentSnapshot<Map<String, dynamic>> snapshot =
+          await _firestore.collection('users').doc(user.uid).get();
 
       // Belgeyi kontrol et ve kullanıcının adını al
       if (snapshot.exists) {
@@ -218,5 +222,4 @@ class _RandevuPageState extends State<RandevuPage>
 
     return userName;
   }
-
 }

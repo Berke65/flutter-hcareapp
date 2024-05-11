@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:hcareapp/main.dart';
-import 'package:hcareapp/pages/SickPages/SickAnasayfa.dart';
+import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -26,19 +26,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(
-            Icons.home_outlined,
-            size: 30,
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SickAnasayfa(),
+        leading: Container(
+          child: Container(
+            margin: EdgeInsets.all(5.0), // Container'ın kenar boşlukları
+            decoration: BoxDecoration(
+              shape: BoxShape.circle, // Container'ı daire şeklinde yap
+              color: Colors.grey[200], // Container'ın arka plan rengi
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.home_outlined,
+                size: 30,
               ),
-            );
-          },
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const YoneticiHomePage(),
+                  ),
+                );
+              },
+            ),
+          ),
         ),
         automaticallyImplyLeading: false,
         title: const Text('Profil'),
@@ -55,18 +64,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text("Emin misiniz?"),
-                      content: Text("Çıkış yapmak istediğinize emin misiniz?"),
+                      title: const Text("Emin misiniz?"),
+                      content:
+                      const Text("Çıkış yapmak istediğinize emin misiniz?"),
                       actions: [
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child: Text("İptal"),
+                          child: const Text("İptal"),
                         ),
                         TextButton(
                           onPressed: () {
-                            Navigator.of(context).pop(); // Önce alert dialogu kapat
+                            Navigator.of(context)
+                                .pop(); // Önce alert dialogu kapat
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -74,14 +85,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             );
                           },
-                          child: Text("Evet"),
+                          child: const Text("Evet"),
                         ),
                       ],
                     );
                   },
                 );
               },
-              child: Row(
+              child: const Row(
                 children: <Widget>[
                   Icon(Icons.exit_to_app, color: Colors.red), // Çıkış ikonu
                   SizedBox(width: 5.0),
@@ -92,7 +103,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
-
           ],
         ),
       ),
@@ -207,7 +217,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           const SizedBox(height: 8.0),
           Text(
-            "rol: " + userData['roleName'],
+            // ignore: prefer_interpolation_to_compose_strings
+            "Rol: " + userData['roleName'],
             style: const TextStyle(
               fontSize: 16.0,
               color: Colors.grey,
@@ -231,7 +242,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ListTile(
             leading: const Icon(Icons.account_circle_outlined),
             title: Text(
-              userData['name'] + " " + userData['surname'],
+              userData['name'] + "" + userData['surname'],
               style: const TextStyle(fontSize: 18),
             ),
           ),

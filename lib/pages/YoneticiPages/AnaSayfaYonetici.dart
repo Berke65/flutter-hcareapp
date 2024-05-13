@@ -2,11 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:hcareapp/main.dart';
+import 'package:hcareapp/pages/YoneticiPages/AllSickPage.dart';
 import 'package:hcareapp/pages/YoneticiPages/Profile.dart';
 import 'package:hcareapp/pages/YoneticiPages/bottomAppBarYonetici.dart';
 import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/authService.dart';
 import 'package:hcareapp/services/auth_services.dart';
+import 'package:hcareapp/pages/YoneticiPages/AllSickPage.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -237,14 +239,26 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                               borderRadius: BorderRadius.circular(30),
                             ),
                           ),
-                          child: const Text(
-                            'Görüntüle Ve Düzenle',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          child: Column(
+                            children: [
+                              const Text(
+                                'Görüntüle Ve Düzenle',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
+                        TextButton(onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AllSickPage(),
+                            ),
+                          );
+                        }, child: Text('Tüm Hastları Görmek için tıklayınız'))
                       ],
                     ),
                   ],
@@ -308,7 +322,6 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                       ),
                       const Divider(),
                       Text('Pencereyi kapatıp açtığınızda işlemin sonuçları gözükecektir'),
-                      const Divider(), // Her öğe arasına bir ayırıcı ekleyelim
                     ],
                   );
                 },

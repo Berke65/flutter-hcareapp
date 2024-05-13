@@ -8,9 +8,12 @@ void main() => runApp(SickInformation());
 
 class Medicine {
   String name;
+  int dosage; // Dozaj bilgisini ekledik
+  String time; // Saat bilgisini ekliyoruz
 
 
-  Medicine(this.name);
+
+  Medicine(this.name, this.dosage, this.time);
 }
 
 class SickInformation extends StatefulWidget {
@@ -42,14 +45,13 @@ class _SickInformationState extends State<SickInformation> {
   ];
 
   final List<String> selectedKaliciHastaliklar = [];
-  final List<String> ilaclar = [];
+  final List<Medicine> ilaclar = [];
   final List<String> hastaliklar = [];
   String? selectedKanGrubu;
   String? kullaniciNot;
   final firebaseFirestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
 
 
   @override
@@ -69,7 +71,8 @@ class _SickInformationState extends State<SickInformation> {
             ),
             const SizedBox(height: 10.0),
             DropdownButtonFormField<String>(
-              value: selectedKanGrubu, // Seçilen kan grubunu burada gösteriyoruz
+              value: selectedKanGrubu,
+              // Seçilen kan grubunu burada gösteriyoruz
               items: kanGruplari.map((String kanGrubu) {
                 return DropdownMenuItem<String>(
                   value: kanGrubu,
@@ -78,7 +81,8 @@ class _SickInformationState extends State<SickInformation> {
               }).toList(),
               onChanged: (String? value) {
                 setState(() {
-                  selectedKanGrubu = value; // Seçilen kan grubunu değişkene atıyoruz
+                  selectedKanGrubu =
+                      value; // Seçilen kan grubunu değişkene atıyoruz
                 });
               },
               decoration: const InputDecoration(
@@ -149,11 +153,11 @@ class _SickInformationState extends State<SickInformation> {
         ),
         const SizedBox(height: 10.0),
         Wrap(
-          children: ilaclar.map((String ilac) {
+          children: ilaclar.map((Medicine ilac) {
             return Padding(
               padding: const EdgeInsets.all(4.0),
               child: FilterChip(
-                label: Text(ilac),
+                label: Text(ilac.name), // İlaç adını burada kullanıyoruz
                 onSelected: (_) {},
                 selected: true,
               ),
@@ -173,27 +177,56 @@ class _SickInformationState extends State<SickInformation> {
 
   Future<void> _showIlaclarDialog() async {
     final TextEditingController ilacController = TextEditingController();
+    final TextEditingController dozajController = TextEditingController();
+    final TextEditingController saatController = TextEditingController(); // Saat bilgisi için bir TextEditingController ekledik
 
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('İlaç Ekle'),
-          content: TextFormField(
-            controller: ilacController,
-            decoration: const InputDecoration(
-              hintText: 'İlacı girin',
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  ilaclar.add(ilacController.text);
-                });
-                Navigator.of(context).pop();
-              },
-              child: const Text('Ekle'),
+        return Row(
+          children: [
+            AlertDialog(
+              title: const Text('İlaç Ekle'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: ilacController,
+                    decoration: const InputDecoration(
+                      hintText: 'İlacı girin',
+                    ),
+                  ),
+                  const SizedBox(height: 10.0),
+                  TextFormField(
+                    controller: dozajController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      hintText: 'Dozajı girin',
+                    ),
+                  ),
+                  const SizedBox(height: 10.0),
+                  TextFormField(
+                    controller: saatController,
+                    keyboardType: TextInputType.datetime,
+                    decoration: const InputDecoration(
+                      hintText: 'Saat bilgisini girin (HH:MM)',
+                    ),
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      // İlaç adı, dozajı ve saat bilgisini ekleyerek ilaç listesine ekliyoruz
+                      ilaclar.add(Medicine(ilacController.text, int.parse(
+                          dozajController.text), saatController.text));
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Ekle'),
+                ),
+              ],
             ),
           ],
         );
@@ -230,7 +263,8 @@ class _SickInformationState extends State<SickInformation> {
     String? res;
     String? uid = FirebaseAuth.instance.currentUser?.uid;
 
-    QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore.instance
+    QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore
+        .instance
         .collection('users')
         .where('uid', isEqualTo: uid)
         .get();
@@ -245,11 +279,11 @@ class _SickInformationState extends State<SickInformation> {
     });
     print(currentUsername);
 
-    QuerySnapshot<Map<String, dynamic>> sickQuery = await FirebaseFirestore.instance
+    QuerySnapshot<Map<String, dynamic>> sickQuery = await FirebaseFirestore
+        .instance
         .collection('nurseSickMatch')
         .where('SickName', isEqualTo: currentUsername)
         .get();
-
 
 
     String? NurseName;
@@ -265,23 +299,42 @@ class _SickInformationState extends State<SickInformation> {
     String currentUserEmail = userQuery.docs.first.data()['email'];
 
     try {
-      await firebaseFirestore.collection('hastaBilgileri').doc(uid).set({
-        'hastaMail' : currentUserEmail,
-        'hastaKaliciHastalik': selectedKaliciHastaliklar,
-        'hastaKanGrup' : selectedKanGrubu,
-        'hastaKullanılanİlaclar' : ilaclar,
-        'hastaNot' : kullaniciNot,
-        'connectedNurse': NurseName,
-        'SickName' : currentUsername,
+      // İlaçları Firestore'a kaydetme
+      List<Map<String, dynamic>> ilacBilgileri = [];
+      ilaclar.forEach((ilac) {
+        ilacBilgileri.add({
+          'ilacAdi': ilac.name,
+          'dozaj': ilac.dosage,
+          'saat': ilac.time, // Saat bilgisini de Firestore'a ekliyoruz
+        });
       });
-      res = "success";
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Bilgileriniz başarıyla kaydedildi. Hasta Anasayfasına yönlendiriliyorsunuz')));
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => SickAnasayfa()));
+
+      if(selectedKanGrubu == null  || kullaniciNot == null)
+        {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Lütfen kan grubu ve not kısmını boş geçmeyiniz')));
+        }
+      else {
+        await firebaseFirestore.collection('hastaBilgileri').doc(uid).set({
+          'hastaMail': currentUserEmail,
+          'hastaKaliciHastalik': selectedKaliciHastaliklar,
+          'hastaKanGrup': selectedKanGrubu,
+          'hastaKullanılanİlaclar': ilacBilgileri,
+          // İlaç bilgileri buraya eklendi
+          'hastaNot': kullaniciNot,
+          'connectedNurse': NurseName,
+          'SickName': currentUsername,
+        });
+        res = "success";
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text(
+            'Bilgileriniz başarıyla kaydedildi. Hasta Anasayfasına yönlendiriliyorsunuz')));
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => SickAnasayfa()));
+      }
     } catch (e) {
       print('Firestore veri ekleme hatası: $e');
-      res = "Bir hata oluştu, lütfen tekrar deneyin."; //forhotrestart
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Bilinmeyen bir hata oluştu lütfen tekrar deneyiniz')));
+      res = "Bir hata oluştu, lütfen tekrar deneyin.";
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text(
+          'Bilinmeyen bir hata oluştu lütfen tekrar deneyiniz')));
     }
   }
 }

@@ -16,7 +16,7 @@ class MedicineControl extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text('Hemşire İlaç Takip'),
+        title: Text('Bilgilerim'),
         actions: [
           Container(
             margin: EdgeInsets.all(5.0), // Container'ın kenar boşlukları
@@ -83,39 +83,85 @@ class _MedicationListState extends State<MedicationList> {
     super.initState();
   }
 
+  Future<List<Map<String, dynamic>>> _showSickUsers() async {
+    try {
+      String? uid = FirebaseAuth.instance.currentUser?.uid;
+
+      QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore.instance
+          .collection('users')
+          .where('uid', isEqualTo: uid)
+          .get();
+
+      String? currentUsername;
+      userQuery.docs.forEach((doc) {
+        if (doc.exists) {
+          currentUsername = doc.data()['name'];
+        } else {
+          currentUsername = "Kullanıcı bulunamadı";
+        }
+      });
+      print(currentUsername);
+
+      // Firestore'dan kullanıcıları al
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+      await FirebaseFirestore.instance.collection('hastaBilgileri').where('SickName', isEqualTo: currentUsername).get();
+
+      // Alınan kullanıcı verilerini işleyerek görüntüleme işlemini yap
+      List<Map<String, dynamic>> sickUsers = querySnapshot.docs.map((doc) => doc.data()).toList();
+
+      return sickUsers;
+    } catch (e) {
+      print('Error fetching sick users: $e');
+      // Hata durumunda kullanıcıya bilgi verme veya uygun bir şekilde işlem yapma
+      throw e; // Hata durumunda döndürülen future'ı hata durumu ile işlemek için hatayı yeniden fırlatır
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: FirebaseFirestore.instance.collection('hastaBilgileri').get(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: _showSickUsers(),
+      builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(), // Bekletici göster
-          );
+          // Veriler yüklenirken gösterilecek widget
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          // Hata durumunda gösterilecek widget
+          return Center(child: Text('Error: ${snapshot.error}'));
         } else {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text('Bir hata oluştu: ${snapshot.error}'), // Hata göster
-            );
+          // Veriler başarıyla alındıysa gösterilecek widget
+          List<Map<String, dynamic>> sickUsers = snapshot.data!;
+          if (sickUsers.isEmpty) {
+            // Veri yoksa gösterilecek uyarı mesajı
+            return Center(child: Text('Henüz eşleştirildiğiniz bir hasta bulunmamaktadır.'));
           } else {
-            // İlaç bilgileri başarıyla alındıysa
-            List<Map<String, dynamic>> ilacListesi = [];
-            snapshot.data!.docs.forEach((doc) {
-              Map<String, dynamic> ilacBilgileri = doc.data();
-              ilacListesi.add(ilacBilgileri);
-            });
-
+            // Veriler varsa ListView.builder içinde gösterilecek widget
             return ListView.builder(
-              itemCount: ilacListesi.length,
+              itemCount: sickUsers.length,
               itemBuilder: (context, index) {
-                final ilacBilgileri = ilacListesi[index];
-                final kullanilanIlaclar = ilacBilgileri['hastaKullanılanİlaclar'] as List<dynamic>;
+                Map<String, dynamic> user = sickUsers[index];
+                List<dynamic> kaliciHastaliklar = user['hastaKaliciHastalik'] ?? [];
+                List<dynamic> kullanilanIlaclar = user['hastaKullanılanİlaclar'] ?? [];
 
-                return ListTile(
-                  title: Text(kullanilanIlaclar.join(', ')),
-                  onTap: () {
-                    // İlaç detayları sayfasına yönlendirme eklenebilir
-                  },
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ListTile(
+                      title: Text("Ad: " + user['SickName'] ,style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                      subtitle: Column(
+                        children: [
+                          Text("Hasta Notu: " + user['hastaNot']),
+                          Text("Kalıcı Hastalıklar: " + kaliciHastaliklar.join(', ')),
+                          Text("Kullanılan İlaçlar: " + kullanilanIlaclar.join(', ')),
+                          Text("Hasta Kan Grubu: " + user['hastaKanGrup']),
+                        ],
+                      ),
+                      onTap: () {
+                        // Kullanıcıya tıklandığında yapılacak işlemler buraya eklenir
+                      },
+                    ),
+                    Divider(), // Satırlar arasına ayırıcı ekler
+                  ],
                 );
               },
             );

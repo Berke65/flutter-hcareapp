@@ -277,13 +277,14 @@ class _GirisYapState extends State<GirisYap> {
             .get();
 
         QuerySnapshot<Map<String, dynamic>> sickQuery =
-            await FirebaseFirestore.instance.collection('hastaBilgileri').get();
+            await FirebaseFirestore.instance.collection('hastaBilgileri')
+            .where('hastaMail', isEqualTo: email)
+            .get();
 
         // Eğer kullanıcı bulunduysa ve sadece bir tane varsa
         if (userQuery.docs.isNotEmpty && userQuery.docs.length == 1) {
           String roleName = userQuery.docs.first.data()['roleName'];
 
-          var hastaMail = sickQuery.docs.first.data()['hastaMail'];
 
           if (roleName == "Yönetim") {
             Navigator.pushReplacement(context,
@@ -292,21 +293,19 @@ class _GirisYapState extends State<GirisYap> {
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => NursePageHome()));
           } else if (roleName == "Hasta") {
-            if (hastaMail != email) {
+
+       //   var hastaMail = sickQuery.docs.first.data()['hastaMail'];
+
+            if (sickQuery.docs.isEmpty) {
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text(
-                  'Bilgilerinizi Eksiksiz Doldurunuz! (GEROPİTAL EVDE SAĞLIK HİZMETLERİ)',
+                  'Bilgilerinizi Eksiksiz Doldurusssssnuz! (GEROPİTAL EVDE SAĞLIK HİZMETLERİ)',
                 ),
               ));
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => SickInformation()
                   ));
             } else {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text(
-                  'Aşama Tamamlandı Anasayfaya yönlendiriliyorsunuz (GEROPİTAL EVDE SAĞLIK HİZMETLERİ)',
-                ),
-              ));
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => SickAnasayfa()));
             }

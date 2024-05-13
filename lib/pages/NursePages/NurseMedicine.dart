@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hcareapp/main.dart';
 import 'package:hcareapp/pages/NursePages/BottomAppbarNurse.dart';
+import 'package:hcareapp/services/notifi_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() {
   runApp(const NurseMedicine());
 }
+
 
 class NurseMedicine extends StatefulWidget {
   const NurseMedicine({super.key});
@@ -32,6 +36,12 @@ class _NurseMedicineState extends State<NurseMedicine> {
 
   // Hata durumunu kontrol etmek için bir değişken
   String? errorText;
+
+  @override
+  void initState() {
+    super.initState();
+    _showSickUsers();
+  }
 
   @override
   void dispose() {
@@ -78,137 +88,53 @@ class _NurseMedicineState extends State<NurseMedicine> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                DataTable(
-                  columns: const [
-                    DataColumn(label: Text('İlaç İsmi')),
-                    DataColumn(label: Text('Dozaj')),
-                    DataColumn(label: Text('Zaman')),
-                  ],
-                  rows: medications.map((medication) {
-                    return DataRow(cells: [
-                      DataCell(Text(medication['isim'])),
-                      DataCell(Text(medication['dozaj'])),
-                      DataCell(Text(medication['zaman'])),
-                    ]);
-                  }).toList(),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          DropdownButton<String>(
-                            value: selectedMedication,
-                            onChanged: (String? value) {
-                              setState(() {
-                                selectedMedication = value;
-                              });
-                            },
-                            items: [
-                              const DropdownMenuItem(
-                                value: null,
-                                child: Text('Verilen İlacı Seçiniz'),
-                              ),
-                              for (var medication in medications)
-                                DropdownMenuItem(
-                                  value: medication['isim'],
-                                  child: Text(medication['isim']),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          SizedBox(
-                            width: 80,
-                            child: TextFormField(
-                              controller: _timeController,
-                              decoration: InputDecoration(
-                                hintText: 'Saat Girin (HH.MM)',
-                                errorText: errorText,
-                                border: const OutlineInputBorder(),
-                                contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 10.0, horizontal: 12.0),
-                              ),
-                            ),
-                          ),
+                FutureBuilder<List<Map<String, dynamic>>>(
+                  future: _showSickUsers(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator(); // Veri yüklenirken gösterilecek widget
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      // Veri başarıyla yüklendiğinde
+                      List<Map<String, dynamic>> sickUsers = snapshot.data!;
+                      return sickUsers.isEmpty
+                          ? Center(
+                        child: Text(
+                          'Henüz Eşleştildiğiniz bir hasta bulunmamaktadır.',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      )
+                          : DataTable(
+                        columns: const [
+                          DataColumn(label: Text('İlaç Adı')),
+                          DataColumn(label: Text('İlaç Dozu')),
+                          DataColumn(label: Text('İlaç Saati')),
                         ],
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(),
-                      onPressed: () {
-                        // Saat girilip girilmediğini kontrol et
-                        if (_timeController.text.isEmpty ||
-                            _timeController.text.trim().length < 5 ||
-                            !_timeController.text.contains('.')) {
-                          setState(() {
-                            errorText = 'Geçerli bir saat girin (HH.MM).';
-                          });
-                        } else {
-                          final timeParts = _timeController.text.split('.');
-                          final hour = int.tryParse(timeParts[0]);
-                          final minute = int.tryParse(timeParts[1]);
+                        rows: sickUsers.expand((user) {
+                          final ilaclar = user['hastaKullanılanİlaclar'] as List<dynamic>;
 
-                          // Saat ve dakika kontrolü
-                          if (hour == null ||
-                              hour > 23 ||
-                              hour < 0 ||
-                              minute == null ||
-                              minute > 59 ||
-                              minute < 0) {
-                            setState(() {
-                              errorText = 'Geçerli bir saat girin (HH.mm).';
-                            });
-                          } else {
-                            setState(() {
-                              selectedMedications.add({
-                                'isim': selectedMedication!,
-                                'zaman': _timeController.text,
-                              });
-                              selectedMedication = null;
-                              _timeController.clear();
-                              errorText = null; // Hata mesajını temizle
-                            });
-                          }
-                        }
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 16.0, horizontal: 24.0),
-                        child: Text('Kaydet', style: TextStyle(fontSize: 16)),
-                      ),
-                    ),
-                  ],
+                          return ilaclar.map((ilac) {
+                            final ilacAdi = ilac['ilacAdi'];
+                            final dozaj = ilac['dozaj'];
+                            final saat = ilac['saat'];
+
+                            return DataRow(cells: [
+                              DataCell(Text(ilacAdi)),
+                              DataCell(Text(dozaj.toString())),
+                              DataCell(Text(saat)),
+                            ]);
+                          });
+                        }).toList(),
+                      );
+
+                    }
+                  },
                 ),
-                const SizedBox(height: 20),
-                for (var med in selectedMedications)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Seçilen İlaç: ${med['isim']}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        'Seçilen Zaman: ${med['zaman']}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                    ],
-                  ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
-                    // Acil durum butonuna basıldığında yapılacak işlemler
+                    //KODDDDDDD
                   },
                   style: ButtonStyle(
                     backgroundColor:
@@ -234,5 +160,39 @@ class _NurseMedicineState extends State<NurseMedicine> {
         bottomNavigationBar: BottomAppbarNurse(context),
       ),
     );
+  }
+  Future<List<Map<String, dynamic>>> _showSickUsers() async {
+
+    try {
+      String? uid = FirebaseAuth.instance.currentUser?.uid;
+
+      QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore.instance
+          .collection('users')
+          .where('uid', isEqualTo: uid)
+          .get();
+
+      String? currentUsername;
+      userQuery.docs.forEach((doc) {
+        if (doc.exists) {
+          currentUsername = doc.data()['name'];
+        } else {
+          currentUsername = "Kullanıcı bulunamadı";
+        }
+      });
+      print(currentUsername);
+
+      // Firestore'dan kullanıcıları al
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+      await FirebaseFirestore.instance.collection('hastaBilgileri').where('connectedNurse', isEqualTo: currentUsername).get();
+
+      // Alınan kullanıcı verilerini işleyerek görüntüleme işlemini yap
+      List<Map<String, dynamic>> sickUsers = querySnapshot.docs.map((doc) => doc.data()).toList();
+
+      return sickUsers;
+    } catch (e) {
+      print('Error fetching sick users: $e');
+      // Hata durumunda kullanıcıya bilgi verme veya uygun bir şekilde işlem yapma
+      throw e; // Hata durumunda döndürülen future'ı hata durumu ile işlemek için hatayı yeniden fırlatır
+    }
   }
 }

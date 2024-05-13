@@ -86,41 +86,48 @@ class _NursePageState extends State<NursePage> {
           } else {
             // Veriler başarıyla alındıysa gösterilecek widget
             List<Map<String, dynamic>> sickUsers = snapshot.data!;
-            return ListView.builder(
-              itemCount: sickUsers.length,
-              itemBuilder: (context, index) {
-                Map<String, dynamic> user = sickUsers[index];
-                List<dynamic> kaliciHastaliklar = user['hastaKaliciHastalik'] ?? [];
-                List<dynamic> kullanilanIlaclar = user['hastaKullanılanİlaclar'] ?? [];
+            if (sickUsers.isEmpty) {
+              // Veri yoksa gösterilecek uyarı mesajı
+              return Center(child: Text('Henüz eşleştirildiğiniz bir hasta bulunmamaktadır.'));
+            } else {
+              // Veriler varsa ListView.builder içinde gösterilecek widget
+              return ListView.builder(
+                itemCount: sickUsers.length,
+                itemBuilder: (context, index) {
+                  Map<String, dynamic> user = sickUsers[index];
+                  List<dynamic> kaliciHastaliklar = user['hastaKaliciHastalik'] ?? [];
+                  List<dynamic> kullanilanIlaclar = user['hastaKullanılanİlaclar'] ?? [];
 
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ListTile(
-                      title: Text("Sorumlu Olduğu Hasta: " + user['SickName'] ,style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-                      subtitle: Column(
-                        children: [
-                          Text("Hasta Notu: " + user['hastaNot']),
-                          Text("Sorumlu Olduğu Hemşire: " + user['connectedNurse']),
-                          Text("Kalıcı Hastalıklar: " + kaliciHastaliklar.join(', ')),
-                          Text("Kullanılan İlaçlar: " + kullanilanIlaclar.join(', ')),
-                          Text("Hasta Kan Grubu: " + user['hastaKanGrup']),
-                        ],
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ListTile(
+                        title: Text("Sorumlu Olduğu Hasta: " + user['SickName'] ,style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                        subtitle: Column(
+                          children: [
+                            Text("Hasta Notu: " + user['hastaNot']),
+                            Text("Sorumlu Olduğu Hemşire: " + user['connectedNurse']),
+                            Text("Kalıcı Hastalıklar: " + kaliciHastaliklar.join(', ')),
+                            Text("Kullanılan İlaçlar: " + kullanilanIlaclar.join(', ')),
+                            Text("Hasta Kan Grubu: " + user['hastaKanGrup']),
+                          ],
+                        ),
+                        onTap: () {
+                          // Kullanıcıya tıklandığında yapılacak işlemler buraya eklenir
+                        },
                       ),
-                      onTap: () {
-                        // Kullanıcıya tıklandığında yapılacak işlemler buraya eklenir
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
-
+                      Divider(), // Satırlar arasına ayırıcı ekler
+                    ],
+                  );
+                },
+              );
+            }
           }
         },
-      ),
+      ), // Noktalı virgül burada olmamalı
       bottomNavigationBar: BottomAppbarNurse(context),
     );
+
   }
   Future<List<Map<String, dynamic>>> _showSickUsers() async {
     try {

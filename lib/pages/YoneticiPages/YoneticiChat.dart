@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hcareapp/pages/YoneticiPages/authService.dart';
-import 'package:hcareapp/pages/YoneticiPages/bottomAppBarYonetici.dart';
+import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
+import 'package:hcareapp/pages/YoneticiPages/YoneticiChat.dart';
+import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
 import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/userTile.dart';
 import 'Profile.dart';
@@ -108,7 +110,85 @@ class _YoneticiChatState extends State<YoneticiChat> {
           _buildUserList(),
         ],
       ),
-      bottomNavigationBar: BottomAppBarYonetici(context),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white, // BottomAppBar'ın arka plan rengini beyaza ayarladık
+        elevation: 1.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AnaSayfaYonetici(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.home_outlined,size: 30,),
+                  Text(
+                    'Anasayfa',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.black45,
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RandevuYonetici(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.calendar_today_outlined,size: 30,),
+                  Text(
+                    'Randevu',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.black45,
+            ),
+            InkWell(
+              onTap: () {
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.message,size: 30),
+                  Text(
+                    'Sohbet',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

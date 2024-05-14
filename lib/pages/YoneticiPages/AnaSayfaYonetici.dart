@@ -1,15 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:hcareapp/main.dart';
 import 'package:hcareapp/pages/YoneticiPages/AllSickPage.dart';
 import 'package:hcareapp/pages/YoneticiPages/Profile.dart';
-import 'package:hcareapp/pages/YoneticiPages/bottomAppBarYonetici.dart';
+import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
+import 'package:hcareapp/pages/YoneticiPages/YoneticiChat.dart';
 import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/authService.dart';
 import 'package:hcareapp/services/auth_services.dart';
-import 'package:hcareapp/pages/YoneticiPages/AllSickPage.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -63,7 +61,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
         centerTitle: true,
         actions: [
           Container(
-            margin: EdgeInsets.all(5.0), // Container'ın kenar boşlukları
+            margin: const EdgeInsets.all(5.0), // Container'ın kenar boşlukları
             decoration: BoxDecoration(
               shape: BoxShape.circle, // Container'ı daire şeklinde yap
               color: Colors.grey[200], // Container'ın arka plan rengi
@@ -88,7 +86,93 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
       body: Column(
         children: [_buildUserList()],
       ),
-      bottomNavigationBar: BottomAppBarYonetici(context),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        elevation: 1.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            InkWell(
+                onTap: () {},
+                child: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.home,
+                      size: 30,
+                    ),
+                    Text(
+                      'Anasayfa',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.black45,
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RandevuYonetici(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.calendar_today_outlined,
+                    size: 30,
+                  ),
+                  Text(
+                    'Randevu',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.black45, // Çizgi rengi
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const YoneticiChat(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.message_outlined,
+                    size: 30,
+                  ),
+                  Text(
+                    'Sohbet',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -128,7 +212,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
           children: [
             const Center(
               child: Text(
-                'Mobil Uygulamamıza Hoşgeldiniz!',
+                'Hoşgeldin ', //username çekilecek yanına yazılacak
                 style: TextStyle(
                   fontSize: 23,
                   fontWeight: FontWeight.bold,
@@ -163,12 +247,37 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                         color: Colors.black87,
                       ),
                     ),
-                    const SizedBox(height: 25),
+                    const Divider(
+                      color: Colors.black87,
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    const Column(
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.healing_outlined,
+                              size: 22,
+                            ),
+                            Text(
+                              'Hemşire',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 22),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
                     SizedBox(
-                      width: 240,
-                      height: 55,
+                      width: 500,
+                      height: 70,
                       child: _dropdownlist(
-                        'Hemşire seçmek için tıklayınız',
+                        '',
                         nurseUserNames,
                         context,
                         (value) {
@@ -176,12 +285,27 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                         },
                       ),
                     ),
+                    const Row(
+                      children: [
+                        Icon(
+                          Icons.sick,
+                          size: 22,
+                        ),
+                        Text(
+                          'Hasta',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 22),
+                        )
+                      ],
+                    ),
                     const SizedBox(height: 10), // Dropdownlar arası boşluk
                     SizedBox(
-                      width: 240,
-                      height: 55,
+                      width: 500,
+                      height: 70,
                       child: _dropdownlist(
-                        'Hasta seçmek için tıklayınız',
+                        '',
                         sickUserNames,
                         context,
                         (value) {
@@ -227,7 +351,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                         ),
                         TextButton(
                           onPressed: () {
-                              removePairedValuesPopup(context);
+                            removePairedValuesPopup(context);
                           },
                           style: TextButton.styleFrom(
                             side: const BorderSide(color: Colors.grey),
@@ -239,26 +363,14 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                               borderRadius: BorderRadius.circular(30),
                             ),
                           ),
-                          child: Column(
-                            children: [
-                              const Text(
-                                'Görüntüle Ve Düzenle',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                          child: const Text(
+                            'Görüntüle Ve Düzenle',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        TextButton(onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AllSickPage(),
-                            ),
-                          );
-                        }, child: Text('Tüm Hastları Görmek için tıklayınız'))
                       ],
                     ),
                   ],
@@ -266,6 +378,34 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
               ),
             ),
             const SizedBox(height: 20),
+            Center(
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  side: const BorderSide(color: Colors.grey),
+                  backgroundColor: Colors.grey[300],
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AllSickPage(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  'Tüm Hastaları Görmek için tıklayınız',
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ),
           ],
         );
       },
@@ -282,50 +422,54 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
           return AlertDialog(
             title: const Text("Eşleştirilmiş Kişiler"),
             content: Container(
-              width: MediaQuery.of(context).size.width * 0.8, // Genişliği ayarla
+              width:
+                  MediaQuery.of(context).size.width * 0.8, // Genişliği ayarla
               child: pairedValues.isEmpty
                   ? const Text('Eşleştirilmiş kişiler bulunamadı.')
                   : ListView.builder(
-                shrinkWrap: true,
-                itemCount: pairedValues.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ListTile(
-                        title: Text(
-                          'Hemşire: ${pairedValues[index]['sick']}',
-                        ),
-                      ),
-                      ListTile(
-                        title: Text(
-                          'Hasta: ${pairedValues[index]['nurse']}',
-                        ),
-                        trailing: TextButton(
-                          onPressed: () async {
-                            // Belirli bir eşleşmiş değeri silmek için ilgili veritabanı işlemlerini yap
-                            String nurseName = pairedValues[index]['nurse'];
-                            String sickName = pairedValues[index]['sick'];
-                            await deletePairFromDatabase(nurseName, sickName);
-                            // Listeyi güncelle ve alert dialogu yeniden göster
-                            setState(() {
-                              pairedValues.removeAt(index);
-                            });
-                          },
-                          child: const Text(
-                            'Kaldır',
-                            style: TextStyle(
-                              color: Colors.red,
+                      shrinkWrap: true,
+                      itemCount: pairedValues.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ListTile(
+                              title: Text(
+                                'Hasta: ${pairedValues[index]['sick']}',
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                      const Divider(),
-                      Text('Pencereyi kapatıp açtığınızda işlemin sonuçları gözükecektir'),
-                    ],
-                  );
-                },
-              ),
+                            ListTile(
+                              title: Text(
+                                'Hemşire: ${pairedValues[index]['nurse']}',
+                              ),
+                              trailing: TextButton(
+                                onPressed: () async {
+                                  // Belirli bir eşleşmiş değeri silmek için ilgili veritabanı işlemlerini yap
+                                  String nurseName =
+                                      pairedValues[index]['nurse'];
+                                  String sickName = pairedValues[index]['sick'];
+                                  await deletePairFromDatabase(
+                                      nurseName, sickName);
+                                  // Listeyi güncelle ve alert dialogu yeniden göster
+                                  setState(() {
+                                    pairedValues.removeAt(index);
+                                  });
+                                },
+                                child: const Text(
+                                  'Kaldır',
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const Divider(),
+                            const Text(
+                                'Pencereyi kapatıp açtığınızda işlemin sonuçları gözükecektir'),
+                          ],
+                        );
+                      },
+                    ),
             ),
             actions: <Widget>[
               TextButton(
@@ -346,7 +490,8 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
   Future<void> deletePairFromDatabase(String nurseName, String sickName) async {
     try {
       // Veritabanından belirli bir eşleşmiş değeri sil
-      await FirebaseFirestore.instance.collection('nurseSickMatch')
+      await FirebaseFirestore.instance
+          .collection('nurseSickMatch')
           .where('nurseName', isEqualTo: nurseName)
           .where('SickName', isEqualTo: sickName)
           .get()
@@ -360,15 +505,13 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
     }
   }
 
-
-
   Future<List<Map<String, dynamic>>> getPairedValues() async {
     try {
       List<Map<String, dynamic>> pairedValues = [];
 
       // Veritabanından belirli koleksiyondaki tüm belgeleri al
       QuerySnapshot querySnapshot =
-      await FirebaseFirestore.instance.collection('nurseSickMatch').get();
+          await FirebaseFirestore.instance.collection('nurseSickMatch').get();
 
       // Her bir belgeyi dön ve eşleştirilmiş değerleri listeye ekle
       querySnapshot.docs.forEach((doc) {
@@ -385,36 +528,48 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
     }
   }
 
-
   Widget _dropdownlist(String hintText, List<String> userNames,
       BuildContext context, Function(String?) onValueChanged) {
     String? selectedValue;
 
-    return DropdownButtonFormField<String>(
-      decoration: InputDecoration(
-        hintText: hintText,
-        border: const OutlineInputBorder(),
-      ),
-      value: selectedValue,
-      onChanged: (value) {
-        onValueChanged(value);
-        selectedValue = value; // Seçilen değeri güncelle
-      },
-      items: userNames.map((userName) {
-        // Eşleştirilmiş kişileri kontrol et ve seçilemez yap
-        bool isMatched = userName.contains('(Eşleştirilmiş)');
-        return DropdownMenuItem<String>(
-          value: userName,
-          child: Text(
-            userName,
-            style: TextStyle(
-              color: isMatched ? Colors.grey : Colors.black, // Eşleştirilmişse gri renkte göster
-            ),
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return DropdownButtonFormField<String>(
+          decoration: InputDecoration(
+            hintText: hintText,
+            border: const OutlineInputBorder(),
           ),
-          onTap: isMatched ? null : () => onValueChanged(userName), // Eşleştirilmişse tıklanamaz yap
+          value: selectedValue,
+          onChanged: (value) {
+            setState(() {
+              selectedValue = value; // Seçilen değeri güncelle
+            });
+            onValueChanged(value);
+          },
+          onTap: () {
+            FocusScope.of(context).requestFocus(FocusNode());
+          },
+          items: userNames.map((userName) {
+            // Eşleştirilmiş kişileri kontrol et ve seçilemez yap
+            bool isMatched = userName.contains('(Eşleştirilmiş)');
+            return DropdownMenuItem<String>(
+              value: userName,
+              child: Text(
+                userName,
+                style: TextStyle(
+                  color: isMatched
+                      ? Colors.grey
+                      : Colors.black, // Eşleştirilmişse gri renkte göster
+                ),
+              ),
+              onTap: isMatched
+                  ? null
+                  : () => onValueChanged(
+                      userName), // Eşleştirilmişse tıklanamaz yap
+            );
+          }).toList(),
         );
-      }).toList(),
+      },
     );
   }
-
 }

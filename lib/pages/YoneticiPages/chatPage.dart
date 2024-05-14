@@ -2,7 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/authService.dart';
-import 'package:hcareapp/pages/YoneticiPages/bottomAppBarYonetici.dart';
+import 'package:hcareapp/pages/YoneticiPages/RandevuYonetici.dart';
+import 'package:hcareapp/pages/YoneticiPages/YoneticiChat.dart';
+import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
@@ -142,7 +145,100 @@ void userProfile() {
           _buildUserInput(),
         ],
       ),
-      bottomNavigationBar: BottomAppBarYonetici(context),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        elevation: 1.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AnaSayfaYonetici(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.home_outlined,
+                    size: 30,
+                  ),
+                  Text(
+                    'Anasayfa',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.black45,
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RandevuYonetici(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.calendar_today_outlined,
+                    size: 30,
+                  ),
+                  Text(
+                    'Randevu',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.black45, // Çizgi rengi
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const YoneticiChat(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.message,
+                    size: 30,
+                  ),
+                  Text(
+                    'Sohbet',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   } // resim sonra bakılacak !!!!!!!
 

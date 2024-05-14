@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hcareapp/pages/SickPages/SickInformation.dart';
 import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
 import 'package:hcareapp/pages/NursePages/NursePageHome.dart';
+import 'package:hcareapp/pages/auth/kayitOlPage.dart';
 import 'package:hcareapp/pages/auth/passwd.dart';
 import 'package:hcareapp/pages/SickPages/SickHomePage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -53,7 +54,7 @@ class _GirisYapState extends State<GirisYap> {
                         children: [
                           SizedBox(
                             width: 200,
-                            height: 200,
+                            height: 280,
                             child:
                                 Image.asset('images/gero1.jpg'), // Logo resmi
                           ),
@@ -86,65 +87,54 @@ class _GirisYapState extends State<GirisYap> {
                                 const EdgeInsets.symmetric(horizontal: 22.0),
                             child: passwdTxtField(),
                           ),
-                          customSizedBox(),
-                          customSizedBox(),
-                          CustomButton(
-                            icon: Icons.admin_panel_settings_outlined,
-                            text: 'Giriş Yap',
-                            onPressed: signIn,
-                          ),
-                          customSizedBox(),
-                          CustomButton(
-                            icon: Icons.lock_outlined,
-                            text: 'Şifremi Unuttum',
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Passwd(),
-                                ),
-                              );
-                            },
-                          ),
-                          customSizedBox(),
-                          CustomButton(
-                            icon: Icons.home_outlined,
-                            text: 'Ana Ekrana Dön',
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Main(),
-                                ),
-                              );
-                            },
-                          ),
-                          customSizedBox(),
-                          //Şimdilik sayfayı görmek için açtım silersin canım
-                          CustomButton(
-                              icon: Icons.healing_outlined,
-                              text: 'Hemşire Sayfasına git',
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => NursePageHome(),
-                                  ),
-                                );
-                              }),
-                          customSizedBox(),
+                          Row(
 
-                          CustomButton(
-                            icon: Icons.sick,
-                            text: 'Hasta Sayfasına Giriş',
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => SickAnasayfa(),
-                                ),
-                              );
-                            },
+                            children: [
+                              const SizedBox(width: 10,),
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const Passwd(),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text(
+                                    'Şifremi Unuttum!',
+                                    style: TextStyle(
+                                        color: Colors.black54,
+                                        fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
+                                  )),
+                            ],
+                          ),
+                          customSizedBox(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CustomButton(
+                                icon: Icons.admin_panel_settings_outlined,
+                                text: 'Giriş Yap',
+                                onPressed: signIn,
+                              ),
+                              const SizedBox(
+                                width: 12,
+                              ),
+                              CustomButton(
+                                icon: Icons.person_add_alt,
+                                text: 'Kayıt Ol',
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const kayitOlPage(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -191,7 +181,7 @@ class _GirisYapState extends State<GirisYap> {
         labelText: 'Şifre',
         suffixIcon: IconButton(
           icon: Icon(
-            _obscureText ? Icons.visibility : Icons.visibility_off,
+            _obscureText ? Icons.visibility_off : Icons.visibility,
             color: Colors.grey, // Görme butonunun rengi
           ),
           onPressed: () {
@@ -276,8 +266,9 @@ class _GirisYapState extends State<GirisYap> {
             .where('email', isEqualTo: email)
             .get();
 
-        QuerySnapshot<Map<String, dynamic>> sickQuery =
-            await FirebaseFirestore.instance.collection('hastaBilgileri')
+        QuerySnapshot<Map<String, dynamic>> sickQuery = await FirebaseFirestore
+            .instance
+            .collection('hastaBilgileri')
             .where('hastaMail', isEqualTo: email)
             .get();
 
@@ -285,16 +276,16 @@ class _GirisYapState extends State<GirisYap> {
         if (userQuery.docs.isNotEmpty && userQuery.docs.length == 1) {
           String roleName = userQuery.docs.first.data()['roleName'];
 
-
           if (roleName == "Yönetim") {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => AnaSayfaYonetici()));
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const AnaSayfaYonetici()));
           } else if (roleName == "Hemşire") {
             Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => NursePageHome()));
+                MaterialPageRoute(builder: (context) => const NursePageHome()));
           } else if (roleName == "Hasta") {
-
-       //   var hastaMail = sickQuery.docs.first.data()['hastaMail'];
+            //   var hastaMail = sickQuery.docs.first.data()['hastaMail'];
 
             if (sickQuery.docs.isEmpty) {
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -303,11 +294,12 @@ class _GirisYapState extends State<GirisYap> {
                 ),
               ));
               Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => SickInformation()
-                  ));
+                  MaterialPageRoute(builder: (context) => SickInformation()));
             } else {
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => SickAnasayfa()));
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SickAnasayfa()));
             }
           }
         } else {
@@ -378,18 +370,18 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 227,
+      width: 170,
       height: 45,
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 5,
-            blurRadius: 7,
-            offset: const Offset(0, 3),
+            spreadRadius: 3,
+            blurRadius: 5,
+            // offset: const Offset(2, 3),
           ),
         ],
       ),

@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/authService.dart';
-import 'package:hcareapp/pages/YoneticiPages/bottomAppBarYonetici.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
@@ -141,7 +140,7 @@ class _ChatPageState extends State<ChatPage> {
           _buildUserInput(),
         ],
       ),
-      bottomNavigationBar: BottomAppBarYonetici(context),
+      // bottomNavigationBar: BottomAppBarYonetici(context),
     );
   } // resim sonra bakılacak !!!!!!!
 

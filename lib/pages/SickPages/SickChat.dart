@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hcareapp/pages/SickPages/SickInformation.dart';
+import 'package:hcareapp/pages/SickPages/Sickinfopage.dart';
 import 'package:hcareapp/pages/SickPages/authService.dart';
-import 'package:hcareapp/pages/SickPages/BottomAppBarSick.dart';
 import 'package:hcareapp/pages/SickPages/chatService.dart';
 import 'package:hcareapp/pages/SickPages/userTile.dart';
 import 'ChatPage.dart';
 import 'Profile.dart';
+import 'SickHomePage.dart';
 
 void main() {
   runApp(const SickChat());
@@ -104,7 +106,92 @@ class _SickChatState extends State<SickChat> {
           _buildUserList(),
         ],
       ),
-      bottomNavigationBar: BottomAppBarSick(context),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        // BottomAppBar'ın arka plan rengini beyaza ayarladık
+        elevation: 1.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SickAnasayfa(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.home_outlined,
+                    size: 30,
+                  ),
+                  Text(
+                    'Anasayfa',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.black45,
+            ),
+            InkWell(
+              onTap: () { Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>  SickInfoPage(),
+                ),
+              );},
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.medical_information_outlined,
+                    size: 30,
+                  ),
+                  Text(
+                    'Sağlık Bilgilerim',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.black45,
+            ),
+            InkWell(
+              onTap: () {},
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.message,
+                    size: 30,
+                  ),
+                  Text(
+                    'Sohbet',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

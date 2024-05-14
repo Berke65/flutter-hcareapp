@@ -2,10 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:hcareapp/pages/YoneticiPages/bottomAppBarYonetici.dart';
+import 'package:hcareapp/pages/YoneticiPages/YoneticiChat.dart';
+import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 
 import 'Profile.dart';
 
@@ -82,7 +83,6 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
         child: Column(
           children: [
             const SizedBox(height: 16),
-
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -90,7 +90,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                   children: [
                     TableCalendar(
                       daysOfWeekStyle: const DaysOfWeekStyle(
-                        weekdayStyle: TextStyle(color: Colors.cyan),
+                        weekdayStyle: TextStyle(color: Colors.black),
                         weekendStyle: TextStyle(color: Colors.redAccent),
                       ),
                       firstDay: DateTime.utc(2024, 1, 1),
@@ -126,8 +126,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Seçilen Gün: ${_selectedDay.day}/${_selectedDay
-                          .month}/${_selectedDay.year}',
+                      'Seçilen Gün: ${_selectedDay.day}/${_selectedDay.month}/${_selectedDay.year}',
                       style: const TextStyle(
                         fontSize: 19,
                         fontWeight: FontWeight.bold,
@@ -135,84 +134,101 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                     ),
                     const SizedBox(height: 8),
                     Expanded(
-                      child: ListView.builder(
-                        itemCount: randevular.length,
-                        itemBuilder: (context, index) {
-                          final randevu = randevular[index];
-                          if (randevu.dateTime.day == _selectedDay.day &&
-                              randevu.dateTime.month == _selectedDay.month &&
-                              randevu.dateTime.year == _selectedDay.year) {
-                            return ListTile(
-                              title: Text(
-                                '${randevu.saat} --> ${randevu.detay}',
-                                style: const TextStyle(
-                                  fontSize: 16,
+                      child: Container(
+                        color: Colors.grey[200], // Gri arkaplan rengini ayarla
+                        child: ListView.builder(
+                          itemCount: randevular.length,
+                          itemBuilder: (context, index) {
+                            final randevu = randevular[index];
+                            if (randevu.dateTime.day == _selectedDay.day &&
+                                randevu.dateTime.month == _selectedDay.month &&
+                                randevu.dateTime.year == _selectedDay.year) {
+                              return ListTile(
+                                title: Text(
+                                  '${randevu.saat} --> ${randevu.detay}',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                  ),
                                 ),
-                              ),
-                              subtitle: Text(
-                                'Randevu Alan Kişi: ${randevu.userName}', // userName'i görüntüle
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
+                                subtitle: Text(
+                                  'Randevu Alan Kişi: ${randevu.userName}',
+                                  // userName'i görüntüle
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
                                 ),
-                              ),
-                              trailing: IconButton(
-                                icon: const Icon(Icons.cancel),
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text(
-                                            "Randevuyu iptal etmek istediğinize emin misiniz?"),
-                                        content: const Text(
-                                            "Bu işlem geri alınamaz, emin misiniz?"),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            onPressed: () => Navigator.of(context).pop(),
-                                            child: const Text("İptal"),
-                                          ),
-                                          TextButton(
-                                            onPressed: () async {
-                                              try {
-                                                // Tıklanan satırdaki randevuyu Firestore'dan kaldır
-                                                await FirebaseFirestore.instance.collection('randevu')
-                                                    .where('tarih', isEqualTo: randevu.dateTime)
-                                                    .where('sağlıkAlanı', isEqualTo: randevu.detay)
-                                                    .where('userName', isEqualTo: randevu.userName)
-                                                    .where('saat', isEqualTo: randevu.saat)
-                                                    .get().then((querySnapshot) {
-                                                  querySnapshot.docs.forEach((doc) {
-                                                    doc.reference.delete();
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.cancel),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text(
+                                              "Randevuyu iptal etmek istediğinize emin misiniz?"),
+                                          content: const Text(
+                                              "Bu işlem geri alınamaz, emin misiniz?"),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.of(context).pop(),
+                                              child: const Text("İptal"),
+                                            ),
+                                            TextButton(
+                                              onPressed: () async {
+                                                try {
+                                                  // Tıklanan satırdaki randevuyu Firestore'dan kaldır
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection('randevu')
+                                                      .where('tarih',
+                                                          isEqualTo:
+                                                              randevu.dateTime)
+                                                      .where('sağlıkAlanı',
+                                                          isEqualTo:
+                                                              randevu.detay)
+                                                      .where('userName',
+                                                          isEqualTo:
+                                                              randevu.userName)
+                                                      .where('saat',
+                                                          isEqualTo:
+                                                              randevu.saat)
+                                                      .get()
+                                                      .then((querySnapshot) {
+                                                    querySnapshot.docs
+                                                        .forEach((doc) {
+                                                      doc.reference.delete();
+                                                    });
                                                   });
-                                                });
-                                                // Liste içinden tıklanan randevuyu kaldır
-                                                setState(() {
-                                                  randevular.remove(randevu); // Randevuyu listeden kaldır
-                                                });
-                                                // İletişim kutusunu kapat
-                                                Navigator.of(context).pop();
-                                              } catch (e) {
-                                                print("Hataaaaaaaa: $e");
-                                                // Hata durumunda kullanıcıya bilgi vermek için gerekli işlemler yapılabilir
-                                              }
-                                            },
-
-                                            child: const Text("Evet, İptal Et"),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                            );
-                          } else {
-                            return const SizedBox.shrink();
-                          }
-                        },
+                                                  // Liste içinden tıklanan randevuyu kaldır
+                                                  setState(() {
+                                                    randevular.remove(
+                                                        randevu); // Randevuyu listeden kaldır
+                                                  });
+                                                  // İletişim kutusunu kapat
+                                                  Navigator.of(context).pop();
+                                                } catch (e) {
+                                                  print("Hataaaaaaaa: $e");
+                                                  // Hata durumunda kullanıcıya bilgi vermek için gerekli işlemler yapılabilir
+                                                }
+                                              },
+                                              child:
+                                                  const Text("Evet, İptal Et"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                              );
+                            } else {
+                              return const SizedBox.shrink();
+                            }
+                          },
+                        ),
                       ),
-
                     ),
                   ],
                 ),
@@ -221,30 +237,105 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomAppBarYonetici(context),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white, // BottomAppBar'ın arka plan rengini beyaza ayarladık
+        elevation: 1.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AnaSayfaYonetici(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.home_outlined,size: 30,),
+                  Text(
+                    'Anasayfa',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.black45,
+            ),
+            InkWell(
+              onTap: () {
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.calendar_today,size: 30,),
+                  Text(
+                    'Randevu',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.black45,
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const YoneticiChat(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.message_outlined,size: 30),
+                  Text(
+                    'Sohbet',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-
-  Future<void> _removeRandevu() async{
-
-  }
+  Future<void> _removeRandevu() async {}
 
   // _getRandevular fonksiyonu _YoneticiHomePageState sınıfının bir parçası olarak tanımlanmalıdır
   Future<void> _getRandevular() async {
     // Firestore'dan randevu bilgilerini al
     QuerySnapshot<Map<String, dynamic>> querySnapshot =
-    await FirebaseFirestore.instance.collection('randevu').get();
+        await FirebaseFirestore.instance.collection('randevu').get();
 
     setState(() {
       // Alınan randevu bilgilerini listeye ekle
       randevular = querySnapshot.docs
           .map((doc) => Randevu(
-        doc['tarih'].toDate(),
-        doc['sağlıkAlanı'],
-        doc['userName'] ?? '', // Eğer userName alanı null ise boş bir string olarak ata
-        doc['saat']
-      ))
+              doc['tarih'].toDate(),
+              doc['sağlıkAlanı'],
+              doc['userName'] ?? '',
+              // Eğer userName alanı null ise boş bir string olarak ata
+              doc['saat']))
           .toList();
     });
   }
@@ -260,8 +351,8 @@ class Randevu {
 }
 
 List<Randevu> randevular = [
-  Randevu(DateTime(2024, 3, 12, 10, 0), 'Kardiyoloji', 'isim1',''),
-  Randevu(DateTime(2024, 3, 12, 14, 30), 'Dahiliye', 'isim2',''),
-  Randevu(DateTime(2024, 3, 13, 9, 0), 'Ortopedi', 'isim3',''),
-  Randevu(DateTime(2024, 3, 14, 11, 0), 'Göz Hastalıkları', 'isim4',''),
+  Randevu(DateTime(2024, 3, 12, 10, 0), 'Kardiyoloji', 'isim1', ''),
+  Randevu(DateTime(2024, 3, 12, 14, 30), 'Dahiliye', 'isim2', ''),
+  Randevu(DateTime(2024, 3, 13, 9, 0), 'Ortopedi', 'isim3', ''),
+  Randevu(DateTime(2024, 3, 14, 11, 0), 'Göz Hastalıkları', 'isim4', ''),
 ];

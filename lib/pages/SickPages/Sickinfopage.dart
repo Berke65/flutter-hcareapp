@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:hcareapp/pages/SickPages/BottomAppBarSick.dart';
-import 'package:hcareapp/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'Profile.dart';
+import 'SickHomePage.dart';
+import 'SickChat.dart';
 
 void main() {
-  runApp(MedicineControl());
+  runApp(SickInfoPage());
 }
 
-class MedicineControl extends StatelessWidget {
+class SickInfoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text('Bilgilerim'),
+        title: const Text('Bilgilerim'),
         actions: [
           Container(
-            margin: EdgeInsets.all(5.0), // Container'ın kenar boşlukları
+            margin: const EdgeInsets.all(5.0), // Container'ın kenar boşlukları
             decoration: BoxDecoration(
               shape: BoxShape.circle, // Container'ı daire şeklinde yap
               color: Colors.grey[200], // Container'ın arka plan rengi
@@ -40,14 +40,99 @@ class MedicineControl extends StatelessWidget {
             ),
           ),
         ],
-
       ),
       body: MedicationList(),
-      bottomNavigationBar: BottomAppBarSick(context),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        // BottomAppBar'ın arka plan rengini beyaza ayarladık
+        elevation: 1.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SickAnasayfa(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.home_outlined,
+                    size: 30,
+                  ),
+                  Text(
+                    'Anasayfa',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.black45,
+            ),
+            InkWell(
+              onTap: () {},
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.medical_information,
+                    size: 30,
+                  ),
+                  Text(
+                    'Sağlık Bilgilerim',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.black45,
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SickChat(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.message_outlined,
+                    size: 30,
+                  ),
+                  Text(
+                    'Sohbet',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
-
 
 class MedicationSchedulePage extends StatefulWidget {
   @override
@@ -61,11 +146,97 @@ class _MedicationSchedulePageState extends State<MedicationSchedulePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Hemşire İlaç Takip'),
+        title: const Text('Hemşire İlaç Takip'),
       ),
       body: MedicationList(),
-      bottomNavigationBar: BottomAppBarSick(context),
-
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        // BottomAppBar'ın arka plan rengini beyaza ayarladık
+        elevation: 1.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SickAnasayfa(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.home_outlined,
+                    size: 30,
+                  ),
+                  Text(
+                    'Anasayfa',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.black45,
+            ),
+            InkWell(
+              onTap: () {},
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.medical_information,
+                    size: 30,
+                  ),
+                  Text(
+                    'Sağlık Bilgilerim',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.black45,
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SickChat(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.message_outlined,
+                    size: 30,
+                  ),
+                  Text(
+                    'Sohbet',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -87,7 +258,8 @@ class _MedicationListState extends State<MedicationList> {
     try {
       String? uid = FirebaseAuth.instance.currentUser?.uid;
 
-      QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore.instance
+      QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore
+          .instance
           .collection('users')
           .where('uid', isEqualTo: uid)
           .get();
@@ -104,10 +276,14 @@ class _MedicationListState extends State<MedicationList> {
 
       // Firestore'dan kullanıcıları al
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
-      await FirebaseFirestore.instance.collection('hastaBilgileri').where('SickName', isEqualTo: currentUsername).get();
+          await FirebaseFirestore.instance
+              .collection('hastaBilgileri')
+              .where('SickName', isEqualTo: currentUsername)
+              .get();
 
       // Alınan kullanıcı verilerini işleyerek görüntüleme işlemini yap
-      List<Map<String, dynamic>> sickUsers = querySnapshot.docs.map((doc) => doc.data()).toList();
+      List<Map<String, dynamic>> sickUsers =
+          querySnapshot.docs.map((doc) => doc.data()).toList();
 
       return sickUsers;
     } catch (e) {
@@ -124,7 +300,7 @@ class _MedicationListState extends State<MedicationList> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Veriler yüklenirken gösterilecek widget
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           // Hata durumunda gösterilecek widget
           return Center(child: Text('Error: ${snapshot.error}'));
@@ -133,34 +309,96 @@ class _MedicationListState extends State<MedicationList> {
           List<Map<String, dynamic>> sickUsers = snapshot.data!;
           if (sickUsers.isEmpty) {
             // Veri yoksa gösterilecek uyarı mesajı
-            return Center(child: Text('Henüz eşleştirildiğiniz bir hasta bulunmamaktadır.'));
+            return const Center(child: Text('Henüz bilgi girmediniz.'));
           } else {
             // Veriler varsa ListView.builder içinde gösterilecek widget
             return ListView.builder(
               itemCount: sickUsers.length,
               itemBuilder: (context, index) {
                 Map<String, dynamic> user = sickUsers[index];
-                List<dynamic> kaliciHastaliklar = user['hastaKaliciHastalik'] ?? [];
-                List<dynamic> kullanilanIlaclar = user['hastaKullanılanİlaclar'] ?? [];
+                List<dynamic> kaliciHastaliklar =
+                    user['hastaKaliciHastalik'] ?? [];
+                List<dynamic> kullanilanIlaclar =
+                    user['hastaKullanılanİlaclar'] ?? [];
 
                 return Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ListTile(
-                      title: Text("Ad: " + user['SickName'] ,style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-                      subtitle: Column(
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 16.0),
+                      child: Text("Ad: ${user['SickName']}",
+                          style: const TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.bold)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Hasta Notu: " + user['hastaNot']),
-                          Text("Kalıcı Hastalıklar: " + kaliciHastaliklar.join(', ')),
-                          Text("Kullanılan İlaçlar: " + kullanilanIlaclar.join(', ')),
-                          Text("Hasta Kan Grubu: " + user['hastaKanGrup']),
+                          SizedBox(height: 12,),
+
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Kalıcı Hastalıklar: ",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w500),
+                              ),
+                              Text('${kaliciHastaliklar.join(', ')}',
+                                  style: const TextStyle(fontSize: 18))
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("Kullanılan İlaçlar:",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500)),
+                              Text(
+                                '${kullanilanIlaclar.join(', ')}',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("Hasta Kan Grubu: ",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500)),
+                              Text(
+                                '${user['hastaKanGrup']}',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+
+                            children: [
+                              const Text(
+                                "Hasta Notu: ",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w500),
+                              ),
+                              Text('${user['hastaNot']}',
+                                  style: const TextStyle(fontSize: 18))
+                            ],
+                          ),
                         ],
                       ),
-                      onTap: () {
-                        // Kullanıcıya tıklandığında yapılacak işlemler buraya eklenir
-                      },
                     ),
-                    Divider(), // Satırlar arasına ayırıcı ekler
+                    const Divider(), // Satırlar arasına ayırıcı ekler
                   ],
                 );
               },
@@ -170,11 +408,4 @@ class _MedicationListState extends State<MedicationList> {
       },
     );
   }
-
-
-
-
-
-
 }
-

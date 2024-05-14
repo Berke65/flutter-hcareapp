@@ -1,13 +1,12 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hcareapp/main.dart';
-import 'package:hcareapp/pages/NursePages/BottomAppbarNurse.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'Profile.dart';
+import 'AnaSayfaYonetici.dart';
+import 'RandevuYonetici.dart';
+import 'YoneticiChat.dart';
+
 void main() {
   runApp(const AllSickPage());
 }
@@ -19,12 +18,12 @@ class AllSickPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-          appBarTheme: const AppBarTheme(
-            color: Colors.white54,
-          ),
-          bottomAppBarTheme: const BottomAppBarTheme(
-            color: Colors.white,
-          )
+        appBarTheme: const AppBarTheme(
+          color: Colors.white54,
+        ),
+        bottomAppBarTheme: const BottomAppBarTheme(
+          color: Colors.white,
+        ),
       ),
       home: const NursePage(),
     );
@@ -40,96 +39,18 @@ class NursePage extends StatefulWidget {
 
 class _NursePageState extends State<NursePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  TextEditingController _searchController = TextEditingController();
+  late List<Map<String, dynamic>> _allSickUsers;
+  late List<Map<String, dynamic>> _displayedSickUsers;
+
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Image.asset('images/gero1.jpg', fit: BoxFit.cover, height: 38),
-        centerTitle: true,
-        actions: [
-
-          Container(
-            margin: EdgeInsets.all(5.0), // Container'ın kenar boşlukları
-            decoration: BoxDecoration(
-              shape: BoxShape.circle, // Container'ı daire şeklinde yap
-              color: Colors.grey[200], // Container'ın arka plan rengi
-            ),
-            child: IconButton(
-              icon: const Icon(
-                Icons.person,
-                size: 30,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileScreen(),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: _showSickUsers(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // Veriler yüklenirken gösterilecek widget
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            // Hata durumunda gösterilecek widget
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            // Veriler başarıyla alındıysa gösterilecek widget
-            List<Map<String, dynamic>> sickUsers = snapshot.data!;
-            if (sickUsers.isEmpty) {
-              // Veri yoksa gösterilecek uyarı mesajı
-              return Center(child: Text('Henüz kayıtlı bir hasta bulunmamaktadır.'));
-            } else {
-              // Veriler varsa ListView.builder içinde gösterilecek widget
-              return ListView.builder(
-                itemCount: sickUsers.length,
-                itemBuilder: (context, index) {
-                  Map<String, dynamic> user = sickUsers[index];
-                  List<dynamic> kaliciHastaliklar = user['hastaKaliciHastalik'] ?? [];
-                  List<dynamic> kullanilanIlaclar = user['hastaKullanılanİlaclar'] ?? [];
-
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ListTile(
-                        title: Text("Sorumlu Olduğu Hasta: " + user['SickName'] ,style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-                        subtitle: Column(
-                          children: [
-                            Text("Hasta Notu: " + user['hastaNot']),
-                            Text("Sorumlu Olduğu Hemşire: " + user['connectedNurse']),
-                            Text("Kalıcı Hastalıklar: " + kaliciHastaliklar.join(', ')),
-                            Text("Kullanılan İlaçlar: " + kullanilanIlaclar.join(', ')),
-                            Text("Hasta Kan Grubu: " + user['hastaKanGrup']),
-                          ],
-                        ),
-                        onTap: () {
-                          // Kullanıcıya tıklandığında yapılacak işlemler buraya eklenir
-                        },
-                      ),
-                      Divider(), // Satırlar arasına ayırıcı ekler
-                    ],
-                  );
-                },
-              );
-            }
-          }
-        },
-      ), // Noktalı virgül burada olmamalı
-      bottomNavigationBar: BottomAppbarNurse(context),
-    );
-
+  void initState() {
+    super.initState();
+    _fetchSickUsers();
   }
-  Future<List<Map<String, dynamic>>> _showSickUsers() async {
+
+  Future<void> _fetchSickUsers() async {
     try {
       String? uid = FirebaseAuth.instance.currentUser?.uid;
 
@@ -148,21 +69,211 @@ class _NursePageState extends State<NursePage> {
       });
       print(currentUsername);
 
-      // Firestore'dan kullanıcıları al
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
       await FirebaseFirestore.instance.collection('hastaBilgileri').get();
 
-      // Alınan kullanıcı verilerini işleyerek görüntüleme işlemini yap
       List<Map<String, dynamic>> sickUsers = querySnapshot.docs.map((doc) => doc.data()).toList();
 
-      return sickUsers;
+      setState(() {
+        _allSickUsers = sickUsers;
+        _displayedSickUsers = sickUsers;
+      });
     } catch (e) {
       print('Error fetching sick users: $e');
       // Hata durumunda kullanıcıya bilgi verme veya uygun bir şekilde işlem yapma
-      throw e; // Hata durumunda döndürülen future'ı hata durumu ile işlemek için hatayı yeniden fırlatır
     }
   }
 
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Image.asset('images/gero1.jpg', fit: BoxFit.cover, height: 38),
+        centerTitle: true,
+        actions: [
+          Container(
+            margin: const EdgeInsets.all(5.0),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.grey[200],
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.person,
+                size: 30,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                labelText: 'Hasta Ara',
+                prefixIcon: const Icon(Icons.search),
+              ),
+              onChanged: _searchSickUsers,
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _displayedSickUsers.length,
+              itemBuilder: (context, index) {
+                Map<String, dynamic> user = _displayedSickUsers[index];
+                List<dynamic> kaliciHastaliklar = user['hastaKaliciHastalik'] ?? [];
+                List<dynamic> kullanilanIlaclar = user['hastaKullanılanİlaclar'] ?? [];
 
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ListTile(
+                      contentPadding: const EdgeInsets.only(left: 5),
+                      title: Text(
+                        "Hasta Adı: " + (user['SickName'] ?? ""),
+                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+                      ),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Hasta Notu: " + (user['hastaNot'] ?? ""), style: _buildTextStyle()),
+                            const SizedBox(height: 2),
+                            Text("Sorumlu Olduğu Hemşire: " + (user['connectedNurse'] ?? ""), style: _buildTextStyle()),
+                            const SizedBox(height: 2),
+                            Text("Kalıcı Hastalıklar: " + (kaliciHastaliklar.join(', ') ?? ""), style: _buildTextStyle()),
+                            const SizedBox(height: 2),
+                            Text("Kullanılan İlaçlar: " + (kullanilanIlaclar.join(', ') ?? ""), style: _buildTextStyle()),
+                            const SizedBox(height: 2),
+                            Text("Hasta Kan Grubu: " + (user['hastaKanGrup'] ?? ""), style: _buildTextStyle()),
+                          ],
+                        ),
+                      ),
+                      onTap: null,
+                    ),
+                    const Divider(), // Satırlar arasına ayırıcı ekler
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        elevation: 1.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AnaSayfaYonetici(),
+                  ),
+                );
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(Icons.home_outlined,size: 30,),
+                  Text(
+                    'Anasayfa',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.black45,
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RandevuYonetici(),
+                  ),
+                );
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(Icons.calendar_today_outlined,size: 30,),
+                  Text(
+                    'Randevu',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 2),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.black45,
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const YoneticiChat(),
+                  ),
+                );
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(Icons.message_outlined,size: 30),
+                  Text(
+                    'Sohbet',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  TextStyle _buildTextStyle() => const TextStyle(fontSize: 15, color: Colors.black, backgroundColor: Colors.white54);
+
+  void _searchSickUsers(String query) {
+    setState(() {
+      _displayedSickUsers = _allSickUsers.where((user) {
+        final sickName = user['SickName'].toString().toLowerCase();
+        return sickName.contains(query.toLowerCase());
+      }).toList();
+    });
+  }
 }
+SizedBox customSizedBox() => const SizedBox(height: 2);
+
+TextStyle buildTextStyle() => const TextStyle(fontSize: 15, color: Colors.black, backgroundColor: Colors.white54);

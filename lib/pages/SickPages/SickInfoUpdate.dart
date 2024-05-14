@@ -58,6 +58,22 @@ class _SickUpdateState extends State<SickUpdate> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Container(
+          child: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              size: 30,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SickAnasayfa(),
+                ),
+              );
+            },
+          ),
+        ),
         title: const Text('Sağlık Bilgilerini Güncelle'),
       ),
       body: SingleChildScrollView(
@@ -133,7 +149,7 @@ class _SickUpdateState extends State<SickUpdate> {
                 ),
                 child: const Text(
                   'Kaydet',
-                  style: TextStyle(fontSize: 18.0, color: Colors.black54),
+                  style: TextStyle(fontSize: 18.0, color: Colors.black54,),
                 ),
               ),
             )

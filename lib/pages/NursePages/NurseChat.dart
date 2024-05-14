@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hcareapp/pages/NursePages/authService.dart';
-import 'package:hcareapp/pages/NursePages/BottomAppbarNurse.dart';
 import 'package:hcareapp/pages/NursePages/chatService.dart';
 import 'package:hcareapp/pages/NursePages/userTile.dart';
 import 'ChatPage.dart';
 import 'Profile.dart';
+import 'NurseMedicine.dart';
+import 'NursePageHome.dart';
 
 void main() {
   runApp(const NurseChat());
@@ -109,7 +110,74 @@ class _NurseChatState extends State<NurseChat> {
           _buildUserList(),
         ],
       ),
-      bottomNavigationBar: BottomAppbarNurse(context),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white, // BottomAppBar'ın arka plan rengini beyaza ayarladık
+        elevation: .0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const NursePageHome(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.home_outlined,size: 30,),
+                  Text(
+                    'Anasayfa',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const NurseMedicine(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.local_pharmacy_outlined,size: 30,),
+                  Text(
+                    'İlaç Kontrolü',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            InkWell(
+              onTap: () {},
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.message,size: 30,),
+                  Text(
+                    'Sohbet',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

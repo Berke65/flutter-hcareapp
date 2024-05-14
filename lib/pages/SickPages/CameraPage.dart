@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+import 'package:hcareapp/pages/SickPages/SickHomePage.dart';
 
 void main() {
   runApp(const CameraPage());
@@ -48,7 +49,26 @@ class _CameraPageStateState extends State<CameraPageState> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        leading: Container(
+          child: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              size: 30,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SickAnasayfa(),
+                ),
+              );
+            },
+          ),
+        ),
+        automaticallyImplyLeading: false,
+        title: const Text('Kamera'),
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

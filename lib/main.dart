@@ -22,14 +22,13 @@ class Main extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Geropital',
       routes: {
-        "/passwd":(context) => Passwd(),
+        "/passwd": (context) => const Passwd(),
         "/girisYap": (context) => Main(),
       },
       home: Navigator(
         onGenerateRoute: (settings) {
           return MaterialPageRoute(
             builder: (context) => Scaffold(
-
               resizeToAvoidBottomInset: false,
               body: Container(
                 decoration: const BoxDecoration(
@@ -41,12 +40,15 @@ class Main extends StatelessWidget {
                 ),
                 child: Center(
                   child: Column(
+
                     mainAxisAlignment: MainAxisAlignment.center,
+
                     children: [
+                      const SizedBox(height: 200,),
                       SizedBox(
                         width: 200,
                         height: 200,
-                        child: Image.asset('images/gero1.jpg'), // Logo resmi
+                        child: Image.asset('images/gero1.jpg'),
                       ),
                       customSizedBox(),
                       buildGirisKutusu(
@@ -74,7 +76,21 @@ class Main extends StatelessWidget {
                           );
                         },
                       ),
-
+                      const Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          SizedBox(
+                            height: 180,
+                          ),
+                          Text(
+                            'Designed and developed by BekerSoft',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -137,5 +153,5 @@ class Main extends StatelessWidget {
 }
 
 Widget customSizedBox() => const SizedBox(
-  height: 20,
-);
+      height: 20,
+    );

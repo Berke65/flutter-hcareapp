@@ -4,7 +4,8 @@ import 'package:hcareapp/pages/NursePages/BottomAppbarNurse.dart';
 import 'package:hcareapp/services/notifi_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'NurseChat.dart';
+import 'NursePageHome.dart';
 void main() {
   runApp(const NurseMedicine());
 }
@@ -157,7 +158,81 @@ class _NurseMedicineState extends State<NurseMedicine> {
             ),
           ),
         ),
-        bottomNavigationBar: BottomAppbarNurse(context),
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.white, // BottomAppBar'ın arka plan rengini beyaza ayarladık
+          elevation: .0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NursePageHome(),
+                    ),
+                  );
+                },
+                child: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.home_outlined,size: 30,),
+                    Text(
+                      'Anasayfa',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => const NurseMedicine(),
+                  //   ),
+                  // );
+                },
+                child: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.local_pharmacy,size: 30,),
+                    Text(
+                      'İlaç Kontrolü',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NurseChat(),
+                    ),
+                  );
+                },
+                child: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.message_outlined,size: 30,),
+                    Text(
+                      'Sohbet',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

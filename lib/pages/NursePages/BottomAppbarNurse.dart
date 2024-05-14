@@ -77,28 +77,6 @@ BottomAppBar BottomAppbarNurse(BuildContext context) {
             ],
           ),
         ),
-        // InkWell(
-        //   onTap: () {
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //         builder: (context) => ProfileScreen(),
-        //       ),
-        //     );
-        //   },
-        //   child: const Column(
-        //     mainAxisSize: MainAxisSize.min,
-        //     children: [
-        //       Icon(Icons.account_circle_outlined),
-        //       Text(
-        //         'Profil',
-        //         style: TextStyle(
-        //           fontWeight: FontWeight.bold,
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
       ],
     ),
   );

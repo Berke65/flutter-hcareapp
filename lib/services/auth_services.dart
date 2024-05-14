@@ -85,10 +85,10 @@ class authService {
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "invalid-email":
-          res = "Lütfen doğru email biçiminde girin";
+          res = "Lütfen doğru E-Mail biçiminde girin";
           break;
         case "email-already-in-use":
-          res = "Bu Email Zaten Kullanımda";
+          res = "Bu E-mail Zaten Kullanımda";
           break;
         case "weak-password":
           res = "Lütfen 8 karakter üstünde bir parola giriniz";

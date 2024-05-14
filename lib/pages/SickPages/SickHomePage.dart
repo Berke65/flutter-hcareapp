@@ -2,13 +2,17 @@
 // import 'package:flutter/cupertino.dart';
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hcareapp/pages/SickPages/BottomAppBarSick.dart';
+import 'package:flutter/widgets.dart';
+
 import 'package:hcareapp/pages/SickPages/CameraPage.dart';
 import 'package:hcareapp/pages/SickPages/RandevuAl.dart';
 import 'package:hcareapp/pages/SickPages/SickInfoUpdate.dart';
 
 import 'Profile.dart';
+import 'SickChat.dart';
+import 'Sickinfopage.dart';
 
 void main() {
   runApp(const SickAnasayfa());
@@ -32,6 +36,7 @@ class SickAnasayfa extends StatelessWidget {
     );
   }
 }
+
 class SickHomePage extends StatefulWidget {
   const SickHomePage({Key? key}) : super(key: key);
 
@@ -47,43 +52,50 @@ class _SickHomePageState extends State<SickHomePage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-      automaticallyImplyLeading: false,
-      title: Image.asset('images/gero1.jpg', fit: BoxFit.cover, height: 38),
-      centerTitle: true,
-      actions: [
-
-        Container(
-          margin: EdgeInsets.all(5.0), // Container'ın kenar boşlukları
-          decoration: BoxDecoration(
-            shape: BoxShape.circle, // Container'ı daire şeklinde yap
-            color: Colors.grey[200], // Container'ın arka plan rengi
-          ),
-          child: IconButton(
-            icon: const Icon(
-              Icons.person,
-              size: 30,
+        automaticallyImplyLeading: false,
+        title: Image.asset('images/gero1.jpg', fit: BoxFit.cover, height: 38),
+        centerTitle: true,
+        actions: [
+          Container(
+            margin: const EdgeInsets.all(5.0), // Container'ın kenar boşlukları
+            decoration: BoxDecoration(
+              shape: BoxShape.circle, // Container'ı daire şeklinde yap
+              color: Colors.grey[200], // Container'ın arka plan rengi
             ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProfileScreen(),
-                ),
-              );
-            },
+            child: IconButton(
+              icon: const Icon(
+                Icons.person,
+                size: 30,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(),
+                  ),
+                );
+              },
+            ),
           ),
-        ),
-      ],
-    ),
-
-    body: Center(
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(left: 10, top: 12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
+            const Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(width: 20,),
+                Text('Hoş Geldin',style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600,color: Colors.black87),),
+              ],
+            ),//KULLANICI ADI ÇEKİLECEK YANINA YAZILACAK
+            SizedBox(height: 8,),
+            SizedBox(
               child: SizedBox(
-                width: 150,
-                height: 120,
+                width: 395,
+                height: 80,
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
@@ -92,7 +104,7 @@ class _SickHomePageState extends State<SickHomePage> {
                         color: Colors.grey.withOpacity(0.2),
                         spreadRadius: 1,
                         blurRadius: 10,
-                        offset: const Offset(0, 3), // changes position of shadow
+                        offset: const Offset(1, 3),
                       ),
                     ],
                   ),
@@ -110,20 +122,23 @@ class _SickHomePageState extends State<SickHomePage> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
+                      backgroundColor: Colors.blueGrey,
                     ),
-                    child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
+                        Image(
+                          image: AssetImage('images/icone2.png'),
+                          height: 42,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 8),
                         Text(
                           'Sağlık Bilgilerini Güncelle',
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
-                        ),
-                        Icon(
-                          Icons.arrow_forward,
-                          color: Colors.black,
                         ),
                       ],
                     ),
@@ -131,10 +146,10 @@ class _SickHomePageState extends State<SickHomePage> {
                 ),
               ),
             ),
-            const SizedBox(height: 30), // Boşluk ekledik
+            customsizedbox(),
             SizedBox(
-              width: 150,
-              height: 120,
+              width: 395,
+              height: 80,
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
@@ -152,7 +167,7 @@ class _SickHomePageState extends State<SickHomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CameraPage(),
+                        builder: (context) => const CameraPage(),
                       ),
                     );
                   },
@@ -161,30 +176,35 @@ class _SickHomePageState extends State<SickHomePage> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
+                    backgroundColor: Colors.blueGrey
                   ),
-                  child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
+                      Icon(
+                        Icons.video_camera_back,
+                        color: Colors.white,
+                        size: 40,
+                      ),
+                      SizedBox(
+                        width: 12,
+                      ),
                       Text(
                         'Kamerayı Görüntüle',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ), // Buton metni
-                      Icon(
-                        Icons.arrow_forward,
-                        color: Colors.black,
-                      ),
                     ],
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 30), // Boşluk ekledik
+            customsizedbox(),
             SizedBox(
-              width: 150,
-              height: 120,
+              width: 395,
+              height: 80,
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
@@ -202,38 +222,136 @@ class _SickHomePageState extends State<SickHomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => RandevuAl(),
+                        builder: (context) => const RandevuAl(),
                       ),
-                    );                  },
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     elevation: 5, // Butonun yüksekliği
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
+
                     ),
+                    backgroundColor: Colors.blueGrey,
                   ),
-                  child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
+                      Image(
+                        image: AssetImage('images/icone3.png'),
+                        height: 42,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 12,
+                      ),
                       Text(
                         'Randevu Al',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ), // Buton metni
-                      Icon(
-                        Icons.arrow_forward,
-                        color: Colors.black,
-                      ),
                     ],
                   ),
                 ),
               ),
             ),
+            customsizedbox(),
+            const Divider(),
           ],
         ),
       ),
-      bottomNavigationBar: BottomAppBarSick(context),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        // BottomAppBar'ın arka plan rengini beyaza ayarladık
+        elevation: 1.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            InkWell(
+              onTap: () {},
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.home,
+                    size: 30,
+                  ),
+                  Text(
+                    'Anasayfa',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.black45,
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SickInfoPage(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.medical_information_outlined,
+                    size: 30,
+                  ),
+                  Text(
+                    'Sağlık Bilgilerim',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.black45,
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SickChat(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.message_outlined,
+                    size: 30,
+                  ),
+                  Text(
+                    'Sohbet',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
+
+  SizedBox customsizedbox() => const SizedBox(height: 20);
 }

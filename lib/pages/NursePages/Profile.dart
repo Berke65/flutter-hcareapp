@@ -136,76 +136,86 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          CircleAvatar(
-            radius: 50.0,
-            backgroundImage: NetworkImage(userData['image']),
-            child: Stack(
-              children: [
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextButton(
-                      onPressed: () async {
-                        final file = await ImagePicker()
-                            .pickImage(source: ImageSource.gallery);
-                        if (file == null) return;
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Image.asset(
+                'images/profile.jpg', // Arka plan resmi
+                fit: BoxFit.fill,
+              ),
+              CircleAvatar(
+                radius: 50.0,
+                backgroundImage: NetworkImage(userData['image']),
+                child: Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextButton(
+                          onPressed: () async {
+                            final file = await ImagePicker()
+                                .pickImage(source: ImageSource.gallery);
+                            if (file == null) return;
 
-                        String fileName =
-                        DateTime.now().microsecondsSinceEpoch.toString();
+                            String fileName =
+                            DateTime.now().microsecondsSinceEpoch.toString();
 
-                        Reference referenceRoot =
-                        FirebaseStorage.instance.ref();
-                        Reference referenceDirImages =
-                        referenceRoot.child('images');
-                        Reference referenceImagesToUpload =
-                        referenceDirImages.child(fileName);
+                            Reference referenceRoot =
+                            FirebaseStorage.instance.ref();
+                            Reference referenceDirImages =
+                            referenceRoot.child('images');
+                            Reference referenceImagesToUpload =
+                            referenceDirImages.child(fileName);
 
-                        try {
-                          await referenceImagesToUpload
-                              .putFile(File(file.path));
-                          imageUrl =
-                          await referenceImagesToUpload.getDownloadURL();
+                            try {
+                              await referenceImagesToUpload
+                                  .putFile(File(file.path));
+                              imageUrl =
+                              await referenceImagesToUpload.getDownloadURL();
 
-                          // Burada veritabanına ekleme yapılacak
-                          User? user = _auth.currentUser;
-                          String userID = user!.uid;
+                              // Burada veritabanına ekleme yapılacak
+                              User? user = _auth.currentUser;
+                              String userID = user!.uid;
 
-                          await FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(userID)
-                              .update({
-                            'image': imageUrl,
-                            // Ekstra alanı ve değerini güncelle
-                          });
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                              content: Text(
-                                  'Profil Resminizin aktifleşmesi icin lütfen sayfayı yenileyin')));
-                        } catch (error) {
-                          // Hata durumunda yapılacak işlemler
-                          print('Hata oluştu: $error');
-                        }
-                      },
-                      onLongPress: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              content: Image.network(
-                                userData['image'],
-                                fit: BoxFit
-                                    .contain, // Resmi AlertDialog içinde büyük göster
-                              ),
+                              await FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(userID)
+                                  .update({
+                                'image': imageUrl,
+                                // Ekstra alanı ve değerini güncelle
+                              });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Profil Resminizin aktifleşmesi icin lütfen sayfayı yenileyin')));
+                            } catch (error) {
+                              // Hata durumunda yapılacak işlemler
+                              print('Hata oluştu: $error');
+                            }
+                          },
+                          onLongPress: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  content: Image.network(
+                                    userData['image'],
+                                    fit: BoxFit
+                                        .contain, // Resmi AlertDialog içinde büyük göster
+                                  ),
+                                );
+                              },
                             );
                           },
-                        );
-                      },
-                      child: const SizedBox(),
+                          child: const SizedBox(),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           const SizedBox(height: 16.0),
           Text(
@@ -242,7 +252,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ListTile(
             leading: const Icon(Icons.account_circle_outlined),
             title: Text(
-              userData['name'] + "" + userData['surname'],
+              userData['name'] + " " + userData['surname'],
               style: const TextStyle(fontSize: 18),
             ),
           ),

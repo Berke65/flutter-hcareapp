@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hcareapp/main.dart';
-import 'package:hcareapp/pages/NursePages/BottomAppbarNurse.dart';
-import 'package:hcareapp/services/notifi_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'NurseChat.dart';
@@ -135,7 +134,7 @@ class _NurseMedicineState extends State<NurseMedicine> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
-                    //KODDDDDDD
+                    launchUrl(Uri.parse('tel://112'));
                   },
                   style: ButtonStyle(
                     backgroundColor:

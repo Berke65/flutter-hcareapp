@@ -1,7 +1,8 @@
-// import 'dart:ui';
-// import 'package:flutter/cupertino.dart';
-import 'dart:ui';
 
+import 'dart:ui';
+import 'package:hcareapp/pages/YoneticiPages/authService.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -46,6 +47,23 @@ class SickHomePage extends StatefulWidget {
 
 class _SickHomePageState extends State<SickHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final AuthService _authService = AuthService();
+  late String? currentUsername; // Kullanıcı adını saklamak için değişken
+  List<Map<String, dynamic>> _displayedSickUsers = []; // Hasta verilerini saklamak için liste
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchSickUsers();
+    // Kullanıcı adını Firestore'dan al ve currentUsername değişkenine ata
+    userNameGetFirestore().then((value) {
+      setState(() {
+        currentUsername = value;
+      });
+    });
+    // Hasta verilerini çek ve listeye ekle
+    userName();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,14 +102,17 @@ class _SickHomePageState extends State<SickHomePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Row(
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(width: 20,),
-                Text('Hoş Geldin',style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600,color: Colors.black87),),
+                Text(
+                  'Hoşgeldin ${currentUsername ?? ''}!',
+                  style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600,color: Colors.black87),),
               ],
             ),//KULLANICI ADI ÇEKİLECEK YANINA YAZILACAK
-            SizedBox(height: 8,),
+            const Divider(),
+            customsizedbox(),
             SizedBox(
               child: SizedBox(
                 width: 395,
@@ -259,6 +280,86 @@ class _SickHomePageState extends State<SickHomePage> {
             ),
             customsizedbox(),
             const Divider(),
+            Text('Randevularım', style: TextStyle(fontWeight: FontWeight.bold , fontSize: 20.0),),
+            Expanded(
+              child: _displayedSickUsers.isEmpty
+                  ? const Center(
+                child: Text(
+                  'Randevunuz bulunamamaktadır',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              )
+                  : ListView.builder(
+                itemCount: _displayedSickUsers.length,
+                itemBuilder: (context, index) {
+                  final user = _displayedSickUsers[index];
+                  DateTime date = user['tarih'].toDate();
+                  String formattedDate = "${date.day}/${date.month}/${date.year}";
+                  return ListTile(
+                    title: Text(user['saat'] ?? 'Anonim'),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(user['sağlıkAlanı'] ?? 'Email yok'),
+                        Text(formattedDate),
+                      ],
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () async {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Randevu İptali'),
+                              content: Text('Randevuyu iptal etmek istediğinize emin misiniz?'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('Vazgeç'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    try {
+                                      // Tıklanan satırdaki randevuyu Firestore'dan kaldır
+                                      await FirebaseFirestore
+                                          .instance
+                                          .collection('randevu')
+                                          .where('tarih', isEqualTo: user['tarih'])
+                                          .where('sağlıkAlanı', isEqualTo: user['sağlıkAlanı'])
+                                          .where('userName', isEqualTo: user['userName'])
+                                          .where('saat', isEqualTo: user['saat'])
+                                          .get()
+                                          .then((querySnapshot) {
+                                        querySnapshot.docs.forEach((doc) {
+                                          doc.reference.delete();
+                                        });
+                                      });
+                                      // İptal edilen randevuyu listeden kaldır
+                                      setState(() {
+                                        _displayedSickUsers.removeAt(index);
+                                      });
+                                    } catch (e) {
+                                      print("Hata: $e");
+                                      // Hata durumunda kullanıcıya bilgi vermek için gerekli işlemler yapılabilir
+                                    }
+                                    Navigator.of(context).pop(); // İletişim kutusunu kapat
+                                  },
+                                  child: const Text("Evet, İptal Et"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+
           ],
         ),
       ),
@@ -352,6 +453,71 @@ class _SickHomePageState extends State<SickHomePage> {
       ),
     );
   }
+
+  Future<void> userName() async {
+    String? uid = FirebaseAuth.instance.currentUser?.uid;
+
+  }
+
+  Future<void> _fetchSickUsers() async {
+    String? uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    // Kullanıcı adı almak için Firestore sorgusu
+    DocumentSnapshot<Map<String, dynamic>> userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get();
+
+    String? currentUsername = userDoc.data()?['name'];
+    if (currentUsername == null) return;
+
+    // Randevuları almak için Firestore sorgusu
+    QuerySnapshot<Map<String, dynamic>> randevuSnapshot = await FirebaseFirestore.instance
+        .collection('randevu')
+        .where('userName', isEqualTo: currentUsername)
+        .get();
+
+    List<Map<String, dynamic>> randevuList = randevuSnapshot.docs.map((doc) => doc.data()).toList();
+
+    setState(() {
+      _displayedSickUsers = randevuList;
+    });
+
+    String formatDate(Timestamp? timestamp) {
+      if (timestamp == null) return '';
+
+      DateTime date = timestamp.toDate();
+      String day = date.day.toString();
+      String month = date.month.toString();
+      String year = date.year.toString();
+
+      return '$day/$month/$year';
+    }
+
+  }
+
+
+
+  Future<String?> userNameGetFirestore() async {
+    String currentUserId = _authService.getCurrentUser()!.uid;
+
+    QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore.instance
+        .collection('users')
+        .where('uid', isEqualTo: currentUserId)
+        .get();
+
+    String? currentUsername;
+    if (userQuery.docs.isNotEmpty) {
+      currentUsername = userQuery.docs.first.data()['name'];
+    } else {
+      currentUsername = "Kullanıcı bulunamadı";
+    }
+
+    return currentUsername;
+  }
+
+
 
   SizedBox customsizedbox() => const SizedBox(height: 20);
 }

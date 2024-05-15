@@ -50,6 +50,18 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
   final ChatService _chatService = ChatService();
   final AuthService _authService = AuthService();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late String? currentUsername; // Kullanıcı adını saklamak için değişken
+
+  @override
+  void initState() {
+    super.initState();
+    // Kullanıcı adını Firestore'dan al ve currentUsername değişkenine ata
+    userNameGetFirestore().then((value) {
+      setState(() {
+        currentUsername = value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -176,6 +188,26 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
     );
   }
 
+  Future<String?> userNameGetFirestore() async {
+    String currentUserId = _authService.getCurrentUser()!.uid;
+
+    QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore.instance
+        .collection('users')
+        .where('uid', isEqualTo: currentUserId)
+        .get();
+
+    String? currentUsername;
+    userQuery.docs.forEach((doc) {
+      if (doc.exists) {
+        currentUsername = doc.data()['name'];
+      } else {
+        currentUsername = "Kullanıcı bulunamadı";
+      }
+    });
+
+    return currentUsername;
+  }
+
   Widget _buildUserList() {
     String? selectedNurse;
     String? selectedSick;
@@ -210,9 +242,9 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Center(
+            Center(
               child: Text(
-                'Hoşgeldin ', //username çekilecek yanına yazılacak
+                'Hoşgeldin ${currentUsername ?? ''}!',
                 style: TextStyle(
                   fontSize: 23,
                   fontWeight: FontWeight.bold,
@@ -320,16 +352,25 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                         const SizedBox(height: 10),
                         TextButton(
                           onPressed: () {
-                            authService().addDropdownValuesToFirestore(
-                              context: context,
-                              selectedNurse: selectedNurse,
-                              selectedSick: selectedSick,
-                            );
-
-                            setState(() {
-                              selectedNurse = null;
-                              selectedSick = null;
-                            });
+                            if (selectedNurse == null || selectedSick == null) {
+                              // Eğer her iki kullanıcı da seçilmemişse uyarı göster
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Lütfen hemşire ve hasta seçiniz!'),
+                                ),
+                              );
+                            } else {
+                              // Hemşire ve hasta seçilmişse işlemi devam ettir
+                              authService().addDropdownValuesToFirestore(
+                                context: context,
+                                selectedNurse: selectedNurse,
+                                selectedSick: selectedSick,
+                              );
+                              setState(() {
+                                selectedNurse = null;
+                                selectedSick = null;
+                              });
+                            }
                           },
                           style: TextButton.styleFrom(
                             side: const BorderSide(color: Colors.grey),
@@ -349,6 +390,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                             ),
                           ),
                         ),
+
                         TextButton(
                           onPressed: () {
                             removePairedValuesPopup(context);
@@ -443,17 +485,37 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                                 'Hemşire: ${pairedValues[index]['nurse']}',
                               ),
                               trailing: TextButton(
-                                onPressed: () async {
-                                  // Belirli bir eşleşmiş değeri silmek için ilgili veritabanı işlemlerini yap
-                                  String nurseName =
-                                      pairedValues[index]['nurse'];
-                                  String sickName = pairedValues[index]['sick'];
-                                  await deletePairFromDatabase(
-                                      nurseName, sickName);
-                                  // Listeyi güncelle ve alert dialogu yeniden göster
-                                  setState(() {
-                                    pairedValues.removeAt(index);
-                                  });
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text("Emin misiniz?"),
+                                        content: Text("Bu eşleşmeyi kaldırmak istediğinize emin misiniz?"),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () async {
+                                              // Evet'e tıklandığında yapılacak işlemler
+                                              String nurseName = pairedValues[index]['nurse'];
+                                              String sickName = pairedValues[index]['sick'];
+                                              await deletePairFromDatabase(nurseName, sickName);
+                                              setState(() {
+                                                pairedValues.removeAt(index);
+                                              });
+                                              Navigator.of(context).pop(); // Dialog kapat
+                                            },
+                                            child: Text("Evet"),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop(); // Dialog kapat
+                                            },
+                                            child: Text("Hayır"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
                                 },
                                 child: const Text(
                                   'Kaldır',
@@ -462,10 +524,11 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                                   ),
                                 ),
                               ),
+
                             ),
                             const Divider(),
                             const Text(
-                                'Pencereyi kapatıp açtığınızda işlemin sonuçları gözükecektir'),
+                                'Pencereyi tekrar acıldıgında aktifleşecektir'),
                           ],
                         );
                       },

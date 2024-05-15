@@ -7,6 +7,7 @@ import 'package:hcareapp/main.dart';
 import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -65,8 +66,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text("Emin misiniz?"),
-                      content:
-                      const Text("Çıkış yapmak istediğinize emin misiniz?"),
+                      content: const Text("Çıkış yapmak istediğinize emin misiniz?"),
                       actions: [
                         TextButton(
                           onPressed: () {
@@ -75,10 +75,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: const Text("İptal"),
                         ),
                         TextButton(
-                          onPressed: () {
-                            Navigator.of(context)
-                                .pop(); // Önce alert dialogu kapat
-                            Navigator.push(
+                          onPressed: () async {
+                            Navigator.of(context).pop(); // Önce alert dialogu kapat
+
+                            // Firebase Auth çıkış yapma işlemi
+                            await _auth.signOut();
+
+                            // SharedPreferences verilerini temizle
+                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            await prefs.clear();
+
+                            // Kullanıcıyı giriş sayfasına yönlendir
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => Main(),

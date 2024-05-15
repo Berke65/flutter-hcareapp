@@ -6,6 +6,7 @@ import 'Profile.dart';
 import 'AnaSayfaYonetici.dart';
 import 'RandevuYonetici.dart';
 import 'YoneticiChat.dart';
+import 'package:hcareapp/pages/YoneticiPages/SickDetailsPage.dart';
 
 void main() {
   runApp(const AllSickPage());
@@ -123,7 +124,7 @@ class _NursePageState extends State<NursePage> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: _searchController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Hasta Ara',
                 prefixIcon: const Icon(Icons.search),
               ),
@@ -135,8 +136,6 @@ class _NursePageState extends State<NursePage> {
               itemCount: _displayedSickUsers.length,
               itemBuilder: (context, index) {
                 Map<String, dynamic> user = _displayedSickUsers[index];
-                List<dynamic> kaliciHastaliklar = user['hastaKaliciHastalik'] ?? [];
-                List<dynamic> kullanilanIlaclar = user['hastaKullanılanİlaclar'] ?? [];
 
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -147,24 +146,20 @@ class _NursePageState extends State<NursePage> {
                         "Hasta Adı: " + (user['SickName'] ?? ""),
                         style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
                       ),
-                      subtitle: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      subtitle: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Hasta Notu: " + (user['hastaNot'] ?? ""), style: _buildTextStyle()),
-                            const SizedBox(height: 2),
-                            Text("Sorumlu Olduğu Hemşire: " + (user['connectedNurse'] ?? ""), style: _buildTextStyle()),
-                            const SizedBox(height: 2),
-                            Text("Kalıcı Hastalıklar: " + (kaliciHastaliklar.join(', ') ?? ""), style: _buildTextStyle()),
-                            const SizedBox(height: 2),
-                            Text("Kullanılan İlaçlar: " + (kullanilanIlaclar.join(', ') ?? ""), style: _buildTextStyle()),
-                            const SizedBox(height: 2),
-                            Text("Hasta Kan Grubu: " + (user['hastaKanGrup'] ?? ""), style: _buildTextStyle()),
-                          ],
                         ),
                       ),
-                      onTap: null,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SickDetailsPage(sickData: user),
+                          ),
+                        );
+                      },
                     ),
                     const Divider(), // Satırlar arasına ayırıcı ekler
                   ],
@@ -189,9 +184,9 @@ class _NursePageState extends State<NursePage> {
                   ),
                 );
               },
-              child: Column(
+              child: const Column(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Icon(Icons.home_outlined,size: 30,),
                   Text(
                     'Anasayfa',
@@ -216,9 +211,9 @@ class _NursePageState extends State<NursePage> {
                   ),
                 );
               },
-              child: Column(
+              child: const Column(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Icon(Icons.calendar_today_outlined,size: 30,),
                   Text(
                     'Randevu',
@@ -244,9 +239,9 @@ class _NursePageState extends State<NursePage> {
                   ),
                 );
               },
-              child: Column(
+              child: const Column(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Icon(Icons.message_outlined,size: 30),
                   Text(
                     'Sohbet',
@@ -262,8 +257,6 @@ class _NursePageState extends State<NursePage> {
       ),
     );
   }
-
-  TextStyle _buildTextStyle() => const TextStyle(fontSize: 15, color: Colors.black, backgroundColor: Colors.white54);
 
   void _searchSickUsers(String query) {
     setState(() {

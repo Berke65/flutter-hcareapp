@@ -8,6 +8,8 @@ import 'package:hcareapp/pages/auth/kayitOlPage.dart';
 import 'package:hcareapp/pages/auth/passwd.dart';
 import 'package:hcareapp/pages/SickPages/SickHomePage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 void main() {
   runApp(const GirisYap());
@@ -275,6 +277,9 @@ class _GirisYapState extends State<GirisYap> {
         // Eğer kullanıcı bulunduysa ve sadece bir tane varsa
         if (userQuery.docs.isNotEmpty && userQuery.docs.length == 1) {
           String roleName = userQuery.docs.first.data()['roleName'];
+
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('email', email);
 
           if (roleName == "Yönetim") {
             Navigator.pushReplacement(

@@ -68,8 +68,10 @@ class _SickHomePageState extends State<SickHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey.shade50,
       key: _scaffoldKey,
       appBar: AppBar(
+        backgroundColor: Colors.blueGrey[300],
         automaticallyImplyLeading: false,
         title: Image.asset('images/gero1.jpg', fit: BoxFit.cover, height: 38),
         centerTitle: true,
@@ -78,7 +80,7 @@ class _SickHomePageState extends State<SickHomePage> {
             margin: const EdgeInsets.all(5.0), // Container'ın kenar boşlukları
             decoration: BoxDecoration(
               shape: BoxShape.circle, // Container'ı daire şeklinde yap
-              color: Colors.grey[200], // Container'ın arka plan rengi
+              color: Colors.blueGrey[200], // Container'ın arka plan rengi
             ),
             child: IconButton(
               icon: const Icon(
@@ -105,12 +107,12 @@ class _SickHomePageState extends State<SickHomePage> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(width: 20,),
+                const SizedBox(width: 20,),
                 Text(
                   'Hoşgeldin ${currentUsername ?? ''}!',
-                  style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600,color: Colors.black87),),
+                  style: const TextStyle(fontSize: 20,fontWeight: FontWeight.w600,color: Colors.black87),),
               ],
-            ),//KULLANICI ADI ÇEKİLECEK YANINA YAZILACAK
+            ),
             const Divider(),
             customsizedbox(),
             SizedBox(
@@ -129,12 +131,71 @@ class _SickHomePageState extends State<SickHomePage> {
                       ),
                     ],
                   ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(1.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SickUpdate(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        backgroundColor: Colors.blueGrey,
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Image(
+                            image: AssetImage('images/icone2.png'),
+                            height: 42,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            'Sağlık Bilgilerini Güncelle',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            customsizedbox(),
+            SizedBox(
+              width: 395,
+              height: 80,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 10,
+                      offset: const Offset(0, 3), // changes position of shadow
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(1.0),
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SickUpdate(),
+                          builder: (context) => const CameraPage(),
                         ),
                       );
                     },
@@ -143,24 +204,26 @@ class _SickHomePageState extends State<SickHomePage> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      backgroundColor: Colors.blueGrey,
+                      backgroundColor: Colors.blueGrey
                     ),
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Image(
-                          image: AssetImage('images/icone2.png'),
-                          height: 42,
+                        Icon(
+                          Icons.video_camera_back,
                           color: Colors.white,
+                          size: 40,
                         ),
-                        SizedBox(width: 8),
+                        SizedBox(
+                          width: 12,
+                        ),
                         Text(
-                          'Sağlık Bilgilerini Güncelle',
+                          'Kamerayı Görüntüle',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
-                        ),
+                        ), // Buton metni
                       ],
                     ),
                   ),
@@ -183,104 +246,52 @@ class _SickHomePageState extends State<SickHomePage> {
                     ),
                   ],
                 ),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CameraPage(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    elevation: 5, // Butonun yüksekliği
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    backgroundColor: Colors.blueGrey
-                  ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.video_camera_back,
-                        color: Colors.white,
-                        size: 40,
-                      ),
-                      SizedBox(
-                        width: 12,
-                      ),
-                      Text(
-                        'Kamerayı Görüntüle',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                child: Padding(
+                  padding: const EdgeInsets.all(1.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RandevuAl(),
                         ),
-                      ), // Buton metni
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            customsizedbox(),
-            SizedBox(
-              width: 395,
-              height: 80,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 1,
-                      blurRadius: 10,
-                      offset: const Offset(0, 3), // changes position of shadow
-                    ),
-                  ],
-                ),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RandevuAl(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    elevation: 5, // Butonun yüksekliği
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      elevation: 5, // Butonun yüksekliği
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
 
+                      ),
+                      backgroundColor: Colors.blueGrey,
                     ),
-                    backgroundColor: Colors.blueGrey,
-                  ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Image(
-                        image: AssetImage('images/icone3.png'),
-                        height: 42,
-                        color: Colors.white,
-                      ),
-                      SizedBox(
-                        width: 12,
-                      ),
-                      Text(
-                        'Randevu Al',
-                        style: TextStyle(
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Image(
+                          image: AssetImage('images/icone3.png'),
+                          height: 42,
                           color: Colors.white,
-                          fontWeight: FontWeight.bold,
                         ),
-                      ), // Buton metni
-                    ],
+                        SizedBox(
+                          width: 12,
+                        ),
+                        Text(
+                          'Randevu Al',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ), // Buton metni
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
             customsizedbox(),
             const Divider(),
-            Text('Randevularım', style: TextStyle(fontWeight: FontWeight.bold , fontSize: 20.0),),
+            const Text('Randevularım', style: TextStyle(fontWeight: FontWeight.bold , fontSize: 20.0),),
             Expanded(
               child: _displayedSickUsers.isEmpty
                   ? const Center(
@@ -305,20 +316,20 @@ class _SickHomePageState extends State<SickHomePage> {
                       ],
                     ),
                     trailing: IconButton(
-                      icon: Icon(Icons.close),
+                      icon: const Icon(Icons.close),
                       onPressed: () async {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: Text('Randevu İptali'),
-                              content: Text('Randevuyu iptal etmek istediğinize emin misiniz?'),
+                              title: const Text('Randevu İptali'),
+                              content: const Text('Randevuyu iptal etmek istediğinize emin misiniz?'),
                               actions: <Widget>[
                                 TextButton(
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
-                                  child: Text('Vazgeç'),
+                                  child: const Text('Vazgeç'),
                                 ),
                                 TextButton(
                                   onPressed: () async {
@@ -364,8 +375,7 @@ class _SickHomePageState extends State<SickHomePage> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
-        // BottomAppBar'ın arka plan rengini beyaza ayarladık
+        color: Colors.blueGrey.shade300,
         elevation: 1.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -378,11 +388,14 @@ class _SickHomePageState extends State<SickHomePage> {
                   Icon(
                     Icons.home,
                     size: 30,
+                    color: Colors.white,
                   ),
                   Text(
                     'Anasayfa',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
+
                     ),
                   ),
                 ],
@@ -391,7 +404,7 @@ class _SickHomePageState extends State<SickHomePage> {
             Container(
               width: 1,
               height: 30,
-              color: Colors.black45,
+              color: Colors.white,
             ),
             InkWell(
               onTap: () {
@@ -408,11 +421,15 @@ class _SickHomePageState extends State<SickHomePage> {
                   Icon(
                     Icons.medical_information_outlined,
                     size: 30,
+                    color: Colors.white,
+
                   ),
                   Text(
                     'Sağlık Bilgilerim',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
+
                     ),
                   ),
                 ],
@@ -421,7 +438,7 @@ class _SickHomePageState extends State<SickHomePage> {
             Container(
               width: 1,
               height: 30,
-              color: Colors.black45,
+              color: Colors.white,
             ),
             InkWell(
               onTap: () {
@@ -438,11 +455,15 @@ class _SickHomePageState extends State<SickHomePage> {
                   Icon(
                     Icons.message_outlined,
                     size: 30,
+                    color: Colors.white,
+
                   ),
                   Text(
                     'Sohbet',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
+
                     ),
                   ),
                 ],

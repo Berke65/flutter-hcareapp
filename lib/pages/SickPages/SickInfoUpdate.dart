@@ -57,7 +57,9 @@ class _SickUpdateState extends State<SickUpdate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
+        backgroundColor: Colors.blueGrey.shade300,
         leading: Container(
           child: IconButton(
             icon: const Icon(
@@ -74,7 +76,7 @@ class _SickUpdateState extends State<SickUpdate> {
             },
           ),
         ),
-        title: const Text('Sağlık Bilgilerini Güncelle'),
+        title: const Text('Sağlık Bilgilerini Güncelle',style: TextStyle(fontWeight: FontWeight.w600),),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
@@ -139,17 +141,18 @@ class _SickUpdateState extends State<SickUpdate> {
             const SizedBox(height: 20.0),
             Center(
               child: ElevatedButton(
-                onPressed: hastaBilgileriKayit,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                       vertical: 12.0, horizontal: 50.0),
-                  backgroundColor: Colors.blueGrey[100],
+                  backgroundColor: Colors.blueGrey[300],
                   elevation: 3, // Gölgelenme miktarı
                   shadowColor: Colors.black, // Gölgelenme rengi
                 ),
+                onPressed: hastaBilgileriKayit,
+
                 child: const Text(
                   'Kaydet',
-                  style: TextStyle(fontSize: 18.0, color: Colors.black54,),
+                  style: TextStyle(fontSize: 18.0, color: Colors.white,),
                 ),
               ),
             )
@@ -182,10 +185,17 @@ class _SickUpdateState extends State<SickUpdate> {
         ),
         const SizedBox(height: 10.0),
         ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(
+                vertical: 12.0, horizontal: 50.0),
+            backgroundColor: Colors.blueGrey[300],
+            elevation: 3, // Gölgelenme miktarı
+            shadowColor: Colors.black, // Gölgelenme rengi
+          ),
           onPressed: () {
             _showIlaclarDialog();
           },
-          child: const Text('İlaç Ekle'),
+          child: const Text('İlaç Ekle',style: TextStyle(color: Colors.white),),
         ),
       ],
     );

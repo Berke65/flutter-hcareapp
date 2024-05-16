@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'NurseChat.dart';
 import 'NursePageHome.dart';
+import 'Profile.dart';
 void main() {
   runApp(const NurseMedicine());
 }
@@ -54,30 +55,43 @@ class _NurseMedicineState extends State<NurseMedicine> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        backgroundColor: Colors.blueGrey.shade50,
         appBar: AppBar(
+          backgroundColor: Colors.blueGrey.shade300,
           title: Image.asset('images/gero1.jpg', fit: BoxFit.cover, height: 38),
           centerTitle: true,
-          leading: IconButton(
-            icon: const Icon(
-              Icons.exit_to_app_outlined,
-              size: 30,
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Main(),
+          actions: [
+            Container(
+              margin: const EdgeInsets.all(5.0), // Container'ın kenar boşlukları
+              decoration: BoxDecoration(
+                shape: BoxShape.circle, // Container'ı daire şeklinde yap
+                color: Colors.blueGrey[200], // Container'ın arka plan rengi
+              ),
+              child: IconButton(
+                icon: const Icon(
+                  Icons.person,
+                  size: 30,
                 ),
-              );
-            },
-          ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Container(
             child: Column(
+
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                customSizedBox(),
                 const Center(
                   child: Text(
                     'İlaç Listesi',
@@ -87,19 +101,21 @@ class _NurseMedicineState extends State<NurseMedicine> {
                     ),
                   ),
                 ),
+                Divider(),
+
                 const SizedBox(height: 10),
                 FutureBuilder<List<Map<String, dynamic>>>(
                   future: _showSickUsers(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator(); // Veri yüklenirken gösterilecek widget
+                      return const CircularProgressIndicator(); // Veri yüklenirken gösterilecek widget
                     } else if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
                     } else {
                       // Veri başarıyla yüklendiğinde
                       List<Map<String, dynamic>> sickUsers = snapshot.data!;
                       return sickUsers.isEmpty
-                          ? Center(
+                          ? const Center(
                         child: Text(
                           'Henüz Eşleştildiğiniz bir hasta bulunmamaktadır.',
                           style: TextStyle(fontSize: 16),
@@ -158,54 +174,68 @@ class _NurseMedicineState extends State<NurseMedicine> {
           ),
         ),
         bottomNavigationBar: BottomAppBar(
-          color: Colors.white, // BottomAppBar'ın arka plan rengini beyaza ayarladık
+          color: Colors.blueGrey[300],
+          // BottomAppBar'ın arka plan rengini beyaza ayarladık
           elevation: .0,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const NursePageHome(),
-                    ),
-                  );
-                },
+                onTap: () {    Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const NursePageHome(),
+                  ),
+                );},
                 child: const Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.home_outlined,size: 30,),
+                    Icon(
+                      Icons.home_outlined,
+                      size: 30,
+                      color: Colors.white,
+                    ),
                     Text(
                       'Anasayfa',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
                   ],
                 ),
               ),
+              Container(
+                width: 1,
+                height: 30,
+                color: Colors.white,
+              ),
               InkWell(
                 onTap: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => const NurseMedicine(),
-                  //   ),
-                  // );
+
                 },
                 child: const Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.local_pharmacy,size: 30,),
+                    Icon(
+                      Icons.local_pharmacy,
+                      size: 30,
+                      color: Colors.white,
+                    ),
                     Text(
-                      'İlaç Kontrolü',
+                      'İlaç Takip',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
                   ],
                 ),
+              ),
+              Container(
+                width: 1,
+                height: 30,
+                color: Colors.white,
               ),
               InkWell(
                 onTap: () {
@@ -219,11 +249,16 @@ class _NurseMedicineState extends State<NurseMedicine> {
                 child: const Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.message_outlined,size: 30,),
+                    Icon(
+                      Icons.message_outlined,
+                      size: 30,
+                      color: Colors.white,
+                    ),
                     Text(
                       'Sohbet',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
                   ],

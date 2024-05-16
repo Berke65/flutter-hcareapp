@@ -72,8 +72,10 @@ class _RandevuPageState extends State<RandevuPage>
         "${selectedDate.day}.${selectedDate.month}.${selectedDate.year}";
 
     return Scaffold(
+      backgroundColor: Colors.blueGrey.shade50,
       key: _scaffoldKey,
       appBar: AppBar(
+        backgroundColor: Colors.blueGrey.shade300,
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
@@ -89,7 +91,7 @@ class _RandevuPageState extends State<RandevuPage>
           },
         ),
         title: const Text('Randevu Al',
-          style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20) ,),
+          style: TextStyle(fontWeight: FontWeight.w600,fontSize: 20) ,),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -115,46 +117,60 @@ class _RandevuPageState extends State<RandevuPage>
               "Seçilen Gün: $formattedDate",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
+            Divider(),
+            const SizedBox(height: 10),
             // Sağlık Alanı Dropdown
-            DropdownButtonFormField<String>(
-              value: selectedDepartment,
-              hint: const Text('Sağlık Alanını Seçin'),
-              onChanged: (newValue) {
-                setState(() {
-                  selectedDepartment = newValue;
-                });
-              },
-              items: healthDepartments.map((department) {
-                return DropdownMenuItem<String>(
-                  value: department,
-                  child: Text(department),
-                );
-              }).toList(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: DropdownButtonFormField<String>(
+                value: selectedDepartment,
+                hint: const Text('Sağlık Alanını Seçin'),
+                onChanged: (newValue) {
+                  setState(() {
+                    selectedDepartment = newValue;
+                  });
+                },
+                items: healthDepartments.map((department) {
+                  return DropdownMenuItem<String>(
+                    value: department,
+                    child: Text(department),
+                  );
+                }).toList(),
+              ),
             ),
             const SizedBox(height: 20),
             // Saat Girişi TextFormFied
-            TextFormField(
-              keyboardType: TextInputType.datetime,
-              // Klavyede sadece saat girişi için saat formatını kullanmak için
-              decoration: const InputDecoration(
-                hintText: 'Saat Girin (Örn: 14.30)',
-                border: OutlineInputBorder(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: TextFormField(
+                keyboardType: TextInputType.datetime,
+                // Klavyede sadece saat girişi için saat formatını kullanmak için
+                decoration: const InputDecoration(
+                  hintText: 'Saat Girin (Örn: 14.30)',
+                  border: OutlineInputBorder(),
+                ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                  // AAAAAAAAAAAAAA
+                  // Yalnızca rakam ve nokta karakterine izin verir
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    selectedHour = value;
+                  });
+                },
               ),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-                // AAAAAAAAAAAAAA
-                // Yalnızca rakam ve iki nokta karakterine izin verir
-              ],
-              onChanged: (value) {
-                setState(() {
-                  selectedHour = value;
-                });
-              },
             ),
             const SizedBox(height: 20),
             // Randevu Al Butonu
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 12.0, horizontal: 50.0),
+                backgroundColor: Colors.blueGrey[300],
+                elevation: 3, // Gölgelenme miktarı
+                shadowColor: Colors.black, // Gölgelenme rengi
+              ),
               onPressed: () async {
                 // Kullanıcının adını al
                 String? userName = await getUserName();
@@ -177,12 +193,11 @@ class _RandevuPageState extends State<RandevuPage>
                       content: Text("Randevunuz Başarıyla oluşturuldu")));
                 }
               },
-              child: const Text('Randevu Al'),
+              child: const Text('Randevu Al',style: TextStyle(color: Colors.white),),
             ),
           ],
         ),
       ),
-      // bottomNavigationBar: BottomAppBarSick(context),
     );
   }
 

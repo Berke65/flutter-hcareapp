@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:hcareapp/main.dart';
-import 'package:hcareapp/pages/YoneticiPages/AnaSayfaYonetici.dart';
+import 'package:hcareapp/pages/NursePages/NursePageHome.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,24 +26,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
+        backgroundColor: Colors.blueGrey[300],
         leading: Container(
           child: Container(
-            margin: EdgeInsets.all(5.0), // Container'ın kenar boşlukları
+            margin: const EdgeInsets.all(5.0),
             decoration: BoxDecoration(
               shape: BoxShape.circle, // Container'ı daire şeklinde yap
-              color: Colors.grey[200], // Container'ın arka plan rengi
+              color: Colors.blueGrey[200], // Container'ın arka plan rengi
             ),
             child: IconButton(
               icon: const Icon(
                 Icons.home_outlined,
                 size: 30,
+                // color: Colors.white,
               ),
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const YoneticiHomePage(),
+                    builder: (context) => const NursePageHome(),
                   ),
                 );
               },
@@ -51,11 +54,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         automaticallyImplyLeading: false,
-        title: const Text('Profil'),
+        title: const Text(
+          'Profil',
+          style: TextStyle(fontSize: 23, fontWeight: FontWeight.w600),
+        ),
       ),
       bottomNavigationBar: BottomAppBar(
         height: 72,
-        color: Colors.white, // BottomAppBar'ın arka plan rengi
+        color: Colors.blueGrey[300],
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -66,7 +72,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text("Emin misiniz?"),
-                      content: const Text("Çıkış yapmak istediğinize emin misiniz?"),
+                      content:
+                      const Text("Çıkış yapmak istediğinize emin misiniz?"),
                       actions: [
                         TextButton(
                           onPressed: () {
@@ -76,13 +83,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            Navigator.of(context).pop(); // Önce alert dialogu kapat
+                            Navigator.of(context)
+                                .pop(); // Önce alert dialogu kapat
 
                             // Firebase Auth çıkış yapma işlemi
                             await _auth.signOut();
 
                             // SharedPreferences verilerini temizle
-                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
                             await prefs.clear();
 
                             // Kullanıcıyı giriş sayfasına yönlendir
@@ -102,11 +111,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
               child: const Row(
                 children: <Widget>[
-                  Icon(Icons.exit_to_app, color: Colors.red), // Çıkış ikonu
+                  Icon(
+                    Icons.exit_to_app,
+                    color: Colors.red,
+                  ), // Çıkış ikonu
                   SizedBox(width: 5.0),
                   Text(
                     'Çıkış Yap',
-                    style: TextStyle(color: Colors.red),
+                    style: TextStyle(
+                        color: Colors.red, fontWeight: FontWeight.w600),
                   ), // Çıkış yazısı
                 ],
               ),
@@ -147,12 +160,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Stack(
             alignment: Alignment.center,
             children: [
-              Image.asset(
-                'images/profile.jpg', // Arka plan resmi
-                fit: BoxFit.fill,
-              ),
+              // Image.asset(
+              //   'images/profile.jpg', // Arka plan resmi
+              //   fit: BoxFit.fill,
+              // ),
               CircleAvatar(
-                radius: 50.0,
+                radius: 58.0,
                 backgroundImage: NetworkImage(userData['image']),
                 child: Stack(
                   children: [
@@ -166,8 +179,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 .pickImage(source: ImageSource.gallery);
                             if (file == null) return;
 
-                            String fileName =
-                            DateTime.now().microsecondsSinceEpoch.toString();
+                            String fileName = DateTime.now()
+                                .microsecondsSinceEpoch
+                                .toString();
 
                             Reference referenceRoot =
                             FirebaseStorage.instance.ref();
@@ -179,8 +193,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             try {
                               await referenceImagesToUpload
                                   .putFile(File(file.path));
-                              imageUrl =
-                              await referenceImagesToUpload.getDownloadURL();
+                              imageUrl = await referenceImagesToUpload
+                                  .getDownloadURL();
 
                               // Burada veritabanına ekleme yapılacak
                               User? user = _auth.currentUser;
@@ -266,10 +280,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           const SizedBox(height: 16.0),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              backgroundColor: Colors.blueGrey[200],
+            ),
             onPressed: () {
               _showEditProfileDialog();
             },
-            child: const Text('Profil Düzenle'),
+            child: const Text(
+              'Profil Düzenle',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -282,15 +306,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          TextFormField(
-            initialValue: userData['name'],
-            onChanged: (value) {
-              _editedProfileData['name'] = value;
-            },
-            decoration: const InputDecoration(
-              labelText: 'Ad',
-            ),
-          ),
           TextFormField(
             initialValue: userData['surname'],
             onChanged: (value) {
@@ -319,16 +334,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           const SizedBox(height: 16.0),
-          ElevatedButton(
-            onPressed: () {
-              _saveProfileChanges(_editedProfileData);
-            },
-            child: const Text('Değişiklikleri Kaydet'),
+          SizedBox(
+            width: 200,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                backgroundColor: Colors.blueGrey[200],
+              ),
+              onPressed: () {
+                _saveProfileChanges(_editedProfileData);
+              },
+              child: const Text(
+                'Değişiklikleri Kaydet',
+                style: TextStyle(color: Colors.white, fontSize: 15),
+              ),
+            ),
           ),
           const SizedBox(height: 0.0),
           SizedBox(
-            width: 150,
+            width: 200,
             child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                backgroundColor: Colors.blueGrey[200],
+              ),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -337,7 +372,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 );
               },
-              child: const Text('İptal Et'),
+              child: const Text(
+                'İptal Et',
+                style: TextStyle(color: Colors.white, fontSize: 15),
+              ),
             ),
           ),
         ],

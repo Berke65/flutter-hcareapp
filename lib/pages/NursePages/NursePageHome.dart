@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'Profile.dart';
 import 'NurseChat.dart';
 import 'NurseMedicine.dart';
+
 void main() {
   runApp(const NursePageHome());
 }
@@ -24,8 +25,7 @@ class NursePageHome extends StatelessWidget {
           ),
           bottomAppBarTheme: const BottomAppBarTheme(
             color: Colors.white,
-          )
-      ),
+          )),
       home: const NursePage(),
     );
   }
@@ -44,18 +44,20 @@ class _NursePageState extends State<NursePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey[50],
+
       key: _scaffoldKey,
       appBar: AppBar(
+        backgroundColor: Colors.blueGrey[300],
         automaticallyImplyLeading: false,
         title: Image.asset('images/gero1.jpg', fit: BoxFit.cover, height: 38),
         centerTitle: true,
         actions: [
-
           Container(
             margin: const EdgeInsets.all(5.0), // Container'ın kenar boşlukları
             decoration: BoxDecoration(
               shape: BoxShape.circle, // Container'ı daire şeklinde yap
-              color: Colors.grey[200], // Container'ın arka plan rengi
+              color: Colors.blueGrey[200], // Container'ın arka plan rengi
             ),
             child: IconButton(
               icon: const Icon(
@@ -88,40 +90,55 @@ class _NursePageState extends State<NursePage> {
             List<Map<String, dynamic>> sickUsers = snapshot.data!;
             if (sickUsers.isEmpty) {
               // Veri yoksa gösterilecek uyarı mesajı
-              return const Center(child: Text('Henüz eşleştirildiğiniz bir hasta bulunmamaktadır.'));
+              return const Center(
+                  child: Text(
+                      'Henüz eşleştirildiğiniz bir hasta bulunmamaktadır.'));
             } else {
               // Veriler varsa ListView.builder içinde gösterilecek widget
               return ListView.builder(
                 itemCount: sickUsers.length,
                 itemBuilder: (context, index) {
                   Map<String, dynamic> user = sickUsers[index];
-                  List<dynamic> kaliciHastaliklar = user['hastaKaliciHastalik'] ?? [];
-                  List<dynamic> kullanilanIlaclar = user['hastaKullanılanİlaclar'] ?? [];
+                  List<dynamic> kaliciHastaliklar =
+                      user['hastaKaliciHastalik'] ?? [];
+                  List<dynamic> kullanilanIlaclar =
+                      user['hastaKullanılanİlaclar'] ?? [];
 
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16), // Verileri sola dayalı olarak göstermek için contentPadding kullanılıyor
-                        title: Center(child: Text("Hasta Adı: " + user['SickName'], style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w900))),
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 16),
+                        // Verileri sola dayalı olarak göstermek için contentPadding kullanılıyor
+                        title: Center(
+                            child: Text("Hasta Adı: " + user['SickName'],
+                                style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w700))),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 12),
-                            const Text(
+                            Text(
                               "Kalıcı Hastalıklar: ",
-                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700,color: Colors.black54),
+                              style: buildTextbaslik(),
                             ),
-                            Text('${kaliciHastaliklar.join(', ')}', style: CustomTxtStyle()),
+                            Text('${kaliciHastaliklar.join(', ')}',
+                                style: CustomTxtStyle()),
                             const SizedBox(height: 8),
-                            const Text("Kullanılan İlaçlar:", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700,color: Colors.black54)),
-                            Text('${kullanilanIlaclar.join(', ')}', style: CustomTxtStyle()),
+                            Text("Kullanılan İlaçlar:",
+                                style: buildTextbaslik()),
+                            Text('${kullanilanIlaclar.join(', ')}',
+                                style: CustomTxtStyle()),
                             const SizedBox(height: 8),
-                            const Text("Hasta Kan Grubu: ", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700,color: Colors.black54)),
-                            Text('${user['hastaKanGrup']}', style: CustomTxtStyle()),
+                            Text("Hasta Kan Grubu: ", style: buildTextbaslik()),
+                            Text('${user['hastaKanGrup']}',
+                                style: CustomTxtStyle()),
                             const SizedBox(height: 8),
-                            const Text("Hasta Notu: ", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700,color: Colors.black54)),
-                            Text('${user['hastaNot']}', style: CustomTxtStyle()),
+                            Text("Hasta Notu: ", style: buildTextbaslik()),
+                            Text('${user['hastaNot']}',
+                                style: CustomTxtStyle()),
                           ],
                         ),
                         onTap: () {
@@ -136,34 +153,39 @@ class _NursePageState extends State<NursePage> {
             }
           }
         },
-      ), // Noktalı virgül burada olmamalı
+      ),
+      // Noktalı virgül burada olmamalı
       bottomNavigationBar: BottomAppBar(
-        color: Colors.white, // BottomAppBar'ın arka plan rengini beyaza ayarladık
+        color: Colors.blueGrey[300],
+        // BottomAppBar'ın arka plan rengini beyaza ayarladık
         elevation: .0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             InkWell(
-              onTap: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => const NursePageHome(),
-                //   ),
-                // );
-              },
+              onTap: () {},
               child: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.home,size: 30,),
+                  Icon(
+                    Icons.home,
+                    size: 30,
+                    color: Colors.white,
+                  ),
                   Text(
                     'Anasayfa',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ],
               ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.white,
             ),
             InkWell(
               onTap: () {
@@ -177,15 +199,25 @@ class _NursePageState extends State<NursePage> {
               child: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.local_pharmacy_outlined,size: 30,),
+                  Icon(
+                    Icons.local_pharmacy_outlined,
+                    size: 30,
+                    color: Colors.white,
+                  ),
                   Text(
-                    'İlaç Kontrolü',
+                    'İlaç Takip',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ],
               ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.white,
             ),
             InkWell(
               onTap: () {
@@ -199,11 +231,16 @@ class _NursePageState extends State<NursePage> {
               child: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.message_outlined,size: 30,),
+                  Icon(
+                    Icons.message_outlined,
+                    size: 30,
+                    color: Colors.white,
+                  ),
                   Text(
                     'Sohbet',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -213,15 +250,20 @@ class _NursePageState extends State<NursePage> {
         ),
       ),
     );
-
   }
 
-  TextStyle CustomTxtStyle() => const TextStyle(fontSize: 20);
+  TextStyle buildTextbaslik() => TextStyle(
+      fontSize: 18, fontWeight: FontWeight.w700, color: Colors.black87);
+
+  TextStyle CustomTxtStyle() =>
+      const TextStyle(fontSize: 16, color: Colors.black54);
+
   Future<List<Map<String, dynamic>>> _showSickUsers() async {
     try {
       String? uid = FirebaseAuth.instance.currentUser?.uid;
 
-      QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore.instance
+      QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore
+          .instance
           .collection('users')
           .where('uid', isEqualTo: uid)
           .get();
@@ -238,10 +280,14 @@ class _NursePageState extends State<NursePage> {
 
       // Firestore'dan kullanıcıları al
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
-      await FirebaseFirestore.instance.collection('hastaBilgileri').where('connectedNurse', isEqualTo: currentUsername).get();
+          await FirebaseFirestore.instance
+              .collection('hastaBilgileri')
+              .where('connectedNurse', isEqualTo: currentUsername)
+              .get();
 
       // Alınan kullanıcı verilerini işleyerek görüntüleme işlemini yap
-      List<Map<String, dynamic>> sickUsers = querySnapshot.docs.map((doc) => doc.data()).toList();
+      List<Map<String, dynamic>> sickUsers =
+          querySnapshot.docs.map((doc) => doc.data()).toList();
 
       return sickUsers;
     } catch (e) {
@@ -250,7 +296,4 @@ class _NursePageState extends State<NursePage> {
       throw e; // Hata durumunda döndürülen future'ı hata durumu ile işlemek için hatayı yeniden fırlatır
     }
   }
-
-
-
 }

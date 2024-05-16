@@ -8,7 +8,9 @@ class SickDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey[100],
       appBar: AppBar(
+        backgroundColor: Colors.blueGrey[300],
         title: Text('Hasta Detayları'),
       ),
       body: SingleChildScrollView(

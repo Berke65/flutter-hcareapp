@@ -28,14 +28,16 @@ class _NurseChatState extends State<NurseChat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
+        backgroundColor: Colors.blueGrey.shade300,
         titleSpacing: 22,
         actions: [
           Container(
             margin: EdgeInsets.all(5.0), // Container'ın kenar boşlukları
             decoration: BoxDecoration(
               shape: BoxShape.circle, // Container'ı daire şeklinde yap
-              color: Colors.grey[200], // Container'ın arka plan rengi
+              color: Colors.blueGrey[200], // Container'ın arka plan rengi
             ),
             child: IconButton(
               icon: const Icon(
@@ -70,13 +72,13 @@ class _NurseChatState extends State<NurseChat> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ElevatedButton(
-                //style:  ButtonStyle(textStyle:  ),
+                style: buildStyleFrom(),
                 onPressed: () {
                   setState(() {
                     selectedRole = 'Yönetim';
                   });
                 },
-                child: Text('Yönetim'),
+                child: Text('Yönetim',style: TextStyle(color: Colors.white),),
               ),
               Container(
                 width: 1,
@@ -84,12 +86,13 @@ class _NurseChatState extends State<NurseChat> {
                 color: Colors.black,
               ),
               ElevatedButton(
+                style: buildStyleFrom(),
                 onPressed: () {
                   setState(() {
                     selectedRole = 'Hasta';
                   });
                 },
-                child: Text('Hasta'),
+                child: Text('Hasta',style: TextStyle(color: Colors.white),),
               ),
               Container(
                 width: 1,
@@ -97,12 +100,13 @@ class _NurseChatState extends State<NurseChat> {
                 color: Colors.black,
               ),
               ElevatedButton(
+                style: buildStyleFrom(),
                 onPressed: () {
                   setState(() {
                     selectedRole = 'Hemşire';
                   });
                 },
-                child: Text('Hemşire'),
+                child: Text('Hemşire',style: TextStyle(color: Colors.white),),
               ),
             ],
           ),
@@ -111,7 +115,8 @@ class _NurseChatState extends State<NurseChat> {
         ],
       ),
       bottomNavigationBar: BottomAppBar(
-        color: Colors.white, // BottomAppBar'ın arka plan rengini beyaza ayarladık
+        color: Colors.blueGrey.shade300,
+        // BottomAppBar'ın arka plan rengini beyaza ayarladık
         elevation: .0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -128,15 +133,25 @@ class _NurseChatState extends State<NurseChat> {
               child: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.home_outlined,size: 30,),
+                  Icon(
+                    Icons.home_outlined,
+                    size: 30,
+                    color: Colors.white,
+                  ),
                   Text(
                     'Anasayfa',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ],
               ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.white,
             ),
             InkWell(
               onTap: () {
@@ -150,25 +165,42 @@ class _NurseChatState extends State<NurseChat> {
               child: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.local_pharmacy_outlined,size: 30,),
+                  Icon(
+                    Icons.local_pharmacy_outlined,
+                    size: 30,
+                    color: Colors.white,
+
+                  ),
                   Text(
                     'İlaç Kontrolü',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
+
                     ),
                   ),
                 ],
               ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.white,
             ),
             InkWell(
               onTap: () {},
               child: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.message,size: 30,),
+                  Icon(
+                    Icons.message,
+                    color: Colors.white,
+                    size: 30,
+                  ),
                   Text(
                     'Sohbet',
                     style: TextStyle(
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -178,6 +210,16 @@ class _NurseChatState extends State<NurseChat> {
           ],
         ),
       ),
+    );
+  }
+
+  ButtonStyle buildStyleFrom() {
+    return ElevatedButton.styleFrom(
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
+      ),
+      backgroundColor: Colors.blueGrey[200],
     );
   }
 
@@ -192,21 +234,20 @@ class _NurseChatState extends State<NurseChat> {
           return const Center(child: CircularProgressIndicator());
         }
         // Filtreleme işlemi
-        final filteredUsers = snapshot.data!.where((userData) =>
-        userData['roleName'] == selectedRole
-        ).toList();
+        final filteredUsers = snapshot.data!
+            .where((userData) => userData['roleName'] == selectedRole)
+            .toList();
         return Expanded(
           child: ListView(
             children: filteredUsers
-                .map<Widget>((userData) =>
-                _buildUserListItem(userData, context))
+                .map<Widget>(
+                    (userData) => _buildUserListItem(userData, context))
                 .toList(),
           ),
         );
       },
     );
   }
-
 
   Widget _buildUserListItem(
       Map<String, dynamic> userData, BuildContext context) {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'Profile.dart';
 import 'AnaSayfaYonetici.dart';
 import 'RandevuYonetici.dart';
@@ -40,10 +39,9 @@ class NursePage extends StatefulWidget {
 
 class _NursePageState extends State<NursePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   late List<Map<String, dynamic>> _allSickUsers;
   late List<Map<String, dynamic>> _displayedSickUsers;
-
 
   @override
   void initState() {
@@ -55,25 +53,27 @@ class _NursePageState extends State<NursePage> {
     try {
       String? uid = FirebaseAuth.instance.currentUser?.uid;
 
-      QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore.instance
+      QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore
+          .instance
           .collection('users')
           .where('uid', isEqualTo: uid)
           .get();
 
       String? currentUsername;
-      userQuery.docs.forEach((doc) {
+      for (var doc in userQuery.docs) {
         if (doc.exists) {
           currentUsername = doc.data()['name'];
         } else {
           currentUsername = "Kullanıcı bulunamadı";
         }
-      });
+      }
       print(currentUsername);
 
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
       await FirebaseFirestore.instance.collection('hastaBilgileri').get();
 
-      List<Map<String, dynamic>> sickUsers = querySnapshot.docs.map((doc) => doc.data()).toList();
+      List<Map<String, dynamic>> sickUsers =
+      querySnapshot.docs.map((doc) => doc.data()).toList();
 
       setState(() {
         _allSickUsers = sickUsers;
@@ -85,21 +85,43 @@ class _NursePageState extends State<NursePage> {
     }
   }
 
+  void _searchSickUsers(String query) {
+    setState(() {
+      _displayedSickUsers = _allSickUsers.where((user) {
+        final sickName = user['SickName'].toString().toLowerCase();
+        return sickName.contains(query.toLowerCase());
+      }).toList();
+    });
+  }
+
+  TextStyle bottomAppBarTxtStyle() {
+    return const TextStyle(
+      color: Colors.white,
+      fontWeight: FontWeight.bold,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey[100],
       key: _scaffoldKey,
       appBar: AppBar(
+        backgroundColor: Colors.blueGrey[300],
         automaticallyImplyLeading: false,
-        title: Image.asset('images/gero1.jpg', fit: BoxFit.cover, height: 38),
-        centerTitle: true,
+        title: const Text(
+          'Tüm Hastalar',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 24,
+          ),
+        ),        centerTitle: true,
         actions: [
           Container(
             margin: const EdgeInsets.all(5.0),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.grey[200],
+              color: Colors.blueGrey[200],
             ),
             child: IconButton(
               icon: const Icon(
@@ -110,7 +132,7 @@ class _NursePageState extends State<NursePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProfileScreen(),
+                    builder: (context) =>  ProfileScreen(),
                   ),
                 );
               },
@@ -126,7 +148,8 @@ class _NursePageState extends State<NursePage> {
               controller: _searchController,
               decoration: const InputDecoration(
                 labelText: 'Hasta Ara',
-                prefixIcon: const Icon(Icons.search),
+                fillColor: Colors.white,
+                prefixIcon: Icon(Icons.search),
               ),
               onChanged: _searchSickUsers,
             ),
@@ -140,28 +163,45 @@ class _NursePageState extends State<NursePage> {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    ListTile(
-                      contentPadding: const EdgeInsets.only(left: 5),
-                      title: Text(
-                        "Hasta Adı: " + (user['SickName'] ?? ""),
-                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
-                      ),
-                      subtitle: const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(13.5),
+                        side: BorderSide(
+                          color: Colors.blueGrey.shade100,
+                          width: 5.0,
                         ),
                       ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SickDetailsPage(sickData: user),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 8.0),
+                        leading: const Icon(Icons.person,
+                            color: Colors.white, size: 40),
+                        tileColor: Colors.blueGrey[400],
+                        title: Text(
+                          "Hasta Adı: " + (user['SickName'] ?? ""),
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
                           ),
-                        );
-                      },
+                        ),
+                        subtitle: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  SickDetailsPage(sickData: user),
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                    const Divider(), // Satırlar arasına ayırıcı ekler
                   ],
                 );
               },
@@ -170,12 +210,14 @@ class _NursePageState extends State<NursePage> {
         ],
       ),
       bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
+        color: Colors.blueGrey[300],
         elevation: 1.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            InkWell(
+            _buildBottomAppBarItem(
+              icon: Icons.home_outlined,
+              label: 'Anasayfa',
               onTap: () {
                 Navigator.push(
                   context,
@@ -184,25 +226,11 @@ class _NursePageState extends State<NursePage> {
                   ),
                 );
               },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.home_outlined,size: 30,),
-                  Text(
-                    'Anasayfa',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
             ),
-            Container(
-              width: 1,
-              height: 30,
-              color: Colors.black45,
-            ),
-            InkWell(
+            _buildDivider(),
+            _buildBottomAppBarItem(
+              icon: Icons.calendar_today_outlined,
+              label: 'Randevu',
               onTap: () {
                 Navigator.push(
                   context,
@@ -211,26 +239,11 @@ class _NursePageState extends State<NursePage> {
                   ),
                 );
               },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.calendar_today_outlined,size: 30,),
-                  Text(
-                    'Randevu',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
             ),
-            const SizedBox(height: 2),
-            Container(
-              width: 1,
-              height: 30,
-              color: Colors.black45,
-            ),
-            InkWell(
+            _buildDivider(),
+            _buildBottomAppBarItem(
+              icon: Icons.message_outlined,
+              label: 'Sohbet',
               onTap: () {
                 Navigator.push(
                   context,
@@ -239,18 +252,6 @@ class _NursePageState extends State<NursePage> {
                   ),
                 );
               },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.message_outlined,size: 30),
-                  Text(
-                    'Sohbet',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
             ),
           ],
         ),
@@ -258,15 +259,35 @@ class _NursePageState extends State<NursePage> {
     );
   }
 
-  void _searchSickUsers(String query) {
-    setState(() {
-      _displayedSickUsers = _allSickUsers.where((user) {
-        final sickName = user['SickName'].toString().toLowerCase();
-        return sickName.contains(query.toLowerCase());
-      }).toList();
-    });
+  Widget _buildBottomAppBarItem({
+    required IconData icon,
+    required String label,
+    required void Function() onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            size: 30,
+            color: Colors.white,
+          ),
+          Text(
+            label,
+            style: bottomAppBarTxtStyle(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Container(
+      width: 1,
+      height: 30,
+      color: Colors.white,
+    );
   }
 }
-SizedBox customSizedBox() => const SizedBox(height: 2);
-
-TextStyle buildTextStyle() => const TextStyle(fontSize: 15, color: Colors.black, backgroundColor: Colors.white54);

@@ -45,104 +45,102 @@ class _GirisYapState extends State<GirisYap> {
               ),
             ),
             // SingleChildScrollView üzerine diğer widget'lar eklenir
-            SingleChildScrollView(
-              child: Form(
-                key: formKey,
-                child: Column(
-                  children: [
-                    Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 200,
-                            height: 280,
-                            child:
-                                Image.asset('images/gero1.jpg'), // Logo resmi
-                          ),
-                          const Row(
-                            children: [
-                              SizedBox(
-                                width: 100,
+            Form(
+              key: formKey,
+              child: Column(
+                children: [
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 200,
+                          height: 280,
+                          child:
+                              Image.asset('images/gero1.jpg'), // Logo resmi
+                        ),
+                        const Row(
+                          children: [
+                            SizedBox(
+                              width: 100,
+                            ),
+                            Icon(Icons.lock_person),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              'Giriş Ekranı',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 28,
+                                fontFamily: 'Roboto',
                               ),
-                              Icon(Icons.lock_person),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                'Giriş Ekranı',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 28,
-                                  fontFamily: 'Roboto',
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 50,
-                          ),
-                          buildEmail(),
-                          customSizedBox(),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 22.0),
-                            child: passwdTxtField(),
-                          ),
-                          Row(
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 50,
+                        ),
+                        buildEmail(),
+                        customSizedBox(),
+                        Padding(
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 22.0),
+                          child: passwdTxtField(),
+                        ),
+                        Row(
 
-                            children: [
-                              const SizedBox(width: 10,),
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const Passwd(),
-                                      ),
-                                    );
-                                  },
-                                  child: const Text(
-                                    'Şifremi Unuttum!',
-                                    style: TextStyle(
-                                        color: Colors.black54,
-                                        fontWeight: FontWeight.bold,
-                                      fontSize: 15,
-                                    ),
-                                  )),
-                            ],
-                          ),
-                          customSizedBox(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              CustomButton(
-                                icon: Icons.admin_panel_settings_outlined,
-                                text: 'Giriş Yap',
-                                onPressed: signIn,
-                              ),
-                              const SizedBox(
-                                width: 12,
-                              ),
-                              CustomButton(
-                                icon: Icons.person_add_alt,
-                                text: 'Kayıt Ol',
+                          children: [
+                            const SizedBox(width: 10,),
+                            TextButton(
                                 onPressed: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const kayitOlPage(),
+                                      builder: (context) => const Passwd(),
                                     ),
                                   );
                                 },
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                                child: const Text(
+                                  'Şifremi Unuttum!',
+                                  style: TextStyle(
+                                      color: Colors.black54,
+                                      fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                )),
+                          ],
+                        ),
+                        customSizedBox(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CustomButton(
+                              icon: Icons.admin_panel_settings_outlined,
+                              text: 'Giriş Yap',
+                              onPressed: signIn,
+                            ),
+                            const SizedBox(
+                              width: 12,
+                            ),
+                            CustomButton(
+                              icon: Icons.person_add_alt,
+                              text: 'Kayıt Ol',
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const kayitOlPage(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],

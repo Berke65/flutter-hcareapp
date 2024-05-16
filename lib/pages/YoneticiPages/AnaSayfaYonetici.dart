@@ -8,7 +8,6 @@ import 'package:hcareapp/pages/YoneticiPages/YoneticiChat.dart';
 import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/authService.dart';
 import 'package:hcareapp/services/auth_services.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
@@ -27,8 +26,8 @@ class _AnaSayfaYoneticiState extends State<AnaSayfaYonetici> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        appBarTheme: const AppBarTheme(
-          color: Colors.white54,
+        appBarTheme: AppBarTheme(
+          color: Colors.blueGrey.shade300, // Burada renk kullanımı
         ),
         bottomAppBarTheme: const BottomAppBarTheme(
           color: Colors.white,
@@ -66,6 +65,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey[50],
       key: _scaffoldKey,
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -76,12 +76,13 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
             margin: const EdgeInsets.all(5.0), // Container'ın kenar boşlukları
             decoration: BoxDecoration(
               shape: BoxShape.circle, // Container'ı daire şeklinde yap
-              color: Colors.grey[200], // Container'ın arka plan rengi
+              color: Colors.blueGrey[200], // Container'ın arka plan rengi
             ),
             child: IconButton(
               icon: const Icon(
                 Icons.person,
                 size: 30,
+                // color: Colors.white,
               ),
               onPressed: () {
                 Navigator.push(
@@ -99,33 +100,35 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
         children: [_buildUserList()],
       ),
       bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
+        color: Colors.blueGrey[300],
         elevation: 1.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             InkWell(
-                onTap: () {},
-                child: const Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.home,
-                      size: 30,
+              onTap: () {},
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    color: Colors.white,
+                    Icons.home,
+                    size: 30,
+                  ),
+                  Text(
+                    'Anasayfa',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
-                    Text(
-                      'Anasayfa',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+            ),
             Container(
               width: 1,
               height: 30,
-              color: Colors.black45,
+              color: Colors.white,
             ),
             InkWell(
               onTap: () {
@@ -140,12 +143,14 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
+                    color: Colors.white,
                     Icons.calendar_today_outlined,
                     size: 30,
                   ),
                   Text(
                     'Randevu',
                     style: TextStyle(
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -155,7 +160,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
             Container(
               width: 1,
               height: 30,
-              color: Colors.black45, // Çizgi rengi
+              color: Colors.white, // Çizgi rengi
             ),
             InkWell(
               onTap: () {
@@ -170,12 +175,14 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
+                    color: Colors.white,
                     Icons.message_outlined,
                     size: 30,
                   ),
                   Text(
                     'Sohbet',
                     style: TextStyle(
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -191,7 +198,8 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
   Future<String?> userNameGetFirestore() async {
     String currentUserId = _authService.getCurrentUser()!.uid;
 
-    QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore.instance
+    QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore
+        .instance
         .collection('users')
         .where('uid', isEqualTo: currentUserId)
         .get();
@@ -242,13 +250,25 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(
+              height: 20,
+            ),
             Center(
               child: Text(
                 'Hoşgeldin ${currentUsername ?? ''}!',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 23,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Container(
+                width: 380,
+                child: const Divider(
+                  color: Colors.black,
                 ),
               ),
             ),
@@ -289,15 +309,16 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                       children: [
                         Row(
                           children: [
-                            Icon(
-                              Icons.healing_outlined,
-                              size: 22,
+                            Image(
+                              image: AssetImage('images/nurse.png'),
+                              height: 32,
+                              color: Colors.black,
                             ),
                             Text(
-                              'Hemşire',
+                              ' Hemşire',
                               style: TextStyle(
                                   color: Colors.black,
-                                  fontWeight: FontWeight.w400,
+                                  fontWeight: FontWeight.w500,
                                   fontSize: 22),
                             ),
                           ],
@@ -309,7 +330,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                       width: 500,
                       height: 70,
                       child: _dropdownlist(
-                        '',
+                        'Hemşire Seçiniz!',
                         nurseUserNames,
                         context,
                         (value) {
@@ -320,11 +341,11 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                     const Row(
                       children: [
                         Icon(
-                          Icons.sick,
-                          size: 22,
+                          Icons.sick_outlined,
+                          size: 28,
                         ),
                         Text(
-                          'Hasta',
+                          ' Hasta',
                           style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.w400,
@@ -337,7 +358,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                       width: 500,
                       height: 70,
                       child: _dropdownlist(
-                        '',
+                        'Hasta Seçiniz!',
                         sickUserNames,
                         context,
                         (value) {
@@ -356,7 +377,8 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                               // Eğer her iki kullanıcı da seçilmemişse uyarı göster
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Lütfen hemşire ve hasta seçiniz!'),
+                                  content:
+                                      Text('Lütfen hemşire ve hasta seçiniz!'),
                                 ),
                               );
                             } else {
@@ -390,7 +412,6 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                             ),
                           ),
                         ),
-
                         TextButton(
                           onPressed: () {
                             removePairedValuesPopup(context);
@@ -490,27 +511,34 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        title: Text("Emin misiniz?"),
-                                        content: Text("Bu eşleşmeyi kaldırmak istediğinize emin misiniz?"),
+                                        backgroundColor: Colors.blueGrey[100],
+                                        title: const Text("Emin misiniz?"),
+                                        content: const Text(
+                                            "Bu eşleşmeyi kaldırmak istediğinize emin misiniz?"),
                                         actions: [
                                           TextButton(
                                             onPressed: () async {
                                               // Evet'e tıklandığında yapılacak işlemler
-                                              String nurseName = pairedValues[index]['nurse'];
-                                              String sickName = pairedValues[index]['sick'];
-                                              await deletePairFromDatabase(nurseName, sickName);
+                                              String nurseName =
+                                                  pairedValues[index]['nurse'];
+                                              String sickName =
+                                                  pairedValues[index]['sick'];
+                                              await deletePairFromDatabase(
+                                                  nurseName, sickName);
                                               setState(() {
                                                 pairedValues.removeAt(index);
                                               });
-                                              Navigator.of(context).pop(); // Dialog kapat
+                                              Navigator.of(context)
+                                                  .pop(); // Dialog kapat
                                             },
-                                            child: Text("Evet"),
+                                            child: const Text("Evet"),
                                           ),
                                           TextButton(
                                             onPressed: () {
-                                              Navigator.of(context).pop(); // Dialog kapat
+                                              Navigator.of(context)
+                                                  .pop(); // Dialog kapat
                                             },
-                                            child: Text("Hayır"),
+                                            child: const Text("Hayır"),
                                           ),
                                         ],
                                       );
@@ -524,7 +552,6 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                                   ),
                                 ),
                               ),
-
                             ),
                             const Divider(),
                             const Text(

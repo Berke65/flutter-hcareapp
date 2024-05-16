@@ -29,14 +29,16 @@ class _SickChatState extends State<SickChat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
+        backgroundColor: Colors.blueGrey.shade300,
         titleSpacing: 22,
         actions: [
           Container(
-            margin: EdgeInsets.all(5.0), // Container'ın kenar boşlukları
+            margin: const EdgeInsets.all(5.0), // Container'ın kenar boşlukları
             decoration: BoxDecoration(
               shape: BoxShape.circle, // Container'ı daire şeklinde yap
-              color: Colors.grey[200], // Container'ın arka plan rengi
+              color: Colors.blueGrey[200], // Container'ın arka plan rengi
             ),
             child: IconButton(
               icon: const Icon(
@@ -66,49 +68,51 @@ class _SickChatState extends State<SickChat> {
       ),
       body: Column(
         children: [
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ElevatedButton(
-                //style:  ButtonStyle(textStyle:  ),
+                style: buildStyleFrom(),
                 onPressed: () {
                   setState(() {
                     selectedRole = 'Yönetim';
                   });
                 },
-                child: Text('Yönetim'),
+                child: const Text(
+                  'Yönetim',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
               ),
-              // ElevatedButton(
-              //   onPressed: () {
-              //     setState(() {
-              //       selectedRole = 'Hasta';
-              //     });
-              //   },
-              //   child: Text('Hasta'),
-              // ),
               Container(
                 width: 1,
                 height: 25,
                 color: Colors.black,
               ),
               ElevatedButton(
+                style: buildStyleFrom(),
                 onPressed: () {
                   setState(() {
                     selectedRole = 'Hemşire';
                   });
                 },
-                child: Text('Hemşire'),
+                child: const Text(
+                  'Hemşire',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ],
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           _buildUserList(),
         ],
       ),
       bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
-        // BottomAppBar'ın arka plan rengini beyaza ayarladık
+        color: Colors.blueGrey.shade300,
         elevation: 1.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -126,6 +130,7 @@ class _SickChatState extends State<SickChat> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
+                    color: Colors.white,
                     Icons.home_outlined,
                     size: 30,
                   ),
@@ -133,6 +138,7 @@ class _SickChatState extends State<SickChat> {
                     'Anasayfa',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -141,26 +147,30 @@ class _SickChatState extends State<SickChat> {
             Container(
               width: 1,
               height: 30,
-              color: Colors.black45,
+              color: Colors.white,
             ),
             InkWell(
-              onTap: () { Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>  SickInfoPage(),
-                ),
-              );},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SickInfoPage(),
+                  ),
+                );
+              },
               child: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
                     Icons.medical_information_outlined,
                     size: 30,
+                    color: Colors.white,
                   ),
                   Text(
                     'Sağlık Bilgilerim',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -169,7 +179,7 @@ class _SickChatState extends State<SickChat> {
             Container(
               width: 1,
               height: 30,
-              color: Colors.black45,
+              color: Colors.white,
             ),
             InkWell(
               onTap: () {},
@@ -179,11 +189,13 @@ class _SickChatState extends State<SickChat> {
                   Icon(
                     Icons.message,
                     size: 30,
+                    color: Colors.white,
                   ),
                   Text(
                     'Sohbet',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -192,6 +204,16 @@ class _SickChatState extends State<SickChat> {
           ],
         ),
       ),
+    );
+  }
+
+  ButtonStyle buildStyleFrom() {
+    return ElevatedButton.styleFrom(
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
+      ),
+      backgroundColor: Colors.blueGrey[400],
     );
   }
 
@@ -206,21 +228,20 @@ class _SickChatState extends State<SickChat> {
           return const Center(child: CircularProgressIndicator());
         }
         // Filtreleme işlemi
-        final filteredUsers = snapshot.data!.where((userData) =>
-        userData['roleName'] == selectedRole
-        ).toList();
+        final filteredUsers = snapshot.data!
+            .where((userData) => userData['roleName'] == selectedRole)
+            .toList();
         return Expanded(
           child: ListView(
             children: filteredUsers
-                .map<Widget>((userData) =>
-                _buildUserListItem(userData, context))
+                .map<Widget>(
+                    (userData) => _buildUserListItem(userData, context))
                 .toList(),
           ),
         );
       },
     );
   }
-
 
   Widget _buildUserListItem(
       Map<String, dynamic> userData, BuildContext context) {

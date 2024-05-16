@@ -14,7 +14,9 @@ class SickInfoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
+        backgroundColor: Colors.blueGrey.shade300,
         automaticallyImplyLeading: false,
         title: const Text('Bilgilerim'),
         actions: [
@@ -22,7 +24,7 @@ class SickInfoPage extends StatelessWidget {
             margin: const EdgeInsets.all(5.0), // Container'ın kenar boşlukları
             decoration: BoxDecoration(
               shape: BoxShape.circle, // Container'ı daire şeklinde yap
-              color: Colors.grey[200], // Container'ın arka plan rengi
+              color: Colors.blueGrey[200], // Container'ın arka plan rengi
             ),
             child: IconButton(
               icon: const Icon(
@@ -43,7 +45,7 @@ class SickInfoPage extends StatelessWidget {
       ),
       body: MedicationList(),
       bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
+        color: Colors.blueGrey.shade300,
         // BottomAppBar'ın arka plan rengini beyaza ayarladık
         elevation: 1.0,
         child: Row(
@@ -64,11 +66,13 @@ class SickInfoPage extends StatelessWidget {
                   Icon(
                     Icons.home_outlined,
                     size: 30,
+                    color: Colors.white,
                   ),
                   Text(
                     'Anasayfa',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -77,7 +81,7 @@ class SickInfoPage extends StatelessWidget {
             Container(
               width: 1,
               height: 30,
-              color: Colors.black45,
+              color: Colors.white,
             ),
             InkWell(
               onTap: () {},
@@ -87,11 +91,13 @@ class SickInfoPage extends StatelessWidget {
                   Icon(
                     Icons.medical_information,
                     size: 30,
+                    color: Colors.white,
                   ),
                   Text(
                     'Sağlık Bilgilerim',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -100,7 +106,7 @@ class SickInfoPage extends StatelessWidget {
             Container(
               width: 1,
               height: 30,
-              color: Colors.black45,
+              color: Colors.white,
             ),
             InkWell(
               onTap: () {
@@ -117,11 +123,13 @@ class SickInfoPage extends StatelessWidget {
                   Icon(
                     Icons.message_outlined,
                     size: 30,
+                    color: Colors.white,
                   ),
                   Text(
                     'Sohbet',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -329,40 +337,39 @@ class _MedicationListState extends State<MedicationList> {
                           vertical: 8.0, horizontal: 16.0),
                       child: Text("Ad: ${user['SickName']}",
                           style: const TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.bold)),
+                              fontSize: 24, fontWeight: FontWeight.bold)),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 12,),
-
+                          Divider(),
+                          const SizedBox(
+                            height: 0,
+                          ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                 "Kalıcı Hastalıklar: ",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w500),
+                                style: builListTileBaslik(),
                               ),
                               Text('${kaliciHastaliklar.join(', ')}',
-                                  style: const TextStyle(fontSize: 18))
+                                  style: buildListTileIcerik(),)
                             ],
                           ),
                           const SizedBox(height: 8),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text("Kullanılan İlaçlar:",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500)),
+                              Text(
+                                "Kullanılan İlaçlar:",
+                                style: builListTileBaslik(),
+                              ),
                               Text(
                                 '${kullanilanIlaclar.join(', ')}',
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                ),
+                                style: buildListTileIcerik(),
                               )
                             ],
                           ),
@@ -370,29 +377,27 @@ class _MedicationListState extends State<MedicationList> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text("Hasta Kan Grubu: ",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500)),
+                              Text(
+                                "Hasta Kan Grubu: ",
+                                style: builListTileBaslik(),
+                              ),
                               Text(
                                 '${user['hastaKanGrup']}',
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                ),
+                                style: buildListTileIcerik(),
                               ),
                             ],
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-
                             children: [
-                              const Text(
+                              Text(
                                 "Hasta Notu: ",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w500),
+                                style: builListTileBaslik(),
                               ),
-                              Text('${user['hastaNot']}',
-                                  style: const TextStyle(fontSize: 18))
+                              Text(
+                                '${user['hastaNot']}',
+                                style: buildListTileIcerik(),
+                              ),
                             ],
                           ),
                         ],
@@ -406,6 +411,18 @@ class _MedicationListState extends State<MedicationList> {
           }
         }
       },
+    );
+  }
+
+  TextStyle buildListTileIcerik() {
+    return TextStyle(fontSize: 16, color: Colors.black54);
+  }
+
+  TextStyle builListTileBaslik() {
+    return TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.w600,
+      color: Colors.black87,
     );
   }
 }

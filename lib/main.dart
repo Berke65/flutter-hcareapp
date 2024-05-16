@@ -108,7 +108,7 @@ class MainScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   SizedBox(
-                    height: 180,
+                    height: 150,
                   ),
                   Text(
                     'Designed and developed by BekerSoft',

@@ -114,6 +114,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
         title: Row(
           children: [
@@ -129,7 +130,7 @@ class _ChatPageState extends State<ChatPage> {
             Text(widget.receiverEmail),
           ],
         ),
-        backgroundColor: Colors.white, // AppBar'ın arka plan rengi
+        backgroundColor: Colors.blueGrey.shade300,
         iconTheme:
         const IconThemeData(color: Colors.black), // Geri butonunun rengi
       ),
@@ -162,7 +163,7 @@ class _ChatPageState extends State<ChatPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    Icons.home,
+                    Icons.home_outlined,
                     size: 30,
                     color: Colors.white,
                   ),
@@ -226,7 +227,7 @@ class _ChatPageState extends State<ChatPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    Icons.message_outlined,
+                    Icons.message,
                     size: 30,
                     color: Colors.white,
                   ),

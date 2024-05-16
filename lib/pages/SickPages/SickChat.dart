@@ -5,7 +5,7 @@ import 'package:hcareapp/pages/SickPages/Sickinfopage.dart';
 import 'package:hcareapp/pages/SickPages/authService.dart';
 import 'package:hcareapp/pages/SickPages/chatService.dart';
 import 'package:hcareapp/pages/SickPages/userTile.dart';
-import 'ChatPage.dart';
+import 'chatPage.dart';
 import 'Profile.dart';
 import 'SickHomePage.dart';
 

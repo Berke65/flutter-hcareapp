@@ -107,6 +107,20 @@ class _NursePageState extends State<NursePage> {
       backgroundColor: Colors.blueGrey[100],
       key: _scaffoldKey,
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            size: 30,
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>  AnaSayfaYonetici(),
+              ),
+            );
+          },
+        ),
         backgroundColor: Colors.blueGrey[300],
         automaticallyImplyLeading: false,
         title: const Text(
@@ -115,7 +129,7 @@ class _NursePageState extends State<NursePage> {
             fontWeight: FontWeight.w600,
             fontSize: 24,
           ),
-        ),        centerTitle: true,
+        ),
         actions: [
           Container(
             margin: const EdgeInsets.all(5.0),

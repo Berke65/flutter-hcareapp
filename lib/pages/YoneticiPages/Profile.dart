@@ -33,8 +33,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Container(
             margin: const EdgeInsets.all(5.0),
             decoration: BoxDecoration(
-              shape: BoxShape.circle, // Container'ı daire şeklinde yap
-              color: Colors.blueGrey[200], // Container'ın arka plan rengi
+              shape: BoxShape.circle,
+              color: Colors.blueGrey[200],
             ),
             child: IconButton(
               icon: const Icon(

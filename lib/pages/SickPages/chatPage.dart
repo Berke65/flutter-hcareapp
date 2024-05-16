@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hcareapp/pages/SickPages/SickChat.dart';
 import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/authService.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'SickHomePage.dart';
+import 'Sickinfopage.dart';
 
 class ChatPage extends StatefulWidget {
   final String receiverEmail;
@@ -44,9 +47,7 @@ class _ChatPageState extends State<ChatPage> {
     //add listener to focus mode
     myFocusNode.addListener(() {
       if (myFocusNode.hasFocus) {
-        // cause a delay so that the keyboard has time show up
-        //then the amount of remaining space will be calculated,
-        // the scroll down
+
         Future.delayed(
           const Duration(milliseconds: 500),
               () => scrollDown(),
@@ -111,7 +112,9 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
+        backgroundColor: Colors.blueGrey.shade300,
         title: Row(
           children: [
             // Profil resmi
@@ -126,9 +129,7 @@ class _ChatPageState extends State<ChatPage> {
             Text(widget.receiverEmail),
           ],
         ),
-        backgroundColor: Colors.white, // AppBar'ın arka plan rengi
-        iconTheme:
-        const IconThemeData(color: Colors.black), // Geri butonunun rengi
+        iconTheme: const IconThemeData(color: Colors.black), // Geri butonunun rengi
       ),
       body: Column(
         children: [
@@ -140,7 +141,104 @@ class _ChatPageState extends State<ChatPage> {
           _buildUserInput(),
         ],
       ),
-      // bottomNavigationBar: BottomAppBarYonetici(context),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.blueGrey.shade300,
+        elevation: 1.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SickAnasayfa(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    color: Colors.white,
+                    Icons.home_outlined,
+                    size: 30,
+                  ),
+                  Text(
+                    'Anasayfa',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.white,
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SickInfoPage(),
+                  ),
+                );
+              },
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.medical_information_outlined,
+                    size: 30,
+                    color: Colors.white,
+                  ),
+                  Text(
+                    'Sağlık Bilgilerim',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 1,
+              height: 30,
+              color: Colors.white,
+            ),
+            InkWell(
+              onTap: () {Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SickChat(),
+                ),
+              );},
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.message,
+                    size: 30,
+                    color: Colors.white,
+                  ),
+                  Text(
+                    'Sohbet',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   } // resim sonra bakılacak !!!!!!!
 

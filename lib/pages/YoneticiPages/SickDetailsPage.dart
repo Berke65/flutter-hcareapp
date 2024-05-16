@@ -11,7 +11,7 @@ class SickDetailsPage extends StatelessWidget {
       backgroundColor: Colors.blueGrey[100],
       appBar: AppBar(
         backgroundColor: Colors.blueGrey[300],
-        title: Text('Hasta Detayları'),
+        title: Text('Hasta Detayları',style: TextStyle(fontWeight: FontWeight.w600,color: Colors.black),),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

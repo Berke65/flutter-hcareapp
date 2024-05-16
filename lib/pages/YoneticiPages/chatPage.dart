@@ -116,6 +116,7 @@ void userProfile() {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
         title: Row(
           children: [
@@ -131,7 +132,7 @@ void userProfile() {
             Text(widget.receiverEmail),
           ],
         ),
-        backgroundColor: Colors.white, // AppBar'ın arka plan rengi
+        backgroundColor: Colors.blueGrey.shade300, // AppBar'ın arka plan rengi
         iconTheme:
             const IconThemeData(color: Colors.black), // Geri butonunun rengi
       ),
@@ -146,7 +147,7 @@ void userProfile() {
         ],
       ),
       bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
+        color: Colors.blueGrey.shade300,
         elevation: 1.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -165,12 +166,15 @@ void userProfile() {
                 children: [
                   Icon(
                     Icons.home_outlined,
+                    color: Colors.white,
                     size: 30,
                   ),
                   Text(
                     'Anasayfa',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
+
                     ),
                   ),
                 ],
@@ -179,7 +183,7 @@ void userProfile() {
             Container(
               width: 1,
               height: 30,
-              color: Colors.black45,
+              color: Colors.white,
             ),
             InkWell(
               onTap: () {
@@ -194,6 +198,7 @@ void userProfile() {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
+                    color: Colors.white,
                     Icons.calendar_today_outlined,
                     size: 30,
                   ),
@@ -201,6 +206,7 @@ void userProfile() {
                     'Randevu',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -209,7 +215,7 @@ void userProfile() {
             Container(
               width: 1,
               height: 30,
-              color: Colors.black45, // Çizgi rengi
+              color: Colors.white,
             ),
             InkWell(
               onTap: () {
@@ -226,11 +232,14 @@ void userProfile() {
                   Icon(
                     Icons.message,
                     size: 30,
+                    color: Colors.white,
                   ),
                   Text(
                     'Sohbet',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
+
                     ),
                   ),
                 ],
@@ -241,23 +250,6 @@ void userProfile() {
       ),
     );
   } // resim sonra bakılacak !!!!!!!
-
-  // Alt gezinme öğesi oluşturma
-  Widget _buildBottomNavItem(IconData icon, String label, Function() onTap) {
-    return InkWell(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon),
-          Text(
-            label,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
-  }
 
 // Mesaj listesini oluşturma
   Widget _buildMessageList() {

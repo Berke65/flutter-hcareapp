@@ -142,12 +142,12 @@ class SickInfoPage extends StatelessWidget {
   }
 }
 
-class MedicationSchedulePage extends StatefulWidget {
+class sickInfostate extends StatefulWidget {
   @override
-  State<MedicationSchedulePage> createState() => _MedicationSchedulePageState();
+  State<sickInfostate> createState() => _sickInfostateState();
 }
 
-class _MedicationSchedulePageState extends State<MedicationSchedulePage> {
+class _sickInfostateState extends State<sickInfostate> {
   final firebaseFirestore = FirebaseFirestore.instance;
 
   @override

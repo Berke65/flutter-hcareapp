@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:hcareapp/main.dart';
 import 'package:hcareapp/pages/auth/GirisYap.dart';
 import 'package:hcareapp/services/auth_services.dart';
+//as
 void main() {
   runApp(const kayitOlPage());
 }

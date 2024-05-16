@@ -9,7 +9,7 @@ import 'package:hcareapp/pages/auth/passwd.dart';
 import 'package:hcareapp/pages/SickPages/SickHomePage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+//
 
 void main() {
   runApp(const GirisYap());

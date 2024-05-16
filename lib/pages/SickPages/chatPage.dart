@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'SickHomePage.dart';
 import 'Sickinfopage.dart';
+//git
 
 class ChatPage extends StatefulWidget {
   final String receiverEmail;

@@ -6,6 +6,7 @@ import 'AnaSayfaYonetici.dart';
 import 'RandevuYonetici.dart';
 import 'YoneticiChat.dart';
 import 'package:hcareapp/pages/YoneticiPages/SickDetailsPage.dart';
+//git
 
 void main() {
   runApp(const AllSickPage());
@@ -130,29 +131,6 @@ class _NursePageState extends State<NursePage> {
             fontSize: 24,
           ),
         ),
-        actions: [
-          Container(
-            margin: const EdgeInsets.all(5.0),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.blueGrey[200],
-            ),
-            child: IconButton(
-              icon: const Icon(
-                Icons.person,
-                size: 30,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>  ProfileScreen(),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
       ),
       body: Column(
         children: [

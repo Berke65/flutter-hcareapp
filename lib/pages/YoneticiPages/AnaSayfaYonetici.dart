@@ -9,6 +9,7 @@ import 'package:hcareapp/pages/YoneticiPages/chatService.dart';
 import 'package:hcareapp/pages/YoneticiPages/authService.dart';
 import 'package:hcareapp/services/auth_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+//git
 
 void main() {
   runApp(const AnaSayfaYonetici());

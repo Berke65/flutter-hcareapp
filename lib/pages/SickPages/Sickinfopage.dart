@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Profile.dart';
 import 'SickHomePage.dart';
 import 'SickChat.dart';
-
+//git
 void main() {
   runApp(SickInfoPage());
 }

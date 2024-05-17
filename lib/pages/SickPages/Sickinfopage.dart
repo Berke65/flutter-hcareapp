@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Profile.dart';
 import 'SickHomePage.dart';
 import 'SickChat.dart';
+
 //git
 void main() {
   runApp(SickInfoPage());
@@ -18,7 +19,11 @@ class SickInfoPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.blueGrey.shade300,
         automaticallyImplyLeading: false,
-        title: const Text('Bilgilerim'),
+        title: const Text(
+          'Bilgilerim',
+          style: TextStyle(
+              fontWeight: FontWeight.w500, fontSize: 24, color: Colors.black),
+        ),
         actions: [
           Container(
             margin: const EdgeInsets.all(5.0), // Container'ın kenar boşlukları
@@ -43,7 +48,7 @@ class SickInfoPage extends StatelessWidget {
           ),
         ],
       ),
-      body: MedicationList(),
+      body: sickInfoSee(),
       bottomNavigationBar: BottomAppBar(
         color: Colors.blueGrey.shade300,
         // BottomAppBar'ın arka plan rengini beyaza ayarladık
@@ -142,121 +147,127 @@ class SickInfoPage extends StatelessWidget {
   }
 }
 
-class sickInfostate extends StatefulWidget {
+// class sickInfostate extends StatefulWidget {
+//   @override
+//   State<sickInfostate> createState() => _sickInfostateState();
+// }
+
+// class _sickInfostateState extends State<sickInfostate> {
+//   final firebaseFirestore = FirebaseFirestore.instance;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.blueGrey.shade50,
+//       appBar: AppBar(
+//         backgroundColor: Colors.blueGrey.shade300,
+//       ),
+//       body: sickInfoSee(),
+//       bottomNavigationBar: BottomAppBar(
+//         color: Colors.blueGrey.shade200,
+//         // BottomAppBar'ın arka plan rengini beyaza ayarladık
+//         elevation: 1.0,
+//         child: Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//           children: [
+//             InkWell(
+//               onTap: () {
+//                 Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                     builder: (context) => const SickAnasayfa(),
+//                   ),
+//                 );
+//               },
+//               child: const Column(
+//                 mainAxisSize: MainAxisSize.min,
+//                 children: [
+//                   Icon(
+//                     color: Colors.white,
+//                     Icons.home_outlined,
+//                     size: 30,
+//                   ),
+//                   Text(
+//                     'Anasayfa',
+//                     style: TextStyle(
+//                       fontWeight: FontWeight.bold,
+//                       color: Colors.white,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             Container(
+//               width: 1,
+//               height: 30,
+//               color: Colors.white,
+//             ),
+//             InkWell(
+//               onTap: () {},
+//               child: const Column(
+//                 mainAxisSize: MainAxisSize.min,
+//                 children: [
+//                   Icon(
+//                     Icons.medical_information,
+//                     size: 30,
+//                     color: Colors.white,
+//                   ),
+//                   Text(
+//                     'Sağlık Bilgilerim',
+//                     style: TextStyle(
+//                       fontWeight: FontWeight.bold,
+//                       color: Colors.white,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             Container(
+//               width: 1,
+//               height: 30,
+//               color: Colors.white,
+//             ),
+//             InkWell(
+//               onTap: () {
+//                 Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                     builder: (context) => const SickChat(),
+//                   ),
+//                 );
+//               },
+//               child: const Column(
+//                 mainAxisSize: MainAxisSize.min,
+//                 children: [
+//                   Icon(
+//                     color: Colors.white,
+//                     Icons.message_outlined,
+//                     size: 30,
+//                   ),
+//                   Text(
+//                     'Sohbet',
+//                     style: TextStyle(
+//                       fontWeight: FontWeight.bold,
+//                       color: Colors.white,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+class sickInfoSee extends StatefulWidget {
   @override
-  State<sickInfostate> createState() => _sickInfostateState();
+  _sickInfoSeeState createState() => _sickInfoSeeState();
 }
 
-class _sickInfostateState extends State<sickInfostate> {
-  final firebaseFirestore = FirebaseFirestore.instance;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Hemşire İlaç Takip'),
-      ),
-      body: MedicationList(),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
-        // BottomAppBar'ın arka plan rengini beyaza ayarladık
-        elevation: 1.0,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SickAnasayfa(),
-                  ),
-                );
-              },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.home_outlined,
-                    size: 30,
-                  ),
-                  Text(
-                    'Anasayfa',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: 1,
-              height: 30,
-              color: Colors.black45,
-            ),
-            InkWell(
-              onTap: () {},
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.medical_information,
-                    size: 30,
-                  ),
-                  Text(
-                    'Sağlık Bilgilerim',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: 1,
-              height: 30,
-              color: Colors.black45,
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SickChat(),
-                  ),
-                );
-              },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.message_outlined,
-                    size: 30,
-                  ),
-                  Text(
-                    'Sohbet',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class MedicationList extends StatefulWidget {
-  @override
-  _MedicationListState createState() => _MedicationListState();
-}
-
-class _MedicationListState extends State<MedicationList> {
+class _sickInfoSeeState extends State<sickInfoSee> {
   late List<Map<String, dynamic>> ilacListesi = [];
-
   @override
   void initState() {
     super.initState();
@@ -328,83 +339,94 @@ class _MedicationListState extends State<MedicationList> {
                     user['hastaKaliciHastalik'] ?? [];
                 List<dynamic> kullanilanIlaclar =
                     user['hastaKullanılanİlaclar'] ?? [];
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 16.0),
-                      child: Text("Ad: ${user['SickName']}",
-                          style: const TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold)),
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.blueGrey.shade100,
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Divider(),
-                          const SizedBox(
-                            height: 0,
-                          ),
-                          Column(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 16.0),
+                          child: Text("Ad: ${user['SickName']}",
+                              style: const TextStyle(
+                                  fontSize: 22, fontWeight: FontWeight.bold)),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "Kalıcı Hastalıklar: ",
-                                style: builListTileBaslik(),
+                              Divider(
+                                color: Colors.black,
                               ),
-                              Text('${kaliciHastaliklar.join(', ')}',
-                                  style: buildListTileIcerik(),)
+                              const SizedBox(
+                                height: 0,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Kalıcı Hastalıklar: ",
+                                    style: builListTileBaslik(),
+                                  ),
+                                  Text(
+                                    '${kaliciHastaliklar.join(', ')}',
+                                    style: buildListTileIcerik(),
+                                  )
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Kullanılan İlaçlar:",
+                                    style: builListTileBaslik(),
+                                  ),
+                                  Text(
+                                    '${kullanilanIlaclar.join(', ')}',
+                                    style: buildListTileIcerik(),
+                                  )
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Hasta Kan Grubu: ",
+                                    style: builListTileBaslik(),
+                                  ),
+                                  Text(
+                                    '${user['hastaKanGrup']}',
+                                    style: buildListTileIcerik(),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Hasta Notu: ",
+                                    style: builListTileBaslik(),
+                                  ),
+                                  Text(
+                                    '${user['hastaNot']}',
+                                    style: buildListTileIcerik(),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
-                          const SizedBox(height: 8),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Kullanılan İlaçlar:",
-                                style: builListTileBaslik(),
-                              ),
-                              Text(
-                                '${kullanilanIlaclar.join(', ')}',
-                                style: buildListTileIcerik(),
-                              )
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Hasta Kan Grubu: ",
-                                style: builListTileBaslik(),
-                              ),
-                              Text(
-                                '${user['hastaKanGrup']}',
-                                style: buildListTileIcerik(),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Hasta Notu: ",
-                                style: builListTileBaslik(),
-                              ),
-                              Text(
-                                '${user['hastaNot']}',
-                                style: buildListTileIcerik(),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    const Divider(), // Satırlar arasına ayırıcı ekler
-                  ],
+                  ),
                 );
               },
             );

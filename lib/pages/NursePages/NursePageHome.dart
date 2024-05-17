@@ -80,7 +80,7 @@ class _NursePageState extends State<NursePage> {
         future: _showSickUsers(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            // Veriler yüklenirken gösterilecek widget
+            // Veriler yüklenirken gösterilecek widgeth
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             // Hata durumunda gösterilecek widget
@@ -104,49 +104,66 @@ class _NursePageState extends State<NursePage> {
                   List<dynamic> kullanilanIlaclar =
                       user['hastaKullanılanİlaclar'] ?? [];
 
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ListTile(
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 16),
-                        // Verileri sola dayalı olarak göstermek için contentPadding kullanılıyor
-                        title: Center(
-                            child: Text("Hasta Adı: " + user['SickName'],
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                        left: 10, right: 10, top: 10, bottom: 0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.only(
+                            bottom: 2,
+                          ), // Add padding
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey.shade100,
+                            borderRadius: BorderRadius.circular(
+                                12), // Add rounded corners
+                          ),
+                          child: ListTile(
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 16),
+                            // Verileri sola dayalı olarak göstermek için contentPadding kullanılıyor
+                            title: Center(
+                              child: Text(
+                                "Hasta Adı: " + user['SickName'],
                                 style: const TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w700))),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 12),
-                            Text(
-                              "Kalıcı Hastalıklar: ",
-                              style: buildTextbaslik(),
+                                    fontSize: 22, fontWeight: FontWeight.w700),
+                              ),
                             ),
-                            Text('${kaliciHastaliklar.join(', ')}',
-                                style: CustomTxtStyle()),
-                            const SizedBox(height: 8),
-                            Text("Kullanılan İlaçlar:",
-                                style: buildTextbaslik()),
-                            Text('${kullanilanIlaclar.join(', ')}',
-                                style: CustomTxtStyle()),
-                            const SizedBox(height: 8),
-                            Text("Hasta Kan Grubu: ", style: buildTextbaslik()),
-                            Text('${user['hastaKanGrup']}',
-                                style: CustomTxtStyle()),
-                            const SizedBox(height: 8),
-                            Text("Hasta Notu: ", style: buildTextbaslik()),
-                            Text('${user['hastaNot']}',
-                                style: CustomTxtStyle()),
-                          ],
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Divider(color: Colors.black,),
+                                const SizedBox(height: 12),
+                                Text(
+                                  "Kalıcı Hastalıklar: ",
+                                  style: buildTextbaslik(),
+                                ),
+                                Text('${kaliciHastaliklar.join(', ')}',
+                                    style: CustomTxtStyle()),
+                                const SizedBox(height: 8),
+                                Text("Kullanılan İlaçlar:",
+                                    style: buildTextbaslik()),
+                                Text('${kullanilanIlaclar.join(', ')}',
+                                    style: CustomTxtStyle()),
+                                const SizedBox(height: 8),
+                                Text("Hasta Kan Grubu: ",
+                                    style: buildTextbaslik()),
+                                Text('${user['hastaKanGrup']}',
+                                    style: CustomTxtStyle()),
+                                const SizedBox(height: 8),
+                                Text("Hasta Notu: ", style: buildTextbaslik()),
+                                Text('${user['hastaNot']}',
+                                    style: CustomTxtStyle()),
+                              ],
+                            ),
+                            onTap: () {
+                              // Kullanıcıya tıklandığında yapılacak işlemler buraya eklenir
+                            },
+                          ),
                         ),
-                        onTap: () {
-                          // Kullanıcıya tıklandığında yapılacak işlemler buraya eklenir
-                        },
-                      ),
-                      const Divider(), // Satırlar arasına ayırıcı ekler
-                    ],
+                      ],
+                    ),
                   );
                 },
               );

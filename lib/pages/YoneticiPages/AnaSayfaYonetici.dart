@@ -372,66 +372,74 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const SizedBox(height: 10),
-                        TextButton(
-                          onPressed: () {
-                            if (selectedNurse == null || selectedSick == null) {
-                              // Eğer her iki kullanıcı da seçilmemişse uyarı göster
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content:
-                                      Text('Lütfen hemşire ve hasta seçiniz!'),
-                                ),
-                              );
-                            } else {
-                              // Hemşire ve hasta seçilmişse işlemi devam ettir
-                              authService().addDropdownValuesToFirestore(
-                                context: context,
-                                selectedNurse: selectedNurse,
-                                selectedSick: selectedSick,
-                              );
-                              setState(() {
-                                selectedNurse = null;
-                                selectedSick = null;
-                              });
-                            }
-                          },
-                          style: TextButton.styleFrom(
-                            side: const BorderSide(color: Colors.grey),
-                            backgroundColor: Colors.grey[300],
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 80,
+                        SizedBox(
+                          width: 250,
+                          child: TextButton(
+                            onPressed: () {
+                              if (selectedNurse == null || selectedSick == null) {
+                                // Eğer her iki kullanıcı da seçilmemişse uyarı göster
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content:
+                                        Text('Lütfen hemşire ve hasta seçiniz!'),
+                                  ),
+                                );
+                              } else {
+                                // Hemşire ve hasta seçilmişse işlemi devam ettir
+                                authService().addDropdownValuesToFirestore(
+                                  context: context,
+                                  selectedNurse: selectedNurse,
+                                  selectedSick: selectedSick,
+                                );
+                                setState(() {
+                                  selectedNurse = null;
+                                  selectedSick = null;
+                                });
+                              }
+                            },
+                            style: TextButton.styleFrom(
+                              side: const BorderSide(color: Colors.grey),
+                              backgroundColor: Colors.blueGrey[300],
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 80,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
                             ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          child: const Text(
-                            'Kaydet',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
+                            child: const Text(
+                              'Kaydet',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17
+                              ),
                             ),
                           ),
                         ),
-                        TextButton(
-                          onPressed: () {
-                            removePairedValuesPopup(context);
-                          },
-                          style: TextButton.styleFrom(
-                            side: const BorderSide(color: Colors.grey),
-                            backgroundColor: Colors.grey[300],
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 38,
+                        SizedBox(
+                          width: 250,
+                          child: TextButton(
+                            onPressed: () {
+                              removePairedValuesPopup(context);
+                            },
+                            style: TextButton.styleFrom(
+                              side: const BorderSide(color: Colors.grey),
+                              backgroundColor: Colors.blueGrey[300],
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 38,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
                             ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          child: const Text(
-                            'Görüntüle Ve Düzenle',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
+                            child: const Text(
+                              'Görüntüle Ve Düzenle',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17
+                              ),
                             ),
                           ),
                         ),
@@ -443,29 +451,34 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
             ),
             const SizedBox(height: 20),
             Center(
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  side: const BorderSide(color: Colors.grey),
-                  backgroundColor: Colors.grey[300],
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AllSickPage(),
+              child: SizedBox(
+                width: 320,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    side: const BorderSide(color: Colors.grey),
+                    backgroundColor: Colors.blueGrey[300],
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
                     ),
-                  );
-                },
-                child: const Text(
-                  'Tüm Hastaları Görmek için tıklayınız',
-                  style: TextStyle(
-                    color: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AllSickPage(),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'Tüm Hastaları Görmek için tıklayınız',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 17,
+                    ),
                   ),
                 ),
               ),
@@ -484,6 +497,7 @@ class _YoneticiHomePageState extends State<YoneticiHomePage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
+            backgroundColor: Colors.blueGrey.shade50,
             title: const Text("Eşleştirilmiş Kişiler"),
             content: Container(
               width:

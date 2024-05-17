@@ -299,13 +299,12 @@ class _SickInformationState extends State<SickInformation> {
     String currentUserEmail = userQuery.docs.first.data()['email'];
 
     try {
-      // İlaçları Firestore'a kaydetme
       List<Map<String, dynamic>> ilacBilgileri = [];
       ilaclar.forEach((ilac) {
         ilacBilgileri.add({
           'ilacAdi': ilac.name,
           'dozaj': ilac.dosage,
-          'saat': ilac.time, // Saat bilgisini de Firestore'a ekliyoruz
+          'saat': ilac.time, // Saat bilgisini de Firestore'a ekliyoruz/
         });
       });
 

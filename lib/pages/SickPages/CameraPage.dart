@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vlc_player/flutter_vlc_player.dart';
-import 'package:hcareapp/pages/SickPages/SickHomePage.dart';
+import 'package:fijkplayer/fijkplayer.dart';
 
 void main() {
-  runApp(const CameraPage());
+  runApp(const MyApp());
 }
 
-class CameraPage extends StatelessWidget {
-  const CameraPage({Key? key}) : super(key: key);
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,33 +15,36 @@ class CameraPage extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: CameraPageState(),
+      home: const CameraPage(),
     );
   }
 }
 
-class CameraPageState extends StatefulWidget {
+class CameraPage extends StatefulWidget {
+  const CameraPage({Key? key}) : super(key: key);
+
   @override
-  _CameraPageStateState createState() => _CameraPageStateState();
+  _CameraPageState createState() => _CameraPageState();
 }
 
-class _CameraPageStateState extends State<CameraPageState> {
-  late final VlcPlayerController _videoPlayerController;
+class _CameraPageState extends State<CameraPage> {
+  late final FijkPlayer _player;
 
   @override
   void initState() {
     super.initState();
-    _videoPlayerController = VlcPlayerController.network(
-      'rtsp://admin:12345678Fb@192.168.1.45:554/onvif1',
-      hwAcc: HwAcc.disabled,
+    _player = FijkPlayer();
+    _player.setDataSource(
+      'rtsp://admin:12345678Fb@192.168.1.142:554/onvif1',
       autoPlay: true,
-      options: VlcPlayerOptions(),
-    );
+    ).catchError((error) {
+      print('Hata: $error');
+    });
   }
 
   @override
   void dispose() {
-    _videoPlayerController.dispose();
+    _player.release();
     super.dispose();
   }
 
@@ -50,36 +52,16 @@ class _CameraPageStateState extends State<CameraPageState> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Container(
-          child: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
-              size: 30,
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const SickAnasayfa(),
-                ),
-              );
-            },
-          ),
-        ),
-        automaticallyImplyLeading: false,
         title: const Text('Kamera'),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          VlcPlayer(
-            controller: _videoPlayerController,
-            aspectRatio: 16 / 9,
-            placeholder: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          ),
-        ],
+      body: Center(
+        child: FijkView(
+          player: _player,
+          panelBuilder: (FijkPlayer player, FijkData data, BuildContext context, Size viewSize, Rect texturePos) {
+            return const SizedBox.shrink();
+          },
+          fit: FijkFit.cover,
+        ),
       ),
     );
   }

@@ -90,8 +90,10 @@ class _RandevuPageState extends State<RandevuPage>
             );
           },
         ),
-        title: const Text('Randevu Al',
-          style: TextStyle(fontWeight: FontWeight.w600,fontSize: 20) ,),
+        title: const Text(
+          'Randevu Al',
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -153,19 +155,39 @@ class _RandevuPageState extends State<RandevuPage>
                   FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                   TextInputFormatter.withFunction((oldValue, newValue) {
                     final text = newValue.text;
-                    if (text.length > 4) {
+
+                    // Eğer metin 5 karakterden fazla veya 5 karakter olup '.' içermiyorsa, eski değeri geri döndür
+                    if (text.length > 5 ||
+                        (text.length == 5 && !text.contains('.'))) {
                       return oldValue;
                     }
+
                     StringBuffer newText = StringBuffer();
                     for (int i = 0; i < text.length; i++) {
                       newText.write(text[i]);
+                      // 2. karakterden sonra '.' ekle
                       if (i == 1 && text.length > 2) {
                         newText.write('.');
                       }
                     }
+                    // Metni saat ve dakika olarak böl ve kontrol et
+                    final parts = newText.toString().split('.');
+                    if (parts.length == 2) {
+                      final hour = int.tryParse(parts[0]) ?? 0;
+                      final minute = int.tryParse(parts[1]) ?? 0;
+                      // Saat 23'ten büyükse eski değeri geri döndür
+                      if (hour > 23) {
+                        return oldValue;
+                      }
+                      // Dakika 59'dan büyükse eski değeri geri döndür
+                      if (minute > 59) {
+                        return oldValue;
+                      }
+                    }
                     return TextEditingValue(
                       text: newText.toString(),
-                      selection: TextSelection.collapsed(offset: newText.length),
+                      selection:
+                          TextSelection.collapsed(offset: newText.length),
                     );
                   }),
                 ],
@@ -194,11 +216,15 @@ class _RandevuPageState extends State<RandevuPage>
                 if (selectedDate == null ||
                     selectedDepartment == null ||
                     selectedHour.isEmpty ||
+                    selectedHour.length != 5 ||
                     userName == null) {
                   // Kullanıcıya boş alanları doldurması gerektiğini belirten bir uyarı göster
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                        content: Text('Lütfen tüm alanları doldurunuz!')),
+                      content: Text(
+                        'Lütfen tüm alanları doğru bir şekilde doldurunuz!',
+                      ),
+                    ),
                   );
                 } else {
                   // Firestore'a randevu bilgilerini ve kullanıcının adını ekleme fonksiyonunu çağır
@@ -208,7 +234,10 @@ class _RandevuPageState extends State<RandevuPage>
                       content: Text("Randevunuz Başarıyla oluşturuldu")));
                 }
               },
-              child: const Text('Randevu Al',style: TextStyle(color: Colors.white),),
+              child: const Text(
+                'Randevu Al',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         ),

@@ -205,75 +205,111 @@ class _SickUpdateState extends State<SickUpdate> {
   Future<void> _showIlaclarDialog() async {
     final TextEditingController ilacController = TextEditingController();
     final TextEditingController dozajController = TextEditingController();
-    final TextEditingController saatController = TextEditingController(); // Saat bilgisi için bir TextEditingController ekledik
+    final TextEditingController saatController = TextEditingController();
 
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return Row(
-          children: [
-            AlertDialog(
-              title: const Text('İlaç Ekle'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextFormField(
-                    controller: ilacController,
-                    decoration: const InputDecoration(
-                      hintText: 'İlacı girin',
-                    ),
-                  ),
-                  const SizedBox(height: 10.0),
-                  TextFormField(
-                    controller: dozajController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      hintText: 'Dozajı girin',
-                    ),
-                  ),
-                  const SizedBox(height: 10.0),
-                  TextFormField(
-                    controller: saatController,
-                    keyboardType: TextInputType.datetime,
-                    decoration: const InputDecoration(
-                      hintText: 'Saat bilgisini girin (HH:MM)',
-                    ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                      TextInputFormatter.withFunction((oldValue, newValue) {
-                        final text = newValue.text;
-                        if (text.length > 4) {
-                          return oldValue;
-                        }
-                        StringBuffer newText = StringBuffer();
-                        for (int i = 0; i < text.length; i++) {
-                          newText.write(text[i]);
-                          if (i == 1 && text.length > 2) {
-                            newText.write('.');
-                          }
-                        }
-                        return TextEditingValue(
-                          text: newText.toString(),
-                          selection: TextSelection.collapsed(offset: newText.length),
-                        );
-                      }),
-                    ],
-                  ),
-                ],
+        return AlertDialog(
+          title: const Text('İlaç Ekle'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: ilacController,
+                decoration: const InputDecoration(
+                  hintText: 'İlacı girin',
+                ),
               ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
+              const SizedBox(height: 10.0),
+              TextFormField(
+                controller: dozajController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  hintText: 'Dozajı girin',
+                ),
+              ),
+              const SizedBox(height: 10.0),
+              TextFormField(
+                controller: saatController,
+                keyboardType: TextInputType.datetime,
+                decoration: const InputDecoration(
+                  hintText: 'Saat bilgisini girin (HH:MM)',
+                ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                  TextInputFormatter.withFunction((oldValue, newValue) {
+                    final text = newValue.text;
+
+                    // Eğer metin 5 karakterden fazla veya 5 karakter olup '.' içermiyorsa, eski değeri geri döndür
+                    if (text.length > 5 ||
+                        (text.length == 5 && !text.contains('.'))) {
+                      return oldValue;
+                    }
+                    StringBuffer newText = StringBuffer();
+                    for (int i = 0; i < text.length; i++) {
+                      newText.write(text[i]);
+                      // 2. karakterden sonra '.' ekle
+                      if (i == 1 && text.length > 2) {
+                        newText.write('.');
+                      }
+                    }
+                    // Metni saat ve dakika olarak böl ve kontrol et
+                    final parts = newText.toString().split('.');
+                    if (parts.length == 2) {
+                      final hour = int.tryParse(parts[0]) ?? 0;
+                      final minute = int.tryParse(parts[1]) ?? 0;
+                      // Saat 23'ten büyükse eski değeri geri döndür
+                      if (hour > 23) {
+                        return oldValue;
+                      }
+                      // Dakika 59'dan büyükse eski değeri geri döndür
+                      if (minute > 59) {
+                        return oldValue;
+                      }
+                    }
+                    return TextEditingValue(
+                      text: newText.toString(),
+                      selection:
+                      TextSelection.collapsed(offset: newText.length),
+                    );
+                  }),
+                ],
+
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // İlaç adı, dozajı ve saat bilgisinin boş olmadığını kontrol et
+                if (ilacController.text.isNotEmpty &&
+                    dozajController.text.isNotEmpty &&
+                    saatController.text.isNotEmpty) {
+                  // Saat bilgisinin uygun formatta olduğunu kontrol et
+                  if (saatController.text.length == 5 &&
+                      saatController.text.contains('.')) {
                     setState(() {
-                      // İlaç adı, dozajı ve saat bilgisini ekleyerek ilaç listesine ekliyoruz
-                      ilaclar.add(Medicine(ilacController.text, int.parse(
-                          dozajController.text), saatController.text));
+                      // İlaç adı, dozajı ve saat bilgisini ekleyerek ilaç listesine ekleyin
+                      ilaclar.add(Medicine(
+                        ilacController.text,
+                        int.parse(dozajController.text),
+                        saatController.text,
+                      ));
                     });
                     Navigator.of(context).pop();
-                  },
-                  child: const Text('Ekle'),
-                ),
-              ],
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Lütfen saat bilgisini HH:MM formatında girin'),
+                    ));
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Lütfen tüm ilaç bilgilerini doldurun'),
+                  ));
+                }
+              },
+              child: const Text('Ekle'),
             ),
           ],
         );
@@ -356,11 +392,9 @@ class _SickUpdateState extends State<SickUpdate> {
         });
       });
 
-      if(selectedKanGrubu == null || kullaniciNot == null)
-        {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Lütfen kan grubu ve not kısmını boş geçmeyiniz')));
-        }
-      else {
+      if (selectedKanGrubu == null || kullaniciNot == null || ilaclar.isEmpty ) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Lütfen tüm alanları doldurunuz')));
+      } else {
         await firebaseFirestore.collection('hastaBilgileri').doc(uid).set({
           'hastaMail': currentUserEmail,
           'hastaKaliciHastalik': selectedKaliciHastaliklar,
@@ -372,15 +406,15 @@ class _SickUpdateState extends State<SickUpdate> {
           'SickName': currentUsername,
         });
         res = "success";
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(
             'Bilgileriniz başarıyla kaydedildi. Hasta Anasayfasına yönlendiriliyorsunuz')));
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => SickAnasayfa()));
+            context, MaterialPageRoute(builder: (context) => const SickAnasayfa()));
       }
     } catch (e) {
       print('Firestore veri ekleme hatası: $e');
       res = "Bir hata oluştu, lütfen tekrar deneyin.";
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(
           'Bilinmeyen bir hata oluştu lütfen tekrar deneyiniz')));
     }
   }

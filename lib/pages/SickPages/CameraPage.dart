@@ -51,7 +51,9 @@ class _CameraPageState extends State<CameraPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
+        backgroundColor: Colors.blueGrey.shade300,
         title: const Text('Kamera'),
       ),
       body: Center(
@@ -60,7 +62,7 @@ class _CameraPageState extends State<CameraPage> {
           panelBuilder: (FijkPlayer player, FijkData data, BuildContext context, Size viewSize, Rect texturePos) {
             return const SizedBox.shrink();
           },
-          fit: FijkFit.cover,
+          fit: FijkFit.contain,
         ),
       ),
     );

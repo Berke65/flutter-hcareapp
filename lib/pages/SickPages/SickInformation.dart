@@ -57,7 +57,9 @@ class _SickInformationState extends State<SickInformation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
+        backgroundColor: Colors.blueGrey.shade300,
         title: const Text('Sağlık Bilgileri'),
       ),
       body: SingleChildScrollView(

@@ -150,9 +150,24 @@ class _RandevuPageState extends State<RandevuPage>
                   border: OutlineInputBorder(),
                 ),
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-                  // AAAAAAAAAAAAAA
-                  // Yalnızca rakam ve nokta karakterine izin verir
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                  TextInputFormatter.withFunction((oldValue, newValue) {
+                    final text = newValue.text;
+                    if (text.length > 4) {
+                      return oldValue;
+                    }
+                    StringBuffer newText = StringBuffer();
+                    for (int i = 0; i < text.length; i++) {
+                      newText.write(text[i]);
+                      if (i == 1 && text.length > 2) {
+                        newText.write('.');
+                      }
+                    }
+                    return TextEditingValue(
+                      text: newText.toString(),
+                      selection: TextSelection.collapsed(offset: newText.length),
+                    );
+                  }),
                 ],
                 onChanged: (value) {
                   setState(() {

@@ -111,7 +111,7 @@ class MainScreen extends StatelessWidget {
                     height: 150,
                   ),
                   Text(
-                    'Designed and developed by BekerSoft',
+                    'Designed and developed by Beker Software',
                     style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.w500,

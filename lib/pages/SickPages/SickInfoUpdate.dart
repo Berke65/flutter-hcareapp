@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hcareapp/pages/SickPages/SickHomePage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -237,6 +238,26 @@ class _SickUpdateState extends State<SickUpdate> {
                     decoration: const InputDecoration(
                       hintText: 'Saat bilgisini girin (HH:MM)',
                     ),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      TextInputFormatter.withFunction((oldValue, newValue) {
+                        final text = newValue.text;
+                        if (text.length > 4) {
+                          return oldValue;
+                        }
+                        StringBuffer newText = StringBuffer();
+                        for (int i = 0; i < text.length; i++) {
+                          newText.write(text[i]);
+                          if (i == 1 && text.length > 2) {
+                            newText.write('.');
+                          }
+                        }
+                        return TextEditingValue(
+                          text: newText.toString(),
+                          selection: TextSelection.collapsed(offset: newText.length),
+                        );
+                      }),
+                    ],
                   ),
                 ],
               ),
